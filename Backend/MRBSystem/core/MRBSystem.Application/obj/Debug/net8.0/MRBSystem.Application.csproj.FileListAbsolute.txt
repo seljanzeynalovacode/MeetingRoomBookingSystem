@@ -1,0 +1,17 @@
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Application.deps.json
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Application.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Application.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.AssemblyInfoInputs.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.AssemblyInfo.cs
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.csproj.CoreCompileInputs.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\refint\MRBSystem.Application.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\ref\MRBSystem.Application.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Contracts.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Domain.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Contracts.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\bin\Debug\net8.0\MRBSystem.Domain.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSystem.Application.csproj.AssemblyReference.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Application\obj\Debug\net8.0\MRBSyste.E84BCF20.Up2Date

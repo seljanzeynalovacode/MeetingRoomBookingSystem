@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aebb6b86-05bf-4d0d-a3ed-436c2b5fc710</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\MRBSystem.Application\MRBSystem.Application.csproj" />
+    <ProjectReference Include="..\..\core\MRBSystem.Contracts\MRBSystem.Contracts.csproj" />
+    <ProjectReference Include="..\..\infrasturucture\MRBSystem.Infrasturucture\MRBSystem.Infrasturucture.csproj" />
+    <ProjectReference Include="..\..\infrasturucture\MRBSystem.Persistence\MRBSystem.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

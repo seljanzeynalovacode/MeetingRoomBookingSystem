@@ -1,0 +1,11 @@
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\bin\Debug\net8.0\MRBSystem.Contracts.deps.json
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\bin\Debug\net8.0\MRBSystem.Contracts.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\bin\Debug\net8.0\MRBSystem.Contracts.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.AssemblyInfoInputs.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.AssemblyInfo.cs
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\refint\MRBSystem.Contracts.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\ref\MRBSystem.Contracts.dll

@@ -1,0 +1,520 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\mrbsystem.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\mrbsystem.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\infrasturucture\\mrbsystem.persistence\\repository\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|solutionrelative:infrasturucture\\mrbsystem.persistence\\repository\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\repository\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\repository\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|solutionrelative:infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Downloads\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\participant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\participant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\reservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\reservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\checkin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\checkin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\approle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\approle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\rezervationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\rezervationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\responsestatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\responsestatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\notificationtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\notificationtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\frequency.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\frequency.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\roomblackout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\roomblackout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\room_equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\room_equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\like.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\like.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\floor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\floor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\entities\\building.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\building.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "secrets.json",
+              "DocumentMoniker": "C:\\Users\\ACER\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
+              "ToolTip": "C:\\Users\\ACER\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-08-09T13:50:36.38Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MRBSystem.WebAPI",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj",
+              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj*",
+              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-08-09T14:05:55.331Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
+              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-08-09T13:50:45.709Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
+              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAgwAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T13:28:16.101Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Program.cs",
+              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Program.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Program.cs*",
+              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T08:53:44.175Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\appsettings.json",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.json",
+              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-08-09T13:50:54.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T13:26:27.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MRBAppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs*",
+              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs*",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T13:32:08.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Downloads\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Downloads\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\ACER\\Downloads\\AppDbContext.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Downloads\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T13:35:52.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Reservation.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Reservation.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Reservation.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Reservation.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Reservation.cs*",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAwBMAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:31:33.68Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BaseEntity.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:04:01.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Participant.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Participant.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Participant.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Participant.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Participant.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:18:40.887Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "RefreshToken.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RefreshToken.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\RefreshToken.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RefreshToken.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\RefreshToken.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:43:20.567Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Notification.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Notification.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Notification.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Notification.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Notification.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:25:06.786Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Room.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Room.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Room.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Room.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Room.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:19:24.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AppUser.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppUser.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\AppUser.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppUser.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\AppUser.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:06:14.677Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Checkin.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Checkin.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Checkin.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Checkin.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Checkin.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:14:17.484Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "AppRole.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppRole.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\AppRole.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppRole.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\AppRole.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:13:40.899Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "RezervationStatus.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\RezervationStatus.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\RezervationStatus.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\RezervationStatus.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\RezervationStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:11:17.459Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "ResponseStatus.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:23:14.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "NotificationType.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\NotificationType.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\NotificationType.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\NotificationType.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\NotificationType.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:28:04.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Frequency.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\Frequency.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\Frequency.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\Frequency.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\Frequency.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:34:49.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "RoomBlackout.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:30:30.912Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Room_Equipment.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Room_Equipment.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Room_Equipment.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Room_Equipment.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Room_Equipment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:27:19.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Like.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Like.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Like.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Like.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Like.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:39:11.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Floor.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Floor.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Floor.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Floor.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Floor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:17:30.14Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Equipment.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Equipment.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Equipment.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Equipment.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Equipment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:20:24.463Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "Comment.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Comment.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Comment.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Comment.cs*",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Comment.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:35:49.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Building.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Building.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Building.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Building.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Entities\\Building.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T09:16:40.816Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

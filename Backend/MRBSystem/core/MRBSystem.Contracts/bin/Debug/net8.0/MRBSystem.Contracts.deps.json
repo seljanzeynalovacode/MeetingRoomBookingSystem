@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "MRBSystem.Contracts/1.0.0": {
+        "runtime": {
+          "MRBSystem.Contracts.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MRBSystem.Contracts/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

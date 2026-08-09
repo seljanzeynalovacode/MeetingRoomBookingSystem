@@ -1,0 +1,6 @@
+@MRBSystem.WebAPI_HostAddress = http://localhost:5156
+
+GET {{MRBSystem.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
