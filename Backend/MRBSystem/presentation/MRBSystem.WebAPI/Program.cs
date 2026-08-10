@@ -25,9 +25,13 @@ namespace MRBSystem.WebAPI
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("MRBSystemConnectionString")));
 
-            builder.Services.AddIdentity<AppUser, AppRole>()
-    .AddEntityFrameworkStores<MRBAppDbContext>()
-    .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true; 
+            })
+.AddEntityFrameworkStores<MRBAppDbContext>()
+.AddDefaultTokenProviders();
+
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             var app = builder.Build();

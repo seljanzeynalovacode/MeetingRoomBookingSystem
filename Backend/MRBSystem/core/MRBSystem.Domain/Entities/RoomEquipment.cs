@@ -1,6 +1,6 @@
 ﻿namespace MRBSystem.Domain.Entities;
 
-public class Room_Equipment : BaseEntity
+public class RoomEquipment : BaseEntity
 {
     public Guid RoomId { get; set; }
     public Room Room { get; set; } = null!;

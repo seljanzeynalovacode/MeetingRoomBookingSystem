@@ -7,11 +7,11 @@ public class Reservation : BaseEntity
     public string Title { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public RezervationStatus Status { get; set; } = RezervationStatus.Confirmed;
+    public ReservationStatus Status { get; set; } = ReservationStatus.Confirmed;
     public Guid ReservedByUserId { get; set; }
     public AppUser ReservedByUser { get; set; } = null!;
-    public Guid OrganaizerId { get; set; }
-    public AppUser Organaizer { get; set; } = null!;
+    public Guid OrganizerId { get; set; }
+    public AppUser Organizer { get; set; } = null!;
     public Guid RoomId { get; set; }
     public Room Room { get; set; } = null!;
     public Checkin? CheckIn { get; set; }

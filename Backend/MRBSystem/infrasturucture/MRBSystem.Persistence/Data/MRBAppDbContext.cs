@@ -13,7 +13,7 @@ public class MRBAppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<Floor> Floors => Set<Floor>();
     public DbSet<Room> Rooms => Set<Room>();
     public DbSet<Equipment> Equipment => Set<Equipment>();
-    public DbSet<Room_Equipment> RoomEquipment => Set<Room_Equipment>();
+    public DbSet<RoomEquipment> RoomEquipment => Set<RoomEquipment>();
     public DbSet<RoomBlackout> RoomBlackouts => Set<RoomBlackout>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<Checkin> CheckIns => Set<Checkin>();
@@ -22,10 +22,11 @@ public class MRBAppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<Like> Likes => Set<Like>();
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder); 
 
-        builder.ApplyConfigurationsFromAssembly(typeof(MRBAppDbContext).Assembly);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(MRBAppDbContext).Assembly);
     }
 }

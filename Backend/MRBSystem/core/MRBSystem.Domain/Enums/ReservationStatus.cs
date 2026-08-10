@@ -1,6 +1,6 @@
 ﻿namespace MRBSystem.Domain.Enums;
 
-public enum RezervationStatus
+public enum ReservationStatus
 {
     Confirmed,
     CheckedIn,
