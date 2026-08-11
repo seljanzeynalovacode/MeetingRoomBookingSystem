@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\..\core\MRBSystem.Application\MRBSystem.Application.csproj" />
+    <ProjectReference Include="..\..\core\MRBSystem.Domain\MRBSystem.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\MRBSystem.Application\MRBSystem.Application.csproj" />
-    <ProjectReference Include="..\..\core\MRBSystem.Domain\MRBSystem.Domain.csproj" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

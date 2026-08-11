@@ -17,3 +17,4 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Infrasturucture\bin\Debug\net8.0\MRBSystem.Contracts.pdb
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Infrasturucture\obj\Debug\net8.0\MRBSystem.Infrasturucture.csproj.AssemblyReference.cache
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Infrasturucture\obj\Debug\net8.0\MRBSyste.33173FA2.Up2Date
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Infrasturucture\obj\Debug\net8.0\MRBSystem.Infrasturucture.sourcelink.json

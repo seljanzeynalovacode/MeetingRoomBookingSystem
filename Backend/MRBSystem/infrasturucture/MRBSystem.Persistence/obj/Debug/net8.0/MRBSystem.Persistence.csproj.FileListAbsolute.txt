@@ -19,3 +19,4 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Persistence\obj\Debug\net8.0\MRBSystem.Persistence.csproj.AssemblyReference.cache
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Persistence\obj\Debug\net8.0\MRBSyste.D42003D6.Up2Date
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Persistence\obj\Debug\net8.0\MRBSystem.Persistence.genruntimeconfig.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\infrasturucture\MRBSystem.Persistence\obj\Debug\net8.0\MRBSystem.Persistence.sourcelink.json

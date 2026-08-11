@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MRBSystem.WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d57217afaed1f9ec0533a87b30d9a7b5ef2fb0d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+daa57fc0b154ed2940450dd534e55030f9c94591")]
 [assembly: System.Reflection.AssemblyProductAttribute("MRBSystem.WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MRBSystem.WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

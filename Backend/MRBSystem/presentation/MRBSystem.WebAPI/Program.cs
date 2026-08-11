@@ -1,8 +1,11 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MRBSystem.Application.Mapper;
+using MRBSystem.Application.Services;
+using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
+using MRBSystem.Infrasturucture.Services;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 
@@ -34,6 +37,25 @@ namespace MRBSystem.WebAPI
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            builder.Services.AddScoped<IBuildingService, BuildingService>();
+            builder.Services.AddScoped<IFloorService, FloorService>();
+            builder.Services.AddScoped<IRoomService, RoomService>();
+            builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+            builder.Services.AddScoped<IRoomEquipmentService, RoomEquipmentService>();
+            builder.Services.AddScoped<IRoomBlackoutService, RoomBlackoutService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<ICheckinService, CheckinService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<IParticipantService, ParticipantService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+
+            builder.Services.AddAutoMapper(x => x.AddProfile(typeof(CustomProfile)));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -45,6 +67,7 @@ namespace MRBSystem.WebAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

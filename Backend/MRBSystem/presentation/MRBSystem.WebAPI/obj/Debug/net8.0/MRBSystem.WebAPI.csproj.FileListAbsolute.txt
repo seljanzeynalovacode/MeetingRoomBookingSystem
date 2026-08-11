@@ -93,3 +93,7 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\MRBSystem.Infrasturucture.pdb
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\MRBSystem.Persistence.pdb
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\MRBSystem.Domain.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\obj\Debug\net8.0\MRBSystem.WebAPI.sourcelink.json
