@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.CheckinDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.CheckinDtos;
 
 public record ResponseCheckinDto :  BaseDto
 {

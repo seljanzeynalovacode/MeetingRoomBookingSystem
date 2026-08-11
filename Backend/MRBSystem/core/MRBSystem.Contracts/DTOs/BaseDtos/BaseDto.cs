@@ -1,4 +1,4 @@
-﻿namespace MRBSystem.Contracts.DTOs;
+﻿namespace MRBSystem.Contracts.DTOs.BaseDtos;
 
 public record BaseDto
 {

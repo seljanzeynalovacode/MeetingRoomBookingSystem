@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.RoomEquipmentDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.RoomEquipmentDtos;
 
 public record ResponseRoomEquipmentDto : BaseDto
 {

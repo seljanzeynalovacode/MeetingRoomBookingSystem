@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.BuildingDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.BuildingDtos;
 
 public record ResponseBuildingDto : BaseDto
 {

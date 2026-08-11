@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.ParticipantDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.ParticipantDtos;
 
 public record ResponseParticipantDto : BaseDto
 {

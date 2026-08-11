@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
 
 public record ResponseRoomBlackoutDto : BaseDto
 {

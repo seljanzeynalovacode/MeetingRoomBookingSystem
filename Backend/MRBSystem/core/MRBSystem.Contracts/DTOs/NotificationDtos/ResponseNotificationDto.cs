@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.NotificationDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.NotificationDtos;
 
 public record ResponseNotificationDto : BaseDto
 {

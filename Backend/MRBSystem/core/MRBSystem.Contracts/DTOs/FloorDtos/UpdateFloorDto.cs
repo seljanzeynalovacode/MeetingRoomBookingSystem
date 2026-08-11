@@ -1,6 +1,6 @@
 ﻿namespace MRBSystem.Contracts.DTOs.FloorDtos;
 
-public class UpdateFloorDto
+public record UpdateFloorDto
 {
     public string Name { get; set; } = null!;
     public int LevelNumber { get; set; }

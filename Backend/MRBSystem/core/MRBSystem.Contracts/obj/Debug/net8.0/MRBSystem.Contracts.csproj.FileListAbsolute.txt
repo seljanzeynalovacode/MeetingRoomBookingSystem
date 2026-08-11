@@ -9,3 +9,4 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\refint\MRBSystem.Contracts.dll
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.pdb
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\ref\MRBSystem.Contracts.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.sourcelink.json

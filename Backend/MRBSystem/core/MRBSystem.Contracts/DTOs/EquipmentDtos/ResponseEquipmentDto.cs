@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.EquipmentDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.EquipmentDtos;
 
 public record ResponseEquipmentDto : BaseDto
 {

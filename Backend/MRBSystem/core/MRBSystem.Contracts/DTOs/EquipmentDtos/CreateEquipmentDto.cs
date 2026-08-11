@@ -3,3 +3,4 @@
 public record CreateEquipmentDto
 {
     public string Name { get; set; } = null!;
+}

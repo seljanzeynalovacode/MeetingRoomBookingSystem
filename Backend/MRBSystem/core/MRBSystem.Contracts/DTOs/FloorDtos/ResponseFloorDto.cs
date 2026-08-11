@@ -1,4 +1,6 @@
-﻿namespace MRBSystem.Contracts.DTOs.FloorDtos;
+﻿using MRBSystem.Contracts.DTOs.BaseDtos;
+
+namespace MRBSystem.Contracts.DTOs.FloorDtos;
 
 public record ResponseFloorDto : BaseDto
 {
