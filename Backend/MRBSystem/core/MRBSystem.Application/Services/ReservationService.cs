@@ -14,136 +14,122 @@ public class ReservationService : IReservationService
     private readonly IGenericRepository<Reservation> _repository;
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
     private readonly ICurrentUserService _currentUser;
+    private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
         IGenericRepository<RoomBlackout> blackoutRepository,
         ICurrentUserService currentUser,
+        INotificationService notificationService,
         IMapper mapper)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
         _currentUser = currentUser;
+        _notificationService = notificationService;
         _mapper = mapper;
     }
 
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
     {
-        if (dto.StartDate >= dto.EndDate)
-        {
-            throw new ArgumentException("StartDate must be earlier than EndDate.");
-        }
-
-        var hasConflict = await _repository.GetQueryable()
-            .AnyAsync(r => r.RoomId == dto.RoomId
-                && r.Status != ReservationStatus.Cancelled
-                && r.Status != ReservationStatus.AutoCancelled
-                && dto.StartDate < r.EndDate
-                && dto.EndDate > r.StartDate);
-
-        if (hasConflict)
-        {
-            throw new InvalidOperationException("Room is already booked for the selected time range.");
-        }
-
-        var hasBlackout = await _blackoutRepository.GetQueryable()
-            .AnyAsync(b => b.RoomId == dto.RoomId
-                && dto.StartDate < b.EndDate
-                && dto.EndDate > b.StartDate);
-
-        if (hasBlackout)
-        {
-            throw new InvalidOperationException("Room is blacked out for the selected time range.");
-        }
+        await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate);
 
         var entity = _mapper.Map<Reservation>(dto);
         entity.ReservedByUserId = _currentUser.UserId;
         entity.QrCodeToken = Guid.NewGuid().ToString();
+        entity.CheckinDeadline = dto.StartDate.AddMinutes(15); // ne zaman autocancel olsun
 
         await _repository.AddAsync(entity);
 
-        var created = await _repository.GetQueryable()
-            .Include(r => r.Room)
-            .Include(r => r.ReservedByUser)
-            .Include(r => r.Organizer)
-            .Include(r => r.CheckIn)
-            .FirstAsync(r => r.Id == entity.Id);
+        var created = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
+
+        await _notificationService.CreateAndSendAsync(created, NotificationType.Created);
 
         return _mapper.Map<ResponseReservationDto>(created);
     }
 
     public async Task<ResponseReservationDto> UpdateAsync(Guid id, UpdateReservationDto dto)
     {
-        var entity = await _repository.GetByIdAsync(id)
-            ?? throw new NotFoundException($"Reservation with id {id} not found.");
-
-        if (dto.StartDate >= dto.EndDate)
+        var entity = await _repository.GetByIdAsync(id);
+        if (entity == null)
         {
-            throw new ArgumentException("StartDate must be earlier than EndDate.");
+            throw new NotFoundException($"Reservation with id {id} not found.");
         }
 
-        var hasConflict = await _repository.GetQueryable()
-            .AnyAsync(r => r.Id != id
-                && r.RoomId == dto.RoomId
-                && r.Status != ReservationStatus.Cancelled
-                && r.Status != ReservationStatus.AutoCancelled
-                && dto.StartDate < r.EndDate
-                && dto.EndDate > r.StartDate);
-
-        if (hasConflict)
-        {
-            throw new InvalidOperationException("Room is already booked for the selected time range.");
-        }
+        await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, excludeReservationId: id);
 
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
 
-        var updated = await _repository.GetQueryable()
-            .Include(r => r.Room)
-            .Include(r => r.ReservedByUser)
-            .Include(r => r.Organizer)
-            .Include(r => r.CheckIn)
-            .FirstAsync(r => r.Id == id);
+        var updated = await GetWithDetailsAsync().FirstAsync(r => r.Id == id);
+
+        await _notificationService.CreateAndSendAsync(updated, NotificationType.Updated);
 
         return _mapper.Map<ResponseReservationDto>(updated);
     }
 
     public async Task CancelAsync(Guid id)
     {
-        var entity = await _repository.GetByIdAsync(id)
-
-        if (entity == null)
-        {
+        var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
+        if (entity == null){
             throw new NotFoundException($"Reservation with id {id} not found.");
         }
-
         entity.Status = ReservationStatus.Cancelled;
         await _repository.UpdateAsync(entity);
+
+        await _notificationService.CreateAndSendAsync(entity, NotificationType.Cancelled);
     }
 
     public async Task<ResponseReservationDto> GetByIdAsync(Guid id)
     {
-        var entity = await _repository.GetQueryable()
-            .Include(r => r.Room)
-            .Include(r => r.ReservedByUser)
-            .Include(r => r.Organizer)
-            .Include(r => r.CheckIn)
-            .FirstOrDefaultAsync(r => r.Id == id)
-            ?? throw new NotFoundException($"Reservation with id {id} not found.");
-
+        var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
+        if (entity == null) {
+            throw new NotFoundException($"Reservation with id {id} not found.");
+        }
         return _mapper.Map<ResponseReservationDto>(entity);
     }
 
     public async Task<ICollection<ResponseReservationDto>> GetAllAsync()
     {
-        var entities = await _repository.GetQueryable()
+        var entities = await GetWithDetailsAsync().ToListAsync();
+        return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
+    }
+
+    private IQueryable<Reservation> GetWithDetailsAsync()
+    {
+        return _repository.GetQueryable()
             .Include(r => r.Room)
             .Include(r => r.ReservedByUser)
             .Include(r => r.Organizer)
-            .Include(r => r.CheckIn)
-            .ToListAsync();
+            .Include(r => r.CheckIn);
+    }
 
-        return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
+    private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, Guid? excludeReservationId = null)
+    {
+        if (startDate >= endDate)
+            throw new ArgumentException("StartDate must be earlier than EndDate.");
+
+        var hasConflict = await _repository.GetQueryable()
+            .AnyAsync(r => r.Id != excludeReservationId
+                && r.RoomId == roomId
+                && r.Status != ReservationStatus.Cancelled
+                && r.Status != ReservationStatus.AutoCancelled
+                && startDate < r.EndDate
+                && endDate > r.StartDate);
+
+        if (hasConflict)
+        {
+            throw new InvalidOperationException("Room is already booked for the selected time range.");
+        }
+        var hasBlackout = await _blackoutRepository.GetQueryable()
+            .AnyAsync(b => b.RoomId == roomId
+                && startDate < b.EndDate
+                && endDate > b.StartDate);
+
+        if (hasBlackout)
+        {
+            throw new InvalidOperationException("Room is blacked out for the selected time range.");
+        }
     }
 }

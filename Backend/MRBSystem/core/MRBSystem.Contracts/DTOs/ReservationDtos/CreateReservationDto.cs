@@ -7,5 +7,4 @@ public record CreateReservationDto
     public DateTime EndDate { get; set; }
     public Guid RoomId { get; set; }
     public Guid OrganizerId { get; set; }
-    public DateTime CheckinDeadline { get; set; }
 }

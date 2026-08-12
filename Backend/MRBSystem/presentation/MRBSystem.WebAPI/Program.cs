@@ -56,8 +56,12 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
 
             builder.Services.AddAutoMapper(x => x.AddProfile(typeof(CustomProfile)));
+
+            builder.Services.AddHostedService<AutoCancelReservationService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

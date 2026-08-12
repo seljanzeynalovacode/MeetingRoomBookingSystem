@@ -10,3 +10,7 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.pdb
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\ref\MRBSystem.Contracts.dll
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.sourcelink.json
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\bin\Debug\net8.0\MRBSystem.Domain.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\bin\Debug\net8.0\MRBSystem.Domain.pdb
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSystem.Contracts.csproj.AssemblyReference.cache
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\core\MRBSystem.Contracts\obj\Debug\net8.0\MRBSyste.90D05C83.Up2Date
