@@ -10,6 +10,7 @@ using MRBSystem.Domain.Repository;
 using MRBSystem.Infrasturucture.Services;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using Serilog;
 using System.Text;
 
 namespace MRBSystem.WebAPI
@@ -19,6 +20,13 @@ namespace MRBSystem.WebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            Log.Logger = new LoggerConfiguration()
+               .ReadFrom.Configuration(builder.Configuration)
+               .Enrich.FromLogContext()
+               .CreateLogger();
+
+            builder.Host.UseSerilog();
 
             // Add services to the container.
 

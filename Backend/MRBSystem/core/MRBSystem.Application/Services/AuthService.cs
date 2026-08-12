@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
@@ -24,30 +25,35 @@ public class AuthService : IAuthService
     private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
+    private readonly ILogger<AuthService> _logger;
 
     public AuthService(
         UserManager<AppUser> userManager,
         RoleManager<AppRole> roleManager,
         IGenericRepository<RefreshToken> refreshTokenRepository,
         IConfiguration configuration,
-        IMapper mapper)
+        IMapper mapper,
+        ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _refreshTokenRepository = refreshTokenRepository;
         _configuration = configuration;
         _mapper = mapper;
+        _logger = logger;
     }
     public async Task<UserResponseDto> RegisterAsync(RegisterDto dto)
     {
         if (dto.Password != dto.ConfirmPassword)
         {
+            _logger.LogWarning("Password and ConfirmPassword do not match for email: {Email}", dto.Email);
             throw new ArgumentException("Password and ConfirmPassword do not match.");
         }
 
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
         if (existingUser != null)
         {
+            _logger.LogWarning("Attempt to register with an existing email: {Email}", dto.Email);
             throw new InvalidOperationException("A user with this email already exists.");
         }
 
@@ -63,6 +69,7 @@ public class AuthService : IAuthService
         var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)
         {
+            _logger.LogError("User creation failed for email: {Email}. Errors: {Errors}", dto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
 
@@ -73,6 +80,7 @@ public class AuthService : IAuthService
         }
 
         await _userManager.AddToRoleAsync(user, defaultRole);
+        _logger.LogInformation("User registered successfully with email: {Email}", dto.Email);
 
         var response = _mapper.Map<UserResponseDto>(user);
         response.Roles = (await _userManager.GetRolesAsync(user)).ToList();
@@ -84,14 +92,17 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null) 
         {
+            _logger.LogWarning("Login attempt failed for non-existent email: {Email}", dto.Email);
             throw new UnauthorizedAccessException("Invalid email or password.");
         }
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
         if (!passwordValid) {
+            _logger.LogWarning("Login attempt failed for email: {Email}. Invalid password.", dto.Email);
             throw new UnauthorizedAccessException("Invalid email or password.");
         }
 
+        _logger.LogInformation("User logged in successfully with email: {Email}", dto.Email);
         return await GenerateTokenResponseAsync(user);
     }
 
@@ -106,6 +117,7 @@ public class AuthService : IAuthService
             token.RevokedAt = DateTime.UtcNow;
             await _refreshTokenRepository.UpdateAsync(token);
         }
+        _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
     }
 
 
@@ -113,6 +125,7 @@ public class AuthService : IAuthService
     {
         if (await _roleManager.RoleExistsAsync(dto.Name))
         {
+            _logger.LogWarning("Attempt to create an existing role: {RoleName}", dto.Name);
             throw new InvalidOperationException($"Role '{dto.Name}' already exists.");
         }
 
@@ -121,8 +134,10 @@ public class AuthService : IAuthService
 
         if (!result.Succeeded)
         {
+            _logger.LogError("Role creation failed for role: {RoleName}. Errors: {Errors}", dto.Name, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
+        _logger.LogInformation("Role created successfully: {RoleName}", dto.Name);
 
         return _mapper.Map<ResponseAppRoleDto>(role);
     }
@@ -132,6 +147,7 @@ public class AuthService : IAuthService
         var role = await _roleManager.FindByIdAsync(id.ToString());
         if (role == null)
         {
+            _logger.LogWarning("Attempt to update a non-existent role with ID: {RoleId}", id);
             throw new NotFoundException($"Role with id {id} not found.");
         }
 
@@ -140,9 +156,10 @@ public class AuthService : IAuthService
 
         if (!result.Succeeded)
         {
+            _logger.LogError("Role update failed for role ID: {RoleId}. Errors: {Errors}", id, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
-
+        _logger.LogInformation("Role updated successfully: {RoleName} (ID: {RoleId})", dto.Name, id);
         return _mapper.Map<ResponseAppRoleDto>(role);
     }
 
@@ -150,8 +167,10 @@ public class AuthService : IAuthService
     {
         var role = await _roleManager.FindByIdAsync(id.ToString());
         if (role == null) {
+            _logger.LogWarning("Attempt to delete a non-existent role with ID: {RoleId}", id);
             throw new NotFoundException($"Role with id {id} not found.");
         }
+        _logger.LogInformation("Role deleted successfully: {RoleName} (ID: {RoleId})", role.Name, id);
 
         await _roleManager.DeleteAsync(role);
     }
@@ -161,15 +180,17 @@ public class AuthService : IAuthService
         var role = await _roleManager.FindByIdAsync(id.ToString());
         if (role == null)
         {
+            _logger.LogWarning("Attempt to retrieve a non-existent role with ID: {RoleId}", id);
             throw new NotFoundException($"Role with id {id} not found.");
         }
-
+        _logger.LogInformation("Role retrieved successfully: {RoleName} (ID: {RoleId})", role.Name, id);
         return _mapper.Map<ResponseAppRoleDto>(role);
     }
 
     public async Task<ICollection<ResponseAppRoleDto>> GetAllRolesAsync()
     {
         var roles = await _roleManager.Roles.ToListAsync();
+        _logger.LogInformation("Retrieved all roles. Total count: {Count}", roles.Count);
         return _mapper.Map<ICollection<ResponseAppRoleDto>>(roles);
     }
 
@@ -180,36 +201,47 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user == null) 
         {
+            _logger.LogWarning("Attempt to assign role '{RoleName}' to a non-existent user with ID: {UserId}", roleName, userId);
             throw new NotFoundException($"User with id {userId} not found.");
         }
 
         if (!await _roleManager.RoleExistsAsync(roleName))
         {
+            _logger.LogWarning("Attempt to assign a non-existent role '{RoleName}' to user with ID: {UserId}", roleName, userId);
             throw new NotFoundException($"Role '{roleName}' not found.");
         }
 
         if (await _userManager.IsInRoleAsync(user, roleName))
         {
+            _logger.LogInformation("User with ID: {UserId} is already assigned to role '{RoleName}'. No action taken.", userId, roleName);
             return; 
         }
 
         var result = await _userManager.AddToRoleAsync(user, roleName);
         if (!result.Succeeded)
         {
+            _logger.LogError("Failed to assign role '{RoleName}' to user with ID: {UserId}. Errors: {Errors}", roleName, userId, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
+        _logger.LogInformation("Role '{RoleName}' successfully assigned to user with ID: {UserId}", roleName, userId);
     }
 
     public async Task RemoveRoleFromUserAsync(Guid userId, string roleName)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null) {
+
+        if (user == null)
+        {
+            _logger.LogWarning("Attempt to remove role '{RoleName}' from a non-existent user with ID: {UserId}", roleName, userId);
             throw new NotFoundException($"User with id {userId} not found.");
         }
 
         var result = await _userManager.RemoveFromRoleAsync(user, roleName);
         if (!result.Succeeded)
+        {
+            _logger.LogError("Failed to remove role '{RoleName}' from user with ID: {UserId}. Errors: {Errors}", roleName, userId, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+        }
     }
     public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken)
     {
@@ -220,16 +252,19 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash);
         if (storedToken == null)
         {
+            _logger.LogWarning("Invalid refresh token attempt.");
             throw new UnauthorizedAccessException("Invalid refresh token.");
         }
 
         if (storedToken.RevokedAt is not null)
         {
+            _logger.LogWarning("Attempt to use a revoked refresh token for user ID: {UserId}", storedToken.UserId);
             throw new UnauthorizedAccessException("Refresh token has been revoked.");
         }
 
         if (storedToken.ExpiresAt < DateTime.UtcNow)
         {
+            _logger.LogWarning("Attempt to use an expired refresh token for user ID: {UserId}", storedToken.UserId);
             throw new UnauthorizedAccessException("Refresh token has expired.");
         }
 
@@ -240,6 +275,7 @@ public class AuthService : IAuthService
         storedToken.ReplacedByTokenHash = HashToken(newTokenResponse.RefreshToken);
         await _refreshTokenRepository.UpdateAsync(storedToken);
 
+        _logger.LogInformation("Refresh token successfully used and replaced for user ID: {UserId}", storedToken.UserId);
         return newTokenResponse;
     }
     // ---
@@ -259,7 +295,7 @@ public class AuthService : IAuthService
         };
 
         await _refreshTokenRepository.AddAsync(refreshTokenEntity);
-
+        _logger.LogInformation("Refresh token generated and stored for user ID: {UserId}", user.Id);
         var accessExpirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
 
         return new TokenResponseDto
@@ -268,6 +304,7 @@ public class AuthService : IAuthService
             RefreshToken = refreshToken,
             ExpiresAt = DateTime.UtcNow.AddMinutes(accessExpirationMinutes)
         };
+
     }
 
     private async Task<string> GenerateAccessTokenAsync(AppUser user)
@@ -300,7 +337,7 @@ public class AuthService : IAuthService
             signingKey,
             SecurityAlgorithms.HmacSha256
         );
-
+        _logger.LogInformation("Generating access token for user ID: {UserId} with roles: {Roles}", user.Id, string.Join(", ", roles));
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
 
         // Butun bu hissələri bir yerə yığıb, əsl JWT token-i yaradırıq
@@ -311,6 +348,7 @@ public class AuthService : IAuthService
             expires: DateTime.UtcNow.AddMinutes(expirationMinutes), 
             signingCredentials: signingCredentials         
         );
+        _logger.LogInformation("Access token generated for user ID: {UserId}", user.Id);
 
         //  obyekti, gondermek ucun adi bir stringe cevir
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -319,6 +357,7 @@ public class AuthService : IAuthService
     private static string GenerateRefreshToken()
     {
         var randomBytes = RandomNumberGenerator.GetBytes(64);
+        
         return Convert.ToBase64String(randomBytes);
     }
 

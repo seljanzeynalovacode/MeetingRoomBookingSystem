@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.ReservationDtos;
 using MRBSystem.Contracts.Services;
@@ -16,19 +17,22 @@ public class ReservationService : IReservationService
     private readonly ICurrentUserService _currentUser;
     private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
+    private readonly ILogger<ReservationService> _logger;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
         IGenericRepository<RoomBlackout> blackoutRepository,
         ICurrentUserService currentUser,
         INotificationService notificationService,
-        IMapper mapper)
+        IMapper mapper,
+        ILogger<ReservationService> logger)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
         _currentUser = currentUser;
         _notificationService = notificationService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
@@ -42,9 +46,16 @@ public class ReservationService : IReservationService
 
         await _repository.AddAsync(entity);
 
+        _logger.LogInformation(
+            "Reservation {ReservationId} created by user {UserId} for room {RoomId}",
+            entity.Id, _currentUser.UserId, dto.RoomId);
+
         var created = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
         await _notificationService.CreateAndSendAsync(created, NotificationType.Created);
+        _logger.LogDebug(
+            "Notification sent for created reservation {ReservationId} to relevant users",
+            created.Id);
 
         return _mapper.Map<ResponseReservationDto>(created);
     }
@@ -54,6 +65,7 @@ public class ReservationService : IReservationService
         var entity = await _repository.GetByIdAsync(id);
         if (entity == null)
         {
+            _logger.LogWarning("Reservation with id {ReservationId} not found for update", id);
             throw new NotFoundException($"Reservation with id {id} not found.");
         }
 
@@ -62,9 +74,16 @@ public class ReservationService : IReservationService
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
 
+        _logger.LogInformation(
+            "Reservation {ReservationId} updated by user {UserId} for room {RoomId}",
+            entity.Id, _currentUser.UserId, dto.RoomId);
+
         var updated = await GetWithDetailsAsync().FirstAsync(r => r.Id == id);
 
         await _notificationService.CreateAndSendAsync(updated, NotificationType.Updated);
+        _logger.LogDebug(
+            "Notification sent for updated reservation {ReservationId} to relevant users",
+            updated.Id);
 
         return _mapper.Map<ResponseReservationDto>(updated);
     }
@@ -73,10 +92,14 @@ public class ReservationService : IReservationService
     {
         var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
         if (entity == null){
+            _logger.LogWarning("Reservation with id {ReservationId} not found for cancellation", id);
             throw new NotFoundException($"Reservation with id {id} not found.");
         }
         entity.Status = ReservationStatus.Cancelled;
         await _repository.UpdateAsync(entity);
+        _logger.LogInformation(
+            "Reservation {ReservationId} cancelled by user {UserId} for room {RoomId}",
+            entity.Id, _currentUser.UserId, entity.RoomId);
 
         await _notificationService.CreateAndSendAsync(entity, NotificationType.Cancelled);
     }
@@ -84,9 +107,12 @@ public class ReservationService : IReservationService
     public async Task<ResponseReservationDto> GetByIdAsync(Guid id)
     {
         var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
-        if (entity == null) {
+        if (entity == null) 
+        {
+            _logger.LogWarning("Reservation with id {ReservationId} not found", id);
             throw new NotFoundException($"Reservation with id {id} not found.");
         }
+        _logger.LogDebug("Fetched reservation {ReservationId} with related entities", id);
         return _mapper.Map<ResponseReservationDto>(entity);
     }
 
@@ -98,6 +124,7 @@ public class ReservationService : IReservationService
 
     private IQueryable<Reservation> GetWithDetailsAsync()
     {
+       
         return _repository.GetQueryable()
             .Include(r => r.Room)
             .Include(r => r.ReservedByUser)
@@ -108,7 +135,12 @@ public class ReservationService : IReservationService
     private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, Guid? excludeReservationId = null)
     {
         if (startDate >= endDate)
+        {
+            _logger.LogWarning(
+                "Invalid date range for room {RoomId}: StartDate {StartDate} is not earlier than EndDate {EndDate}",
+                roomId, startDate, endDate);
             throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
 
         var hasConflict = await _repository.GetQueryable()
             .AnyAsync(r => r.Id != excludeReservationId
@@ -120,6 +152,9 @@ public class ReservationService : IReservationService
 
         if (hasConflict)
         {
+            _logger.LogWarning(
+                "Attempt to create/update reservation for room {RoomId} with conflicting time range {StartDate} - {EndDate}",
+                roomId, startDate, endDate);
             throw new InvalidOperationException("Room is already booked for the selected time range.");
         }
         var hasBlackout = await _blackoutRepository.GetQueryable()
@@ -129,6 +164,9 @@ public class ReservationService : IReservationService
 
         if (hasBlackout)
         {
+            _logger.LogWarning(
+                "Attempt to create/update reservation for room {RoomId} during blackout time range {StartDate} - {EndDate}",
+                roomId, startDate, endDate);
             throw new InvalidOperationException("Room is blacked out for the selected time range.");
         }
     }
