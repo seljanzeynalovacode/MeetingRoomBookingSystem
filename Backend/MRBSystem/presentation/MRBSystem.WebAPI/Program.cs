@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.Services;
@@ -8,6 +10,7 @@ using MRBSystem.Domain.Repository;
 using MRBSystem.Infrasturucture.Services;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using System.Text;
 
 namespace MRBSystem.WebAPI
 {
@@ -55,6 +58,24 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Services.AddAutoMapper(x => x.AddProfile(typeof(CustomProfile)));
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
