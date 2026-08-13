@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using MRBSystem.Application.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.Services;
@@ -17,7 +19,7 @@ namespace MRBSystem.WebAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -33,8 +35,38 @@ namespace MRBSystem.WebAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
+            //---
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "MRBSystem API", Version = "v1" });
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT token-i belə daxil et: Bearer {token}"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+            });
+            //--
             builder.Services.AddDbContext<MRBAppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("MRBSystemConnectionString")));
@@ -91,6 +123,102 @@ namespace MRBSystem.WebAPI
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager =
+                    scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+                var userManager =
+                    scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+                var configuration =
+                    scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+                const string adminRole = "Admin";
+                const string userRole = "User";
+
+                // Create Admin role
+                if (!await roleManager.RoleExistsAsync(adminRole))
+                {
+                    var result = await roleManager.CreateAsync(
+                        new AppRole { Name = adminRole });
+
+                    if (!result.Succeeded)
+                    {
+                        throw new InvalidOperationException(
+                            "Failed to create Admin role.");
+                    }
+                }
+
+                // Create User role
+                if (!await roleManager.RoleExistsAsync(userRole))
+                {
+                    var result = await roleManager.CreateAsync(
+                        new AppRole { Name = userRole });
+
+                    if (!result.Succeeded)
+                    {
+                        throw new InvalidOperationException(
+                            "Failed to create User role.");
+                    }
+                }
+
+                // Get admin credentials from User Secrets / configuration
+                var adminEmail = configuration["SeedAdmin:Email"];
+                var adminPassword = configuration["SeedAdmin:Password"];
+
+                if (string.IsNullOrWhiteSpace(adminEmail) ||
+                    string.IsNullOrWhiteSpace(adminPassword))
+                {
+                    throw new InvalidOperationException(
+                        "SeedAdmin credentials are not configured.");
+                }
+
+                // Check if admin already exists
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+                if (adminUser is null)
+                {
+                    adminUser = new AppUser
+                    {
+                        FirstName = configuration["SeedAdmin:FirstName"] ?? "System",
+                        LastName = configuration["SeedAdmin:LastName"] ?? "Admin",
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    var result = await userManager.CreateAsync(
+                        adminUser,
+                        adminPassword);
+
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(
+                            ", ",
+                            result.Errors.Select(x => x.Description));
+
+                        throw new InvalidOperationException(
+                            $"Failed to create admin user: {errors}");
+                    }
+
+                    var roleResult = await userManager.AddToRoleAsync(
+                        adminUser,
+                        adminRole);
+
+                    if (!roleResult.Succeeded)
+                    {
+                        var errors = string.Join(
+                            ", ",
+                            roleResult.Errors.Select(x => x.Description));
+
+                        throw new InvalidOperationException(
+                            $"Failed to assign Admin role: {errors}");
+                    }
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -98,15 +226,15 @@ namespace MRBSystem.WebAPI
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.MapControllers();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
