@@ -14,7 +14,7 @@ public class BuildingsController : ControllerBase
     {
         _buildingService = buildingService;
     }
-
+   
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetBuildings()

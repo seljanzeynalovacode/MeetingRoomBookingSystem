@@ -17,7 +17,7 @@ namespace MRBSystem.WebAPI.Controllers
             _authService = authService;
         }
 
-        // ===================== AUTH =====================
+     
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -49,7 +49,6 @@ namespace MRBSystem.WebAPI.Controllers
             return NoContent();
         }
 
-        // ===================== ROLLAR =====================
 
         [HttpGet("roles")]
         [Authorize(Roles = "Admin")]
@@ -91,7 +90,22 @@ namespace MRBSystem.WebAPI.Controllers
             return NoContent();
         }
 
-        // ===================== USER-ROLE ELAQESI =====================
+        // user rol elaqesi
+        [HttpGet("users/{userId:guid}/roles")]
+        [Authorize]
+        public async Task<IActionResult> GetUserRoles(Guid userId)
+        {
+            var result = await _authService.GetUserRolesAsync(userId);
+            return Ok(result);
+        }
+
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsersWithRoles()
+        {
+            var result = await _authService.GetAllUsersWithRolesAsync();
+            return Ok(result);
+        }
 
         [HttpPost("users/{userId:guid}/roles/{roleName}")]
         [Authorize(Roles = "Admin")]

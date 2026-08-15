@@ -138,6 +138,32 @@
   },
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "GetAllUsersWithRoles",
+    "RelativePath": "api/Auths/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "GetUserRoles",
+    "RelativePath": "api/Auths/users/{userId}/roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
     "Method": "AssignRole",
     "RelativePath": "api/Auths/users/{userId}/roles/{roleName}",
     "HttpMethod": "POST",
@@ -984,6 +1010,24 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Program\u002B\u003C\u003Ec",
+    "Method": "\u003CMain\u003Eb__0_6",
+    "RelativePath": "test",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.WeatherForecastController",

@@ -235,6 +235,41 @@
         }
       }
     },
+    "/api/Auths/users/{userId}/roles": {
+      "get": {
+        "tags": [
+          "Auths"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auths/users": {
+      "get": {
+        "tags": [
+          "Auths"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auths/users/{userId}/roles/{roleName}": {
       "post": {
         "tags": [
@@ -889,6 +924,25 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/test": {
+      "get": {
+        "tags": [
+          "MRBSystem.WebAPI"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }

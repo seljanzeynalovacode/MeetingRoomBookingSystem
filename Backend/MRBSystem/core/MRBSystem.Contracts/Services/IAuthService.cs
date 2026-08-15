@@ -18,7 +18,10 @@ public interface IAuthService
     Task<ResponseAppRoleDto> GetRoleByIdAsync(Guid id);
     Task<ICollection<ResponseAppRoleDto>> GetAllRolesAsync();
 
-    // Usere rol teyin etmek ve silmek
+    // Usere rol elaqesi
     Task AssignRoleToUserAsync(Guid userId, string roleName);
     Task RemoveRoleFromUserAsync(Guid userId, string roleName);
+
+    Task<List<string>> GetUserRolesAsync(Guid userId);
+    Task<object> GetAllUsersWithRolesAsync();
 }

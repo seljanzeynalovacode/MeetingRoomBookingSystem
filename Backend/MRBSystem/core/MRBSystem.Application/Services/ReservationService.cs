@@ -95,6 +95,12 @@ public class ReservationService : IReservationService
             _logger.LogWarning("Reservation with id {ReservationId} not found for cancellation", id);
             throw new NotFoundException($"Reservation with id {id} not found.");
         }
+        if (entity.Status == ReservationStatus.Cancelled || entity.Status == ReservationStatus.AutoCancelled)
+        {
+            _logger.LogWarning("Attempted to cancel an already cancelled reservation {ReservationId}", id);
+            // Layihəndəki xəta siniflərinə uyğun olaraq BadRequestException və ya InvalidOperationException ata bilərsən
+            throw new InvalidOperationException("Bu rezervasiya artıq ləğv edilib!");
+        }
         entity.Status = ReservationStatus.Cancelled;
         await _repository.UpdateAsync(entity);
         _logger.LogInformation(

@@ -225,7 +225,43 @@ public class AuthService : IAuthService
         }
         _logger.LogInformation("Role '{RoleName}' successfully assigned to user with ID: {UserId}", roleName, userId);
     }
+    public async Task<List<string>> GetUserRolesAsync(Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            _logger.LogWarning("Attempt to retrieve roles for a non-existent user with ID: {UserId}", userId);
+            throw new NotFoundException($"User with id {userId} not found.");
+        }
 
+        var roles = await _userManager.GetRolesAsync(user);
+        _logger.LogInformation("Retrieved roles for user ID: {UserId}. Roles: {Roles}", userId, string.Join(", ", roles));
+
+        return roles.ToList();
+    }
+
+    public async Task<object> GetAllUsersWithRolesAsync()
+    {
+        var users = await _userManager.Users.ToListAsync();
+        var userList = new List<object>();
+
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            userList.Add(new
+            {
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.UserName,
+                user.Email,
+                Roles = roles
+            });
+        }
+
+        _logger.LogInformation("Retrieved all users with their roles. Total count: {Count}", users.Count);
+        return userList;
+    }
     public async Task RemoveRoleFromUserAsync(Guid userId, string roleName)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
