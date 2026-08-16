@@ -6,7 +6,10 @@ namespace MRBSystem.Contracts.Services;
 
 public interface IAuthService
 {
-    Task<TokenResponseDto> LoginAsync(LoginDto dto);
+    Task<LoginResponseDto> AdminLoginAsync(LoginDto dto);
+    Task<TokenResponseDto> VerifyAdmin2FAAsync(Verify2FADto dto);
+    Task<TokenResponseDto> UserLoginAsync(LoginDto dto);
+
     Task<UserResponseDto> RegisterAsync(RegisterDto dto);
     Task<TokenResponseDto> RefreshTokenAsync(string refreshToken);
     Task LogoutAsync(Guid userId);

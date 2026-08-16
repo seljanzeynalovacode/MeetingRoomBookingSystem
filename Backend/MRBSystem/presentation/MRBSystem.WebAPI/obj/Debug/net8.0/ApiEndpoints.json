@@ -1,8 +1,8 @@
 [
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
-    "Method": "Login",
-    "RelativePath": "api/Auths/login",
+    "Method": "AdminLogin",
+    "RelativePath": "api/Auths/admin/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -10,6 +10,22 @@
       {
         "Name": "dto",
         "Type": "MRBSystem.Contracts.DTOs.AuthDtos.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "VerifyAdmin2FA",
+    "RelativePath": "api/Auths/admin/login-2fa",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.Verify2FADto",
         "IsRequired": true
       }
     ],
@@ -131,6 +147,22 @@
       {
         "Name": "id",
         "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "UserLogin",
+    "RelativePath": "api/Auths/user/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.LoginDto",
         "IsRequired": true
       }
     ],

@@ -70,12 +70,27 @@ public class CommentService : ICommentService
 
     public async Task DeleteAsync(Guid id)
     {
-        var entity = await _repository.GetByIdAsync(id)
-            ?? throw new NotFoundException($"Comment with id {id} not found.");
-
+        var entity = await _repository.GetQueryable()
+        .Include(c => c.Replies)
+        .FirstOrDefaultAsync(c => c.Id == id);
+        if (entity == null)
+        {
+            throw new NotFoundException($"Comment with id {id} not found.");
+        }
         if (entity.UserId != _currentUser.UserId)
+        {
             throw new UnauthorizedAccessException("You can only delete your own comments.");
+        }
 
+        if (entity.Replies.Any())
+        {
+            foreach (var reply in entity.Replies.ToList())
+            {
+                await _repository.DeleteAsync(reply.Id);
+            }
+        }
+
+        // Sonra ana şərhi bazadan silirik
         await _repository.DeleteAsync(id);
     }
 
@@ -87,8 +102,11 @@ public class CommentService : ICommentService
             .Include(c => c.Replies).ThenInclude(r => r.User)
             .Include(c => c.Replies).ThenInclude(r => r.Likes)
             .Include(c => c.Replies).ThenInclude(r => r.Replies)
-            .FirstOrDefaultAsync(c => c.Id == id)
-            ?? throw new NotFoundException($"Comment with id {id} not found.");
+            .FirstOrDefaultAsync(c => c.Id == id);
+        if (entity == null)
+        {
+            throw new NotFoundException($"Comment with id {id} not found.");
+        }
 
         var dto = _mapper.Map<DetailedCommentDto>(entity);
         dto.IsLikedByCurrentUser = entity.Likes.Any(l => l.UserId == _currentUser.UserId);
@@ -129,7 +147,9 @@ public class CommentService : ICommentService
             .AnyAsync(l => l.CommentId == commentId && l.UserId == _currentUser.UserId);
 
         if (exists)
-            return; // artiq begenilib, sessizce cixiriq (idempotent davranis)
+        {
+            return; 
+        }
 
         await _likeRepository.AddAsync(new Like
         {

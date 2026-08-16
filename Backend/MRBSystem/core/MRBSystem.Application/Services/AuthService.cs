@@ -26,6 +26,7 @@ public class AuthService : IAuthService
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthService> _logger;
+    private readonly IEmailService _emailService;
 
     public AuthService(
         UserManager<AppUser> userManager,
@@ -33,7 +34,8 @@ public class AuthService : IAuthService
         IGenericRepository<RefreshToken> refreshTokenRepository,
         IConfiguration configuration,
         IMapper mapper,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IEmailService emailService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -41,6 +43,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _mapper = mapper;
         _logger = logger;
+        _emailService = emailService;
     }
     public async Task<UserResponseDto> RegisterAsync(RegisterDto dto)
     {
@@ -87,19 +90,91 @@ public class AuthService : IAuthService
         return response;
     }
 
-    public async Task<TokenResponseDto> LoginAsync(LoginDto dto)
+    public async Task<LoginResponseDto> AdminLoginAsync(LoginDto dto)
+    {
+        // 1. ADDIM: İstifadəçinin bazada olub-olmadığını yoxlayırıq
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+        {
+            _logger.LogWarning("Admin login attempt failed for non-existent email: {Email}", dto.Email);
+            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+        }
+
+        // 2. ADDIM: ŞİFRƏNİ YOXLAYIRIQ (Əgər şifrə səhvdirsə, 2FA kodu GÖNDƏRİLMİR)
+        var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+        if (!passwordValid)
+        {
+            _logger.LogWarning("Admin login attempt failed for email: {Email}. Invalid password.", dto.Email);
+            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+        }
+
+        // 3. ADDIM: Admin rolunun olub-olmadığını yoxlayırıq
+        if (!await _userManager.IsInRoleAsync(user, "Admin"))
+        {
+            _logger.LogWarning("User {Email} attempted to access Admin login without Admin role.", dto.Email);
+            throw new UnauthorizedAccessException("Bu panelə giriş üçün admin hüquqlarınız yoxdur.");
+        }
+
+        // 4. ADDIM: Şifrə və Rol DÜZGÜNDÜRSƏ -> 2FA kodunu yaradıb e-poçta göndəririk
+        var code = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+
+        var subject = "Admin Panel - İki Mərhələli Təsdiq Kodu";
+        var body = $"Salam {user.FirstName},\n\nSizin Admin panelə giriş üçün təsdiq kodunuz: {code}\n\nBu kodun etibarlılıq müddəti qısadır.";
+
+        await _emailService.SendEmailAsync(user.Email, subject, body);
+
+        _logger.LogInformation("2FA Code generated and sent to email: {Email}", user.Email);
+
+        return new LoginResponseDto
+        {
+            Requires2FA = true,
+            Message = "6 rəqəmli təsdiq kodu e-poçt ünvanınıza göndərildi."
+        };
+    }
+
+    public async Task<TokenResponseDto> VerifyAdmin2FAAsync(Verify2FADto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null) 
+        if (user == null || !await _userManager.IsInRoleAsync(user, "Admin"))
         {
-            _logger.LogWarning("Login attempt failed for non-existent email: {Email}", dto.Email);
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new UnauthorizedAccessException("İstifadəçi tapılmadı və ya hüququnuz yoxdur.");
+        }
+
+        // Daxil edilən kodun doğruluğunu yoxlayırıq
+        var isCodeValid = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", dto.Code);
+
+        if (!isCodeValid)
+        {
+            _logger.LogWarning("Invalid 2FA code attempt for {Email}", dto.Email);
+            throw new UnauthorizedAccessException("Daxil etdiyiniz təsdiq kodu yanlışdır və ya vaxtı bitib.");
+        }
+
+        // Kod düzgündürsə, Tokeni yaradıb qaytarırıq!
+        _logger.LogInformation("Admin {Email} successfully verified 2FA and logged in.", dto.Email);
+        return await GenerateTokenResponseAsync(user);
+    }
+
+    public async Task<TokenResponseDto> UserLoginAsync(LoginDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+        {
+            _logger.LogWarning("User login attempt failed for non-existent email: {Email}", dto.Email);
+            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
         }
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-        if (!passwordValid) {
-            _logger.LogWarning("Login attempt failed for email: {Email}. Invalid password.", dto.Email);
-            throw new UnauthorizedAccessException("Invalid email or password.");
+        if (!passwordValid)
+        {
+            _logger.LogWarning("User login attempt failed for email: {Email}. Invalid password.", dto.Email);
+            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+        }
+
+        // Əgər istifadəçilərin hamısı "User" rolundadırsa, bunu da yoxlaya bilərsən
+        if (!await _userManager.IsInRoleAsync(user, "User"))
+        {
+            _logger.LogWarning("User {Email} attempted to access User login without User role.", dto.Email);
+            throw new UnauthorizedAccessException("Hesabınız təsdiqlənməyib və ya lazımi hüquqlara malik deyilsiniz.");
         }
 
         _logger.LogInformation("User logged in successfully with email: {Email}", dto.Email);

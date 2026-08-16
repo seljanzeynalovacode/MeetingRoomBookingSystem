@@ -26,10 +26,24 @@ namespace MRBSystem.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        [HttpPost("admin/login")]
+        public async Task<IActionResult> AdminLogin([FromBody] LoginDto dto)
         {
-            var result = await _authService.LoginAsync(dto);
+            var result = await _authService.AdminLoginAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("admin/login-2fa")]
+        public async Task<IActionResult> VerifyAdmin2FA([FromBody] Verify2FADto dto)
+        {
+            var result = await _authService.VerifyAdmin2FAAsync(dto);
+            return Ok(result); // Bu artıq TokenResponseDto (Access & Refresh token) qaytaracaq
+        }
+
+        [HttpPost("user/login")]
+        public async Task<IActionResult> UserLogin([FromBody] LoginDto dto)
+        {
+            var result = await _authService.UserLoginAsync(dto);
             return Ok(result);
         }
 
