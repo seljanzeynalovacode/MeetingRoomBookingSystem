@@ -14,6 +14,7 @@ public class ReservationService : IReservationService
 {
     private readonly IGenericRepository<Reservation> _repository;
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUser;
     private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
@@ -22,6 +23,7 @@ public class ReservationService : IReservationService
     public ReservationService(
         IGenericRepository<Reservation> repository,
         IGenericRepository<RoomBlackout> blackoutRepository,
+        IUnitOfWork unitOfWork,
         ICurrentUserService currentUser,
         INotificationService notificationService,
         IMapper mapper,
@@ -29,6 +31,7 @@ public class ReservationService : IReservationService
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
+        _unitOfWork = unitOfWork;
         _currentUser = currentUser;
         _notificationService = notificationService;
         _mapper = mapper;
@@ -37,14 +40,18 @@ public class ReservationService : IReservationService
 
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
     {
-        await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate);
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate);
 
-        var entity = _mapper.Map<Reservation>(dto);
-        entity.ReservedByUserId = _currentUser.UserId;
-        entity.QrCodeToken = Guid.NewGuid().ToString();
-        entity.CheckinDeadline = dto.StartDate.AddMinutes(15); // ne zaman autocancel olsun
+            var reservation = _mapper.Map<Reservation>(dto);
+            reservation.ReservedByUserId = _currentUser.UserId;
+            reservation.QrCodeToken = Guid.NewGuid().ToString();
+            reservation.CheckinDeadline = dto.StartDate.AddMinutes(15); // ne zaman autocancel olsun
 
-        await _repository.AddAsync(entity);
+            await _repository.AddAsync(reservation);
+            return reservation;
+        });
 
         _logger.LogInformation(
             "Reservation {ReservationId} created by user {UserId} for room {RoomId}",
@@ -62,23 +69,31 @@ public class ReservationService : IReservationService
 
     public async Task<ResponseReservationDto> UpdateAsync(Guid id, UpdateReservationDto dto)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null)
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            _logger.LogWarning("Reservation with id {ReservationId} not found for update", id);
-            throw new NotFoundException($"Reservation with id {id} not found.");
-        }
+            var reservation = await _repository.GetByIdAsync(id);
+            if (reservation == null)
+            {
+                _logger.LogWarning("Reservation with id {ReservationId} not found for update", id);
+                throw new NotFoundException($"Reservation with id {id} not found.");
+            }
 
-        await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, excludeReservationId: id);
+            EnsureCanModify(reservation);
 
-        _mapper.Map(dto, entity);
-        await _repository.UpdateAsync(entity);
+            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, excludeReservationId: id);
+
+            _mapper.Map(dto, reservation);
+            reservation.CheckinDeadline = dto.StartDate.AddMinutes(15);
+
+            await _repository.UpdateAsync(reservation);
+            return reservation;
+        });
 
         _logger.LogInformation(
             "Reservation {ReservationId} updated by user {UserId} for room {RoomId}",
             entity.Id, _currentUser.UserId, dto.RoomId);
 
-        var updated = await GetWithDetailsAsync().FirstAsync(r => r.Id == id);
+        var updated = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
         await _notificationService.CreateAndSendAsync(updated, NotificationType.Updated);
         _logger.LogDebug(
@@ -90,30 +105,41 @@ public class ReservationService : IReservationService
 
     public async Task CancelAsync(Guid id)
     {
-        var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
-        if (entity == null){
-            _logger.LogWarning("Reservation with id {ReservationId} not found for cancellation", id);
-            throw new NotFoundException($"Reservation with id {id} not found.");
-        }
-        if (entity.Status == ReservationStatus.Cancelled || entity.Status == ReservationStatus.AutoCancelled)
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            _logger.LogWarning("Attempted to cancel an already cancelled reservation {ReservationId}", id);
-            // Layihəndəki xəta siniflərinə uyğun olaraq BadRequestException və ya InvalidOperationException ata bilərsən
-            throw new InvalidOperationException("Bu rezervasiya artıq ləğv edilib!");
-        }
-        entity.Status = ReservationStatus.Cancelled;
-        await _repository.UpdateAsync(entity);
+            var reservation = await _repository.GetByIdAsync(id);
+            if (reservation == null)
+            {
+                _logger.LogWarning("Reservation with id {ReservationId} not found for cancellation", id);
+                throw new NotFoundException($"Reservation with id {id} not found.");
+            }
+
+            EnsureCanModify(reservation);
+
+            if (reservation.Status == ReservationStatus.Cancelled || reservation.Status == ReservationStatus.AutoCancelled)
+            {
+                _logger.LogWarning("Attempted to cancel an already cancelled reservation {ReservationId}", id);
+                throw new InvalidOperationException("Bu rezervasiya artıq ləğv edilib!");
+            }
+
+            reservation.Status = ReservationStatus.Cancelled;
+            await _repository.UpdateAsync(reservation);
+            return reservation;
+        });
+
         _logger.LogInformation(
             "Reservation {ReservationId} cancelled by user {UserId} for room {RoomId}",
             entity.Id, _currentUser.UserId, entity.RoomId);
 
-        await _notificationService.CreateAndSendAsync(entity, NotificationType.Cancelled);
+        var cancelled = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
+
+        await _notificationService.CreateAndSendAsync(cancelled, NotificationType.Cancelled);
     }
 
     public async Task<ResponseReservationDto> GetByIdAsync(Guid id)
     {
         var entity = await GetWithDetailsAsync().FirstOrDefaultAsync(r => r.Id == id);
-        if (entity == null) 
+        if (entity == null)
         {
             _logger.LogWarning("Reservation with id {ReservationId} not found", id);
             throw new NotFoundException($"Reservation with id {id} not found.");
@@ -130,11 +156,9 @@ public class ReservationService : IReservationService
 
     private IQueryable<Reservation> GetWithDetailsAsync()
     {
-       
         return _repository.GetQueryable()
             .Include(r => r.Room)
             .Include(r => r.ReservedByUser)
-            .Include(r => r.Organizer)
             .Include(r => r.CheckIn);
     }
 
@@ -163,6 +187,7 @@ public class ReservationService : IReservationService
                 roomId, startDate, endDate);
             throw new InvalidOperationException("Room is already booked for the selected time range.");
         }
+
         var hasBlackout = await _blackoutRepository.GetQueryable()
             .AnyAsync(b => b.RoomId == roomId
                 && startDate < b.EndDate
@@ -174,6 +199,20 @@ public class ReservationService : IReservationService
                 "Attempt to create/update reservation for room {RoomId} during blackout time range {StartDate} - {EndDate}",
                 roomId, startDate, endDate);
             throw new InvalidOperationException("Room is blacked out for the selected time range.");
+        }
+    }
+
+    private void EnsureCanModify(Reservation entity)
+    {
+        var isOwner = entity.ReservedByUserId == _currentUser.UserId;
+        var isAdmin = _currentUser.IsInRole("Admin");
+
+        if (!isOwner && !isAdmin)
+        {
+            _logger.LogWarning(
+                "User {UserId} attempted to modify/cancel reservation {ReservationId} without ownership.",
+                _currentUser.UserId, entity.Id);
+            throw new UnauthorizedAccessException("Bu rezervasiyanı dəyişmək hüququnuz yoxdur.");
         }
     }
 }

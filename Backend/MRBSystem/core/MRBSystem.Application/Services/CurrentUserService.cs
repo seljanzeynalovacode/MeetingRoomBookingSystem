@@ -21,9 +21,15 @@ public class CurrentUserService : ICurrentUserService
                 .FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(idClaim))
+            {
                 throw new UnauthorizedAccessException("User is not authenticated.");
+            }
 
             return Guid.Parse(idClaim);
         }
+    }
+    public bool IsInRole(string role)
+    {
+        return _httpContextAccessor.HttpContext?.User.IsInRole(role) ?? false;
     }
 }

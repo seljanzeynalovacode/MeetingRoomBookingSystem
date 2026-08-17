@@ -10,8 +10,6 @@ public class Reservation : BaseEntity
     public ReservationStatus Status { get; set; } = ReservationStatus.Confirmed;
     public Guid ReservedByUserId { get; set; }
     public AppUser ReservedByUser { get; set; } = null!;
-    public Guid OrganizerId { get; set; }
-    public AppUser Organizer { get; set; } = null!;
     public Guid RoomId { get; set; }
     public Room Room { get; set; } = null!;
     public Checkin? CheckIn { get; set; }

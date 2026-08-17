@@ -11,11 +11,19 @@ namespace MRBSystem.Application.Services;
 public class ParticipantService : IParticipantService
 {
     private readonly IGenericRepository<Participant> _repository;
+    private readonly IGenericRepository<Reservation> _reservationRepository;
+    private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
-    public ParticipantService(IGenericRepository<Participant> repository, IMapper mapper)
+    public ParticipantService(
+        IGenericRepository<Participant> repository,
+        IGenericRepository<Reservation> reservationRepository,
+        ICurrentUserService currentUser,
+        IMapper mapper)
     {
         _repository = repository;
+        _reservationRepository = reservationRepository;
+        _currentUser = currentUser;
         _mapper = mapper;
     }
 
@@ -25,6 +33,11 @@ public class ParticipantService : IParticipantService
         {
             throw new ArgumentException("Either UserId or GuestEmail must be provided.");
         }
+
+        var reservation = await _reservationRepository.GetByIdAsync(dto.ReservationId)
+            ?? throw new NotFoundException($"Reservation with id {dto.ReservationId} not found.");
+
+        EnsureCanManage(reservation);
 
         var entity = _mapper.Map<Participant>(dto);
         await _repository.AddAsync(entity);
@@ -41,6 +54,11 @@ public class ParticipantService : IParticipantService
         var entity = await _repository.GetByIdAsync(id)
             ?? throw new NotFoundException($"Participant with id {id} not found.");
 
+        var reservation = await _reservationRepository.GetByIdAsync(entity.ReservationId)
+            ?? throw new NotFoundException($"Reservation with id {entity.ReservationId} not found.");
+
+        EnsureCanRespond(entity, reservation);
+
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
 
@@ -53,6 +71,14 @@ public class ParticipantService : IParticipantService
 
     public async Task DeleteAsync(Guid id)
     {
+        var entity = await _repository.GetByIdAsync(id)
+            ?? throw new NotFoundException($"Participant with id {id} not found.");
+
+        var reservation = await _reservationRepository.GetByIdAsync(entity.ReservationId)
+            ?? throw new NotFoundException($"Reservation with id {entity.ReservationId} not found.");
+
+        EnsureCanManage(reservation);
+
         await _repository.DeleteAsync(id);
     }
 
@@ -74,5 +100,28 @@ public class ParticipantService : IParticipantService
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseParticipantDto>>(entities);
+    }
+
+    private void EnsureCanManage(Reservation reservation)
+    {
+        var isOwner = reservation.ReservedByUserId == _currentUser.UserId;
+        var isAdmin = _currentUser.IsInRole("Admin");
+
+        if (!isOwner && !isAdmin)
+        {
+            throw new UnauthorizedAccessException("Bu rezervasiyanın iştirakçılarını idarə etmək hüququnuz yoxdur.");
+        }
+    }
+
+    private void EnsureCanRespond(Participant participant, Reservation reservation)
+    {
+        var isInvitedUser = participant.UserId.HasValue && participant.UserId == _currentUser.UserId;
+        var isOwner = reservation.ReservedByUserId == _currentUser.UserId;
+        var isAdmin = _currentUser.IsInRole("Admin");
+
+        if (!isInvitedUser && !isOwner && !isAdmin)
+        {
+            throw new UnauthorizedAccessException("Bu iştirakçının statusunu dəyişmək hüququnuz yoxdur.");
+        }
     }
 }

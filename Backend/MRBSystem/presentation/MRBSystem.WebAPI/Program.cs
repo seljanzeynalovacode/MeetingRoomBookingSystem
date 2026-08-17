@@ -68,8 +68,9 @@ namespace MRBSystem.WebAPI
             });
             //--
             builder.Services.AddDbContext<MRBAppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MRBSystemConnectionString")));
+     options.UseSqlServer(
+         builder.Configuration.GetConnectionString("MRBSystemConnectionString"),
+         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -79,6 +80,7 @@ namespace MRBSystem.WebAPI
 .AddDefaultTokenProviders();
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

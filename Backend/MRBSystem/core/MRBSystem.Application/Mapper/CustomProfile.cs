@@ -21,79 +21,69 @@ public class CustomProfile : Profile
 {
     public CustomProfile()
     {
-        // ===== AppUser =====
+        //  AppUser 
         CreateMap<AppUser, UserResponseDto>()
             .ForMember(dest => dest.Roles, opt => opt.Ignore()); // UserManager ile ayrica doldurulur
 
-        // ===== AppRole =====
+        //  AppRole 
         CreateMap<AppRole, ResponseAppRoleDto>();
         CreateMap<CreateAppRoleDto, AppRole>();
         CreateMap<UpdateAppRoleDto, AppRole>();
 
-        // ===== Building =====
+        //  Building 
         CreateMap<Building, ResponseBuildingDto>();
         CreateMap<CreateBuildingDto, Building>();
         CreateMap<UpdateBuildingDto, Building>();
 
-        // ===== Floor =====
+        //  Floor 
         CreateMap<Floor, ResponseFloorDto>()
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Building.Name));
         CreateMap<CreateFloorDto, Floor>();
         CreateMap<UpdateFloorDto, Floor>();
 
-        // ===== Room =====
+        //  Room 
         CreateMap<Room, ResponseRoomDto>()
             .ForMember(dest => dest.FloorName, opt => opt.MapFrom(src => src.Floor.Name))
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Floor.Building.Name));
         CreateMap<CreateRoomDto, Room>();
         CreateMap<UpdateRoomDto, Room>();
 
-        // ResponseAvailableRoomDto - availability sorgusunda service/repository
-        // tereifnden custom quraaraq doldurulur (Equipment siyahisi, tarix filtri ile
-        // baglidir), birbasa Entity -> Dto map-i mentiqli deyil, service-de elde qurulacaq
 
-        // ===== Equipment =====
+        //  Equipment 
         CreateMap<Equipment, ResponseEquipmentDto>();
         CreateMap<CreateEquipmentDto, Equipment>();
         CreateMap<UpdateEquipmentDto, Equipment>();
 
-        // ===== RoomEquipment =====
+        //  RoomEquipment 
         CreateMap<RoomEquipment, ResponseRoomEquipmentDto>()
             .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
         CreateMap<CreateRoomEquipmentDto, RoomEquipment>();
         CreateMap<UpdateRoomEquipmentDto, RoomEquipment>();
 
-        // ===== RoomBlackout =====
+        //  RoomBlackout 
         CreateMap<RoomBlackout, ResponseRoomBlackoutDto>()
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
         CreateMap<CreateRoomBlackoutDto, RoomBlackout>();
         CreateMap<UpdateRoomBlackoutDto, RoomBlackout>();
 
-        // ===== Reservation =====
+
+        //  Reservation 
         CreateMap<Reservation, ResponseReservationDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name))
             .ForMember(dest => dest.ReservedByUserName,
                 opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName))
-            .ForMember(dest => dest.OrganizerName,
-                opt => opt.MapFrom(src => src.Organizer.FirstName + " " + src.Organizer.LastName))
             .ForMember(dest => dest.IsCheckedIn, opt => opt.MapFrom(src => src.CheckIn != null));
 
         CreateMap<CreateReservationDto, Reservation>();
         CreateMap<UpdateReservationDto, Reservation>();
 
-        // CalendarReservationDto / RoomCalendarDto - composite, birden cox
-        // entity-den (Room + Reservation + AppUser) qurulur, service/repository-de
-        // custom sorgu ile elde doldurulur, avtomatik CreateMap yazilmir
-
-        // ===== Checkin =====
+        //  Checkin 
         CreateMap<Checkin, ResponseCheckinDto>()
             .ForMember(dest => dest.UserName,
                 opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
-        // CreateCheckinDto -> Entity map yazilmir, QrCodeToken-dan Reservation/User
-        // tapilmasi service-de custom logika teleb edir
 
-        // ===== Comment =====
+        //  Comment 
         CreateMap<Comment, ResponseCommentDto>()
             .ForMember(dest => dest.UserName,
                 opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
@@ -105,15 +95,13 @@ public class CustomProfile : Profile
             .ForMember(dest => dest.UserName,
                 opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
-            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore()); // service-de current user-e gore doldurulur
-                                                                                // Replies eyni adli collection oldugu ucun avtomatik uygunlasir (Comment -> ResponseCommentDto)
-                                                                                // Replies daxilindeki her ResponseCommentDto-nun IsLikedByCurrentUser-i de
-                                                                                // service-de ayrica doldurulmalidir
+            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore()); 
+                                                                                
 
         CreateMap<CreateCommentDto, Comment>();
         CreateMap<UpdateCommentDto, Comment>();
 
-        // ===== Participant =====
+        //  Participant 
         CreateMap<Participant, ResponseParticipantDto>()
             .ForMember(dest => dest.ResponseStatus, opt => opt.MapFrom(src => src.ResponseStatus.ToString()))
             .ForMember(dest => dest.UserName,
@@ -127,9 +115,9 @@ public class CustomProfile : Profile
             .ForMember(dest => dest.ResponseStatus,
                 opt => opt.MapFrom(src => Enum.Parse<ResponseStatus>(src.ResponseStatus)));
 
-        // ===== Notification =====
+        //  Notification 
         CreateMap<Notification, ResponseNotificationDto>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
-        // Create/Update yoxdur - sistem avtomatik yaradir
+        
     }
 }

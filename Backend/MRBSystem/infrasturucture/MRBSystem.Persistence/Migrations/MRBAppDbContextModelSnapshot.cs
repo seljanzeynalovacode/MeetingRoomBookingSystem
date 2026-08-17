@@ -484,9 +484,6 @@ namespace MRBSystem.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("OrganizerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("QrCodeToken")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -521,8 +518,6 @@ namespace MRBSystem.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrganizerId");
 
                     b.HasIndex("QrCodeToken")
                         .IsUnique();
@@ -859,12 +854,6 @@ namespace MRBSystem.Persistence.Migrations
 
             modelBuilder.Entity("MRBSystem.Domain.Entities.Reservation", b =>
                 {
-                    b.HasOne("MRBSystem.Domain.Entities.AppUser", "Organizer")
-                        .WithMany()
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MRBSystem.Domain.Entities.AppUser", "ReservedByUser")
                         .WithMany()
                         .HasForeignKey("ReservedByUserId")
@@ -876,8 +865,6 @@ namespace MRBSystem.Persistence.Migrations
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Organizer");
 
                     b.Navigation("ReservedByUser");
 

@@ -12,8 +12,6 @@ public record ResponseReservationDto : BaseDto
     public string RoomName { get; set; } = null!;
     public Guid ReservedByUserId { get; set; }
     public string ReservedByUserName { get; set; } = null!;
-    public Guid OrganizerId { get; set; }
-    public string OrganizerName { get; set; } = null!;
     public DateTime CheckinDeadline { get; set; }
     public bool IsCheckedIn { get; set; }
 }
