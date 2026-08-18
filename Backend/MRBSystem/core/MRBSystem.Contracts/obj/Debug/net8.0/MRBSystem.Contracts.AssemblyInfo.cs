@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MRBSystem.Contracts")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66a835cad1acd4c2e51531412f2f5c28e985feac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0afa2654f10b1f3d49401f436a954c61632662e")]
 [assembly: System.Reflection.AssemblyProductAttribute("MRBSystem.Contracts")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MRBSystem.Contracts")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

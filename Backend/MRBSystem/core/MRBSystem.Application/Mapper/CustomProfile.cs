@@ -2,7 +2,6 @@
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.DTOs.AppUserDtos;
 using MRBSystem.Contracts.DTOs.BuildingDtos;
-using MRBSystem.Contracts.DTOs.CheckinDtos;
 using MRBSystem.Contracts.DTOs.CommentDtos;
 using MRBSystem.Contracts.DTOs.EquipmentDtos;
 using MRBSystem.Contracts.DTOs.FloorDtos;
@@ -23,48 +22,48 @@ public class CustomProfile : Profile
     {
         //  AppUser 
         CreateMap<AppUser, UserResponseDto>()
-            .ForMember(dest => dest.Roles, opt => opt.Ignore()); // UserManager ile ayrica doldurulur
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
         //  AppRole 
         CreateMap<AppRole, ResponseAppRoleDto>();
-        CreateMap<CreateAppRoleDto, AppRole>();
-        CreateMap<UpdateAppRoleDto, AppRole>();
+        CreateMap<CreateAppRoleDto, AppRole>(MemberList.Source);
+        CreateMap<UpdateAppRoleDto, AppRole>(MemberList.Source);
 
         //  Building 
         CreateMap<Building, ResponseBuildingDto>();
-        CreateMap<CreateBuildingDto, Building>();
-        CreateMap<UpdateBuildingDto, Building>();
+        CreateMap<CreateBuildingDto, Building>(MemberList.Source);
+        CreateMap<UpdateBuildingDto, Building>(MemberList.Source);
 
         //  Floor 
         CreateMap<Floor, ResponseFloorDto>()
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Building.Name));
-        CreateMap<CreateFloorDto, Floor>();
-        CreateMap<UpdateFloorDto, Floor>();
+        CreateMap<CreateFloorDto, Floor>(MemberList.Source);
+        CreateMap<UpdateFloorDto, Floor>(MemberList.Source);
 
         //  Room 
         CreateMap<Room, ResponseRoomDto>()
             .ForMember(dest => dest.FloorName, opt => opt.MapFrom(src => src.Floor.Name))
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Floor.Building.Name));
-        CreateMap<CreateRoomDto, Room>();
-        CreateMap<UpdateRoomDto, Room>();
+        CreateMap<CreateRoomDto, Room>(MemberList.Source);
+        CreateMap<UpdateRoomDto, Room>(MemberList.Source);
 
 
         //  Equipment 
         CreateMap<Equipment, ResponseEquipmentDto>();
-        CreateMap<CreateEquipmentDto, Equipment>();
-        CreateMap<UpdateEquipmentDto, Equipment>();
+        CreateMap<CreateEquipmentDto, Equipment>(MemberList.Source);
+        CreateMap<UpdateEquipmentDto, Equipment>(MemberList.Source);
 
         //  RoomEquipment 
         CreateMap<RoomEquipment, ResponseRoomEquipmentDto>()
             .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
-        CreateMap<CreateRoomEquipmentDto, RoomEquipment>();
-        CreateMap<UpdateRoomEquipmentDto, RoomEquipment>();
+        CreateMap<CreateRoomEquipmentDto, RoomEquipment>(MemberList.Source);
+        CreateMap<UpdateRoomEquipmentDto, RoomEquipment>(MemberList.Source);
 
         //  RoomBlackout 
         CreateMap<RoomBlackout, ResponseRoomBlackoutDto>()
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
-        CreateMap<CreateRoomBlackoutDto, RoomBlackout>();
-        CreateMap<UpdateRoomBlackoutDto, RoomBlackout>();
+        CreateMap<CreateRoomBlackoutDto, RoomBlackout>(MemberList.Source);
+        CreateMap<UpdateRoomBlackoutDto, RoomBlackout>(MemberList.Source);
 
 
         //  Reservation 
@@ -74,8 +73,8 @@ public class CustomProfile : Profile
             .ForMember(dest => dest.ReservedByUserName,
                 opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName));
 
-        CreateMap<CreateReservationDto, Reservation>();
-        CreateMap<UpdateReservationDto, Reservation>();
+        CreateMap<CreateReservationDto, Reservation>(MemberList.Source);
+        CreateMap<UpdateReservationDto, Reservation>(MemberList.Source);
 
         //  Comment 
         CreateMap<Comment, ResponseCommentDto>()
@@ -83,17 +82,16 @@ public class CustomProfile : Profile
                 opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
             .ForMember(dest => dest.RepliesCount, opt => opt.MapFrom(src => src.Replies.Count))
-            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore()); // service-de current user-e gore doldurulur
+            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore());
 
         CreateMap<Comment, DetailedCommentDto>()
             .ForMember(dest => dest.UserName,
                 opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
-            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore()); 
-                                                                                
+            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore());
 
-        CreateMap<CreateCommentDto, Comment>();
-        CreateMap<UpdateCommentDto, Comment>();
+        CreateMap<CreateCommentDto, Comment>(MemberList.Source);
+        CreateMap<UpdateCommentDto, Comment>(MemberList.Source);
 
         //  Participant 
         CreateMap<Participant, ResponseParticipantDto>()
@@ -103,15 +101,15 @@ public class CustomProfile : Profile
                     ? src.User.FirstName + " " + src.User.LastName
                     : null));
 
-        CreateMap<CreateParticipantDto, Participant>();
+        CreateMap<CreateParticipantDto, Participant>(MemberList.Source);
 
-        CreateMap<UpdateParticipantDto, Participant>()
-            .ForMember(dest => dest.ResponseStatus,
-                opt => opt.MapFrom(src => Enum.Parse<ResponseStatus>(src.ResponseStatus)));
+        CreateMap<UpdateParticipantDto, Participant>(MemberList.Source)
+    .ForMember(dest => dest.ResponseStatus,
+        opt => opt.MapFrom(src => Enum.Parse<ResponseStatus>(src.ResponseStatus)))
+    .ForSourceMember(src => src.ResponseStatus, opt => opt.DoNotValidate());
 
         //  Notification 
         CreateMap<Notification, ResponseNotificationDto>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
-        
     }
 }
