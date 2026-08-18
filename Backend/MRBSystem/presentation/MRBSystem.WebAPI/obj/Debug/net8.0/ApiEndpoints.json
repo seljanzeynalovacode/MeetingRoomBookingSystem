@@ -50,8 +50,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "refreshToken",
-        "Type": "System.String",
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.RefreshTokenRequestDto",
         "IsRequired": true
       }
     ],
@@ -310,38 +310,6 @@
       {
         "Name": "dto",
         "Type": "MRBSystem.Contracts.DTOs.BuildingDtos.UpdateBuildingDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MRBSystem.WebAPI.Controllers.CheckinsController",
-    "Method": "CheckIn",
-    "RelativePath": "api/Checkins",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "MRBSystem.Contracts.DTOs.CheckinDtos.CreateCheckinDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MRBSystem.WebAPI.Controllers.CheckinsController",
-    "Method": "GetById",
-    "RelativePath": "api/Checkins/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Guid",
         "IsRequired": true
       }
     ],
@@ -807,6 +775,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.ReservationsController",
+    "Method": "GetMy",
+    "RelativePath": "api/Reservations/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MRBSystem.WebAPI.Controllers.RoomBlackoutsController",
     "Method": "GetAll",
     "RelativePath": "api/RoomBlackouts",
@@ -1044,21 +1022,45 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MRBSystem.WebAPI.Program\u002B\u003C\u003Ec",
-    "Method": "\u003CMain\u003Eb__0_6",
-    "RelativePath": "test",
+    "ContainingType": "MRBSystem.WebAPI.Controllers.RoomsController",
+    "Method": "GetCalendar",
+    "RelativePath": "api/Rooms/{id}/calendar",
     "HttpMethod": "GET",
-    "IsController": false,
+    "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.String",
-        "MediaTypes": [
-          "text/plain"
-        ],
-        "StatusCode": 200
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "startDate",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.DateTime",
+        "IsRequired": false
       }
-    ]
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.RoomsController",
+    "Method": "SearchAvailable",
+    "RelativePath": "api/Rooms/search-available",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.RoomDtos.RoomAvailabilityRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

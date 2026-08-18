@@ -12,9 +12,6 @@ public class Reservation : BaseEntity
     public AppUser ReservedByUser { get; set; } = null!;
     public Guid RoomId { get; set; }
     public Room Room { get; set; } = null!;
-    public Checkin? CheckIn { get; set; }
-    public string QrCodeToken { get; set; } = null!;
-    public DateTime CheckinDeadline { get; set; }
     public byte[] RowVersion { get; set; } = null!;
 
 }

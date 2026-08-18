@@ -16,7 +16,6 @@ public class MRBAppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<RoomEquipment> RoomEquipment => Set<RoomEquipment>();
     public DbSet<RoomBlackout> RoomBlackouts => Set<RoomBlackout>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
-    public DbSet<Checkin> CheckIns => Set<Checkin>();
     public DbSet<Participant> Participants => Set<Participant>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();

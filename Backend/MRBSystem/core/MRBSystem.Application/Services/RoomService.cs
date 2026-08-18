@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MRBSystem.Application.Exceptions;
+using MRBSystem.Contracts.DTOs.CalendarDtos;
 using MRBSystem.Contracts.DTOs.RoomDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
+using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
 
 namespace MRBSystem.Infrasturucture.Services;
@@ -11,11 +13,22 @@ namespace MRBSystem.Infrasturucture.Services;
 public class RoomService : IRoomService
 {
     private readonly IGenericRepository<Room> _repository;
+    private readonly IGenericRepository<Reservation> _reservationRepository;
+    private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
+    private readonly IGenericRepository<RoomEquipment> _roomEquipmentRepository;
     private readonly IMapper _mapper;
 
-    public RoomService(IGenericRepository<Room> repository, IMapper mapper)
+    public RoomService(
+        IGenericRepository<Room> repository,
+        IGenericRepository<Reservation> reservationRepository,
+        IGenericRepository<RoomBlackout> blackoutRepository,
+        IGenericRepository<RoomEquipment> roomEquipmentRepository,
+        IMapper mapper)
     {
         _repository = repository;
+        _reservationRepository = reservationRepository;
+        _blackoutRepository = blackoutRepository;
+        _roomEquipmentRepository = roomEquipmentRepository;
         _mapper = mapper;
     }
 
@@ -72,5 +85,158 @@ public class RoomService : IRoomService
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseRoomDto>>(entities);
+    }
+
+    public async Task<ICollection<ResponseAvailableRoomDto>> SearchAvailableAsync(RoomAvailabilityRequestDto dto)
+    {
+        if (dto.StartDate >= dto.EndDate)
+        {
+            throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
+
+        var candidateRooms = await _repository.GetQueryable()
+            .Include(r => r.Floor)
+                .ThenInclude(f => f.Building)
+            .Where(r => r.IsActive
+                && r.Floor.BuildingId == dto.BuildingId
+                && (dto.FloorId == null || r.FloorId == dto.FloorId)
+                && r.Capacity >= dto.Capacity)
+            .ToListAsync();
+
+        if (candidateRooms.Count == 0)
+        {
+            return Array.Empty<ResponseAvailableRoomDto>();
+        }
+
+        var candidateRoomIds = candidateRooms.Select(r => r.Id).ToList();
+
+        if (dto.EquipmentIds is { Count: > 0 })
+        {
+            var roomEquipmentPairs = await _roomEquipmentRepository.GetQueryable()
+                .Where(re => candidateRoomIds.Contains(re.RoomId))
+                .Select(re => new { re.RoomId, re.EquipmentId })
+                .ToListAsync();
+
+            var roomsWithAllEquipment = roomEquipmentPairs
+                .GroupBy(re => re.RoomId)
+                .Where(g => dto.EquipmentIds.All(reqId => g.Any(re => re.EquipmentId == reqId)))
+                .Select(g => g.Key)
+                .ToHashSet();
+
+            candidateRoomIds = candidateRoomIds.Where(id => roomsWithAllEquipment.Contains(id)).ToList();
+            candidateRooms = candidateRooms.Where(r => candidateRoomIds.Contains(r.Id)).ToList();
+        }
+
+        if (candidateRoomIds.Count == 0)
+        {
+            return Array.Empty<ResponseAvailableRoomDto>();
+        }
+
+        var busyByReservation = await _reservationRepository.GetQueryable()
+            .Where(r => candidateRoomIds.Contains(r.RoomId)
+                && r.Status != ReservationStatus.Cancelled
+                && dto.StartDate < r.EndDate
+                && dto.EndDate > r.StartDate)
+            .Select(r => r.RoomId)
+            .Distinct()
+            .ToListAsync();
+
+        var busyByBlackout = await _blackoutRepository.GetQueryable()
+            .Where(b => candidateRoomIds.Contains(b.RoomId)
+                && dto.StartDate < b.EndDate
+                && dto.EndDate > b.StartDate)
+            .Select(b => b.RoomId)
+            .Distinct()
+            .ToListAsync();
+
+        var busyRoomIds = busyByReservation.Union(busyByBlackout).ToHashSet();
+
+        var availableRooms = candidateRooms
+            .Where(r => !busyRoomIds.Contains(r.Id))
+            .ToList();
+
+        if (availableRooms.Count == 0)
+        {
+            return Array.Empty<ResponseAvailableRoomDto>();
+        }
+
+        var availableRoomIds = availableRooms.Select(r => r.Id).ToList();
+
+        var equipmentByRoom = await _roomEquipmentRepository.GetQueryable()
+            .Where(re => availableRoomIds.Contains(re.RoomId))
+            .Include(re => re.Equipment)
+            .ToListAsync();
+
+        return availableRooms.Select(r => new ResponseAvailableRoomDto
+        {
+            RoomId = r.Id,
+            RoomName = r.Name,
+            Capacity = r.Capacity,
+            FloorName = r.Floor.Name,
+            BuildingName = r.Floor.Building.Name,
+            Equipment = equipmentByRoom
+                .Where(re => re.RoomId == r.Id)
+                .Select(re => re.Equipment.Name)
+                .ToList()
+        }).ToList();
+    }
+
+    public async Task<ICollection<RoomCalendarDto>> GetRoomCalendarAsync(Guid roomId, DateTime startDate, DateTime endDate)
+    {
+        if (startDate > endDate)
+        {
+            throw new ArgumentException("StartDate must be earlier than or equal to EndDate.");
+        }
+
+        if ((endDate.Date - startDate.Date).TotalDays > 90)
+        {
+            throw new ArgumentException("Date range cannot exceed 90 days.");
+        }
+
+        var room = await _repository.GetByIdAsync(roomId)
+            ?? throw new NotFoundException($"Room with id {roomId} not found.");
+
+        var rangeStart = startDate.Date;
+        var rangeEndExclusive = endDate.Date.AddDays(1);
+
+        var reservations = await _reservationRepository.GetQueryable()
+            .Include(r => r.ReservedByUser)
+            .Where(r => r.RoomId == roomId
+                && r.Status != ReservationStatus.Cancelled
+                && r.StartDate < rangeEndExclusive
+                && r.EndDate > rangeStart)
+            .OrderBy(r => r.StartDate)
+            .ToListAsync();
+
+        var days = new List<RoomCalendarDto>();
+
+        for (var day = rangeStart; day < rangeEndExclusive; day = day.AddDays(1))
+        {
+            var dayStart = day;
+            var dayEnd = day.AddDays(1);
+
+            var dayReservations = reservations
+                .Where(r => r.StartDate < dayEnd && r.EndDate > dayStart)
+                .Select(r => new CalendarReservationDto
+                {
+                    ReservationId = r.Id,
+                    Title = r.Title,
+                    StartDate = r.StartDate,
+                    EndDate = r.EndDate,
+                    ReservedByUserName = r.ReservedByUser.FirstName + " " + r.ReservedByUser.LastName,
+                    Status = r.Status.ToString()
+                })
+                .ToList();
+
+            days.Add(new RoomCalendarDto
+            {
+                RoomId = room.Id,
+                RoomName = room.Name,
+                Date = day,
+                Reservations = dayReservations
+            });
+        }
+
+        return days;
     }
 }

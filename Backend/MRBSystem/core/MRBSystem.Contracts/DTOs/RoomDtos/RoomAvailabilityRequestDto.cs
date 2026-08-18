@@ -7,5 +7,5 @@ public record RoomAvailabilityRequestDto
     public Guid BuildingId { get; set; }
     public Guid? FloorId { get; set; }
     public List<Guid>? EquipmentIds { get; set; }
-    public int MinimumCapacity { get; set; }
+    public int Capacity { get; set; }
 }

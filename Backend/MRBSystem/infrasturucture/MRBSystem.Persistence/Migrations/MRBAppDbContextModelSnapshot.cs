@@ -159,43 +159,6 @@ namespace MRBSystem.Persistence.Migrations
                     b.ToTable("Buildings");
                 });
 
-            modelBuilder.Entity("MRBSystem.Domain.Entities.Checkin", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CheckinTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CheckoutTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ReservationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CheckIns");
-                });
-
             modelBuilder.Entity("MRBSystem.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -472,9 +435,6 @@ namespace MRBSystem.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CheckinDeadline")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -483,11 +443,6 @@ namespace MRBSystem.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("QrCodeToken")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
 
                     b.Property<Guid>("ReservedByUserId")
                         .HasColumnType("uniqueidentifier");
@@ -518,9 +473,6 @@ namespace MRBSystem.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("QrCodeToken")
-                        .IsUnique();
 
                     b.HasIndex("ReservedByUserId");
 
@@ -738,25 +690,6 @@ namespace MRBSystem.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MRBSystem.Domain.Entities.Checkin", b =>
-                {
-                    b.HasOne("MRBSystem.Domain.Entities.Reservation", "Reservation")
-                        .WithOne("CheckIn")
-                        .HasForeignKey("MRBSystem.Domain.Entities.Checkin", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MRBSystem.Domain.Entities.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MRBSystem.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("MRBSystem.Domain.Entities.Comment", "ParentComment")
@@ -968,11 +901,6 @@ namespace MRBSystem.Persistence.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Replies");
-                });
-
-            modelBuilder.Entity("MRBSystem.Domain.Entities.Reservation", b =>
-                {
-                    b.Navigation("CheckIn");
                 });
 #pragma warning restore 612, 618
         }

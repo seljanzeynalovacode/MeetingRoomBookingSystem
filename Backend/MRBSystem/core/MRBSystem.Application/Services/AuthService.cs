@@ -21,6 +21,7 @@ namespace MRBSystem.Application.Services;
 public class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly SignInManager<AppUser> _signInManager;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
     private readonly IConfiguration _configuration;
@@ -30,6 +31,7 @@ public class AuthService : IAuthService
 
     public AuthService(
         UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
         RoleManager<AppRole> roleManager,
         IGenericRepository<RefreshToken> refreshTokenRepository,
         IConfiguration configuration,
@@ -38,6 +40,7 @@ public class AuthService : IAuthService
         IEmailService emailService)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _roleManager = roleManager;
         _refreshTokenRepository = refreshTokenRepository;
         _configuration = configuration;
@@ -45,6 +48,7 @@ public class AuthService : IAuthService
         _logger = logger;
         _emailService = emailService;
     }
+
     public async Task<UserResponseDto> RegisterAsync(RegisterDto dto)
     {
         if (dto.Password != dto.ConfirmPassword)
@@ -92,30 +96,42 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponseDto> AdminLoginAsync(LoginDto dto)
     {
-        // 1. ADDIM: İstifadəçinin bazada olub-olmadığını yoxlayırıq
+        const string genericError = "İstifadəçi adı və ya şifrə yanlışdır.";
+        const string lockedOutError = "Hesab müvəqqəti bloklanıb. Zəhmət olmasa bir az sonra yenidən cəhd edin.";
+
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
         {
             _logger.LogWarning("Admin login attempt failed for non-existent email: {Email}", dto.Email);
-            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+            throw new UnauthorizedAccessException(genericError);
         }
 
-        // 2. ADDIM: ŞİFRƏNİ YOXLAYIRIQ (Əgər şifrə səhvdirsə, 2FA kodu GÖNDƏRİLMİR)
-        var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-        if (!passwordValid)
+        if (await _userManager.IsLockedOutAsync(user))
         {
-            _logger.LogWarning("Admin login attempt failed for email: {Email}. Invalid password.", dto.Email);
-            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+            _logger.LogWarning("Admin login blocked - account is locked out: {Email}", dto.Email);
+            throw new UnauthorizedAccessException(lockedOutError);
         }
 
-        // 3. ADDIM: Admin rolunun olub-olmadığını yoxlayırıq
+        var passwordCheck = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
+
+        if (!passwordCheck.Succeeded)
+        {
+            if (passwordCheck.IsLockedOut)
+            {
+                _logger.LogWarning("Admin account locked out after too many failed attempts: {Email}", dto.Email);
+                throw new UnauthorizedAccessException(lockedOutError);
+            }
+
+            _logger.LogWarning("Admin login attempt failed for email: {Email}. Invalid password.", dto.Email);
+            throw new UnauthorizedAccessException(genericError);
+        }
+
         if (!await _userManager.IsInRoleAsync(user, "Admin"))
         {
             _logger.LogWarning("User {Email} attempted to access Admin login without Admin role.", dto.Email);
-            throw new UnauthorizedAccessException("Bu panelə giriş üçün admin hüquqlarınız yoxdur.");
+            throw new UnauthorizedAccessException(genericError);
         }
 
-        // 4. ADDIM: Şifrə və Rol DÜZGÜNDÜRSƏ -> 2FA kodunu yaradıb e-poçta göndəririk
         var code = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
 
         var subject = "Admin Panel - İki Mərhələli Təsdiq Kodu";
@@ -134,47 +150,79 @@ public class AuthService : IAuthService
 
     public async Task<TokenResponseDto> VerifyAdmin2FAAsync(Verify2FADto dto)
     {
+        const string invalidError = "Daxil etdiyiniz təsdiq kodu yanlışdır və ya vaxtı bitib.";
+        const string lockedOutError = "Hesab müvəqqəti bloklanıb. Zəhmət olmasa bir az sonra yenidən cəhd edin.";
+
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null || !await _userManager.IsInRoleAsync(user, "Admin"))
         {
             throw new UnauthorizedAccessException("İstifadəçi tapılmadı və ya hüququnuz yoxdur.");
         }
 
-        // Daxil edilən kodun doğruluğunu yoxlayırıq
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            _logger.LogWarning("2FA verification blocked - account is locked out: {Email}", dto.Email);
+            throw new UnauthorizedAccessException(lockedOutError);
+        }
+
         var isCodeValid = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", dto.Code);
 
         if (!isCodeValid)
         {
+            var failResult = await _userManager.AccessFailedAsync(user);
+
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                _logger.LogWarning("Admin account locked out after too many failed 2FA attempts: {Email}", dto.Email);
+                throw new UnauthorizedAccessException(lockedOutError);
+            }
+
             _logger.LogWarning("Invalid 2FA code attempt for {Email}", dto.Email);
-            throw new UnauthorizedAccessException("Daxil etdiyiniz təsdiq kodu yanlışdır və ya vaxtı bitib.");
+            throw new UnauthorizedAccessException(invalidError);
         }
 
-        // Kod düzgündürsə, Tokeni yaradıb qaytarırıq!
+        await _userManager.ResetAccessFailedCountAsync(user);
+
         _logger.LogInformation("Admin {Email} successfully verified 2FA and logged in.", dto.Email);
         return await GenerateTokenResponseAsync(user);
     }
 
     public async Task<TokenResponseDto> UserLoginAsync(LoginDto dto)
     {
+        const string genericError = "İstifadəçi adı və ya şifrə yanlışdır.";
+        const string lockedOutError = "Hesab müvəqqəti bloklanıb. Zəhmət olmasa bir az sonra yenidən cəhd edin.";
+
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
         {
             _logger.LogWarning("User login attempt failed for non-existent email: {Email}", dto.Email);
-            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+            throw new UnauthorizedAccessException(genericError);
         }
 
-        var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-        if (!passwordValid)
+        if (await _userManager.IsLockedOutAsync(user))
         {
-            _logger.LogWarning("User login attempt failed for email: {Email}. Invalid password.", dto.Email);
-            throw new UnauthorizedAccessException("İstifadəçi adı və ya şifrə yanlışdır.");
+            _logger.LogWarning("User login blocked - account is locked out: {Email}", dto.Email);
+            throw new UnauthorizedAccessException(lockedOutError);
         }
 
-        // Əgər istifadəçilərin hamısı "User" rolundadırsa, bunu da yoxlaya bilərsən
+        var passwordCheck = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
+
+        if (!passwordCheck.Succeeded)
+        {
+            if (passwordCheck.IsLockedOut)
+            {
+                _logger.LogWarning("User account locked out after too many failed attempts: {Email}", dto.Email);
+                throw new UnauthorizedAccessException(lockedOutError);
+            }
+
+            _logger.LogWarning("User login attempt failed for email: {Email}. Invalid password.", dto.Email);
+            throw new UnauthorizedAccessException(genericError);
+        }
+
         if (!await _userManager.IsInRoleAsync(user, "User"))
         {
             _logger.LogWarning("User {Email} attempted to access User login without User role.", dto.Email);
-            throw new UnauthorizedAccessException("Hesabınız təsdiqlənməyib və ya lazımi hüquqlara malik deyilsiniz.");
+            throw new UnauthorizedAccessException(genericError);
         }
 
         _logger.LogInformation("User logged in successfully with email: {Email}", dto.Email);
@@ -194,7 +242,6 @@ public class AuthService : IAuthService
         }
         _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
     }
-
 
     public async Task<ResponseAppRoleDto> CreateRoleAsync(CreateAppRoleDto dto)
     {
@@ -241,7 +288,8 @@ public class AuthService : IAuthService
     public async Task DeleteRoleAsync(Guid id)
     {
         var role = await _roleManager.FindByIdAsync(id.ToString());
-        if (role == null) {
+        if (role == null)
+        {
             _logger.LogWarning("Attempt to delete a non-existent role with ID: {RoleId}", id);
             throw new NotFoundException($"Role with id {id} not found.");
         }
@@ -269,12 +317,10 @@ public class AuthService : IAuthService
         return _mapper.Map<ICollection<ResponseAppRoleDto>>(roles);
     }
 
-   
-
     public async Task AssignRoleToUserAsync(Guid userId, string roleName)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null) 
+        if (user == null)
         {
             _logger.LogWarning("Attempt to assign role '{RoleName}' to a non-existent user with ID: {UserId}", roleName, userId);
             throw new NotFoundException($"User with id {userId} not found.");
@@ -289,7 +335,7 @@ public class AuthService : IAuthService
         if (await _userManager.IsInRoleAsync(user, roleName))
         {
             _logger.LogInformation("User with ID: {UserId} is already assigned to role '{RoleName}'. No action taken.", userId, roleName);
-            return; 
+            return;
         }
 
         var result = await _userManager.AddToRoleAsync(user, roleName);
@@ -379,7 +425,6 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Refresh token has expired.");
         }
 
-        // Kohne token-i revoke edir  ve yenisini yaradir
         var newTokenResponse = await GenerateTokenResponseAsync(storedToken.User);
 
         storedToken.RevokedAt = DateTime.UtcNow;
@@ -389,7 +434,6 @@ public class AuthService : IAuthService
         _logger.LogInformation("Refresh token successfully used and replaced for user ID: {UserId}", storedToken.UserId);
         return newTokenResponse;
     }
-    // ---
 
     private async Task<TokenResponseDto> GenerateTokenResponseAsync(AppUser user)
     {
@@ -415,35 +459,29 @@ public class AuthService : IAuthService
             RefreshToken = refreshToken,
             ExpiresAt = DateTime.UtcNow.AddMinutes(accessExpirationMinutes)
         };
-
     }
 
     private async Task<string> GenerateAccessTokenAsync(AppUser user)
     {
-      
         var roles = await _userManager.GetRolesAsync(user);
 
-        //Token-in icinde hansi ne yazacagimizi siyahi kimi qururuq
         var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
-        new Claim(ClaimTypes.Email, user.Email ?? string.Empty),  
-        new Claim(ClaimTypes.GivenName, user.FirstName),          
-        new Claim(ClaimTypes.Surname, user.LastName)              
-    };
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+            new Claim(ClaimTypes.GivenName, user.FirstName),
+            new Claim(ClaimTypes.Surname, user.LastName)
+        };
 
-        // her rol ucun de ayrica elave edirik
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        // tokeni imzalamaq ucun gizli acarimizi hazirlanir
         var signingKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
         );
 
-        // hansi acarla, hansi usulla imzalayacagiq
         var signingCredentials = new SigningCredentials(
             signingKey,
             SecurityAlgorithms.HmacSha256
@@ -451,24 +489,22 @@ public class AuthService : IAuthService
         _logger.LogInformation("Generating access token for user ID: {UserId} with roles: {Roles}", user.Id, string.Join(", ", roles));
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
 
-        // Butun bu hissələri bir yerə yığıb, əsl JWT token-i yaradırıq
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],        
-            audience: _configuration["Jwt:Audience"],      
-            claims: claims,                                 
-            expires: DateTime.UtcNow.AddMinutes(expirationMinutes), 
-            signingCredentials: signingCredentials         
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
+            signingCredentials: signingCredentials
         );
         _logger.LogInformation("Access token generated for user ID: {UserId}", user.Id);
 
-        //  obyekti, gondermek ucun adi bir stringe cevir
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     private static string GenerateRefreshToken()
     {
         var randomBytes = RandomNumberGenerator.GetBytes(64);
-        
+
         return Convert.ToBase64String(randomBytes);
     }
 

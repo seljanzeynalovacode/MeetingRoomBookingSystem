@@ -3,8 +3,6 @@
 public enum ReservationStatus
 {
     Confirmed,
-    CheckedIn,
     Cancelled,
-    AutoCancelled,
     Completed
 }

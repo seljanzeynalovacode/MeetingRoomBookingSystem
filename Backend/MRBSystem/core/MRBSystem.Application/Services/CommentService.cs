@@ -41,7 +41,7 @@ public class CommentService : ICommentService
             .FirstAsync(c => c.Id == entity.Id);
 
         var result = _mapper.Map<ResponseCommentDto>(created);
-        result.IsLikedByCurrentUser = false; // yeni yaradilan comment-i hele kimse begenmeyib
+        result.IsLikedByCurrentUser = false;
         return result;
     }
 
@@ -70,9 +70,7 @@ public class CommentService : ICommentService
 
     public async Task DeleteAsync(Guid id)
     {
-        var entity = await _repository.GetQueryable()
-        .Include(c => c.Replies)
-        .FirstOrDefaultAsync(c => c.Id == id);
+        var entity = await _repository.GetByIdAsync(id);
         if (entity == null)
         {
             throw new NotFoundException($"Comment with id {id} not found.");
@@ -82,16 +80,7 @@ public class CommentService : ICommentService
             throw new UnauthorizedAccessException("You can only delete your own comments.");
         }
 
-        if (entity.Replies.Any())
-        {
-            foreach (var reply in entity.Replies.ToList())
-            {
-                await _repository.DeleteAsync(reply.Id);
-            }
-        }
-
-        // Sonra ana şərhi bazadan silirik
-        await _repository.DeleteAsync(id);
+        await DeleteWithRepliesAsync(id);
     }
 
     public async Task<DetailedCommentDto> GetByIdAsync(Guid id)
@@ -122,7 +111,6 @@ public class CommentService : ICommentService
 
     public async Task<ICollection<ResponseCommentDto>> GetAllAsync()
     {
-        // Yalniz ust-seviyye comment-ler (reply-lar burada gostərilmir, Detail-de acilir)
         var entities = await _repository.GetQueryable()
             .Where(c => c.ParentCommentId == null)
             .Include(c => c.User)
@@ -148,7 +136,7 @@ public class CommentService : ICommentService
 
         if (exists)
         {
-            return; 
+            return;
         }
 
         await _likeRepository.AddAsync(new Like
@@ -165,5 +153,20 @@ public class CommentService : ICommentService
 
         if (like is not null)
             await _likeRepository.DeleteAsync(like.Id);
+    }
+
+    private async Task DeleteWithRepliesAsync(Guid commentId)
+    {
+        var childIds = await _repository.GetQueryable()
+            .Where(c => c.ParentCommentId == commentId)
+            .Select(c => c.Id)
+            .ToListAsync();
+
+        foreach (var childId in childIds)
+        {
+            await DeleteWithRepliesAsync(childId);
+        }
+
+        await _repository.DeleteAsync(commentId);
     }
 }

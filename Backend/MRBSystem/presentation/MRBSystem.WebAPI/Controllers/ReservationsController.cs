@@ -18,9 +18,17 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _reservationService.GetAllAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMy()
+        {
+            var result = await _reservationService.GetMyReservationsAsync();
             return Ok(result);
         }
 

@@ -6,7 +6,6 @@ public static class NotificationTemplates
 {
     public static (string Title, string Message) Build(
         NotificationType type,
-        ReservationStatus reservationStatus,
         string firstName,
         string lastName,
         string meetingTitle,
@@ -39,19 +38,6 @@ public static class NotificationTemplates
                 $"""
             Hörmətli {firstName} {lastName},
             Meeting room rezervasiyanız yeniləndi.
-            Meeting: {meetingTitle}
-            Otaq: {roomName}
-            Tarix: {date}
-            Saat: {startTime} - {endTime}
-            Hörmətlə,
-            MRBSystem
-            """
-            ),
-            NotificationType.Cancelled when reservationStatus == ReservationStatus.AutoCancelled => (
-                "Rezervasiya avtomatik ləğv edildi",
-                $"""
-            Hörmətli {firstName} {lastName},
-            Meeting room rezervasiyanız, başlama saatından 15 dəqiqə keçməsinə baxmayaraq check-in edilmədiyi üçün avtomatik ləğv edildi.
             Meeting: {meetingTitle}
             Otaq: {roomName}
             Tarix: {date}

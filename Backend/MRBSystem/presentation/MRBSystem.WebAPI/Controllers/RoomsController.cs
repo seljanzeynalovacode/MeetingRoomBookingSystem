@@ -31,6 +31,22 @@ public class RoomsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("search-available")]
+    [Authorize]
+    public async Task<IActionResult> SearchAvailable([FromBody] RoomAvailabilityRequestDto dto)
+    {
+        var result = await _roomService.SearchAvailableAsync(dto);
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/calendar")]
+    [Authorize]
+    public async Task<IActionResult> GetCalendar(Guid id, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    {
+        var result = await _roomService.GetRoomCalendarAsync(id, startDate, endDate);
+        return Ok(result);
+    }
+
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteRoom(Guid id)

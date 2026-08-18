@@ -18,13 +18,6 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .HasConversion<string>()
             .HasMaxLength(20);
 
-        builder.Property(r => r.QrCodeToken)
-            .IsRequired()
-            .HasMaxLength(256);
-
-        builder.HasIndex(r => r.QrCodeToken)
-            .IsUnique();
-
         builder.Property(r => r.RowVersion)
             .IsRowVersion();
 
@@ -38,12 +31,6 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .HasForeignKey(r => r.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(r => r.CheckIn)
-            .WithOne(c => c.Reservation)
-            .HasForeignKey<Checkin>(c => c.ReservationId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Otaqda müəyyən tarix aralığında rezervasiya axtarışını sürətləndirmək üçün
         builder.HasIndex(r => new { r.RoomId, r.StartDate, r.EndDate });
     }
 }

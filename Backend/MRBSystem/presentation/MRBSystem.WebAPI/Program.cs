@@ -25,6 +25,7 @@ namespace MRBSystem.WebAPI
 
             Log.Logger = new LoggerConfiguration()
                .ReadFrom.Configuration(builder.Configuration)
+               .WriteTo.Console()
                .Enrich.FromLogContext()
                .CreateLogger();
 
@@ -67,6 +68,21 @@ namespace MRBSystem.WebAPI
     });
             });
             //--
+
+            var corsAllowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("FrontendPolicy", policy =>
+                {
+                    policy.WithOrigins(corsAllowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddDbContext<MRBAppDbContext>(options =>
      options.UseSqlServer(
          builder.Configuration.GetConnectionString("MRBSystemConnectionString"),
@@ -74,7 +90,11 @@ namespace MRBSystem.WebAPI
 
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
-                options.User.RequireUniqueEmail = true; 
+                options.User.RequireUniqueEmail = true;
+
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.AllowedForNewUsers = true;
             })
 .AddEntityFrameworkStores<MRBAppDbContext>()
 .AddDefaultTokenProviders();
@@ -94,7 +114,6 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
-            builder.Services.AddScoped<ICheckinService, CheckinService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
@@ -103,7 +122,7 @@ namespace MRBSystem.WebAPI
 
             builder.Services.AddAutoMapper(x => x.AddProfile(typeof(CustomProfile)));
 
-            builder.Services.AddHostedService<AutoCancelReservationService>();
+            builder.Services.AddHostedService<NotificationDeliveryService>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -236,10 +255,11 @@ namespace MRBSystem.WebAPI
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
+            app.UseCors("FrontendPolicy");
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapGet("/test", () => "API is working!");
 
             app.MapControllers();
 

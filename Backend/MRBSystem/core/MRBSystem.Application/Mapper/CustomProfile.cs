@@ -72,16 +72,10 @@ public class CustomProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name))
             .ForMember(dest => dest.ReservedByUserName,
-                opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName))
-            .ForMember(dest => dest.IsCheckedIn, opt => opt.MapFrom(src => src.CheckIn != null));
+                opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName));
 
         CreateMap<CreateReservationDto, Reservation>();
         CreateMap<UpdateReservationDto, Reservation>();
-
-        //  Checkin 
-        CreateMap<Checkin, ResponseCheckinDto>()
-            .ForMember(dest => dest.UserName,
-                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
 
         //  Comment 
         CreateMap<Comment, ResponseCommentDto>()

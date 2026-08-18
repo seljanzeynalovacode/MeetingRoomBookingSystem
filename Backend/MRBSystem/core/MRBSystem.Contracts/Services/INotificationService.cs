@@ -8,5 +8,5 @@ public interface INotificationService
 {
     Task<ICollection<ResponseNotificationDto>> GetMyNotificationsAsync();
     Task MarkAsReadAsync(Guid id);
-    Task CreateAndSendAsync(Reservation reservation, NotificationType type);
+    Task CreateAsync(Reservation reservation, NotificationType type);
 }

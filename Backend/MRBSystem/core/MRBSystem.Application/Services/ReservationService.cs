@@ -46,8 +46,6 @@ public class ReservationService : IReservationService
 
             var reservation = _mapper.Map<Reservation>(dto);
             reservation.ReservedByUserId = _currentUser.UserId;
-            reservation.QrCodeToken = Guid.NewGuid().ToString();
-            reservation.CheckinDeadline = dto.StartDate.AddMinutes(15); // ne zaman autocancel olsun
 
             await _repository.AddAsync(reservation);
             return reservation;
@@ -59,7 +57,7 @@ public class ReservationService : IReservationService
 
         var created = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
-        await _notificationService.CreateAndSendAsync(created, NotificationType.Created);
+        await _notificationService.CreateAsync(created, NotificationType.Created);
         _logger.LogDebug(
             "Notification sent for created reservation {ReservationId} to relevant users",
             created.Id);
@@ -83,7 +81,6 @@ public class ReservationService : IReservationService
             await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, excludeReservationId: id);
 
             _mapper.Map(dto, reservation);
-            reservation.CheckinDeadline = dto.StartDate.AddMinutes(15);
 
             await _repository.UpdateAsync(reservation);
             return reservation;
@@ -95,7 +92,7 @@ public class ReservationService : IReservationService
 
         var updated = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
-        await _notificationService.CreateAndSendAsync(updated, NotificationType.Updated);
+        await _notificationService.CreateAsync(updated, NotificationType.Updated);
         _logger.LogDebug(
             "Notification sent for updated reservation {ReservationId} to relevant users",
             updated.Id);
@@ -116,7 +113,7 @@ public class ReservationService : IReservationService
 
             EnsureCanModify(reservation);
 
-            if (reservation.Status == ReservationStatus.Cancelled || reservation.Status == ReservationStatus.AutoCancelled)
+            if (reservation.Status == ReservationStatus.Cancelled)
             {
                 _logger.LogWarning("Attempted to cancel an already cancelled reservation {ReservationId}", id);
                 throw new InvalidOperationException("Bu rezervasiya artıq ləğv edilib!");
@@ -133,7 +130,7 @@ public class ReservationService : IReservationService
 
         var cancelled = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
-        await _notificationService.CreateAndSendAsync(cancelled, NotificationType.Cancelled);
+        await _notificationService.CreateAsync(cancelled, NotificationType.Cancelled);
     }
 
     public async Task<ResponseReservationDto> GetByIdAsync(Guid id)
@@ -158,8 +155,17 @@ public class ReservationService : IReservationService
     {
         return _repository.GetQueryable()
             .Include(r => r.Room)
-            .Include(r => r.ReservedByUser)
-            .Include(r => r.CheckIn);
+            .Include(r => r.ReservedByUser);
+    }
+
+    public async Task<ICollection<ResponseReservationDto>> GetMyReservationsAsync()
+    {
+        var entities = await GetWithDetailsAsync()
+            .Where(r => r.ReservedByUserId == _currentUser.UserId)
+            .OrderByDescending(r => r.StartDate)
+            .ToListAsync();
+
+        return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
     }
 
     private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, Guid? excludeReservationId = null)
@@ -176,7 +182,6 @@ public class ReservationService : IReservationService
             .AnyAsync(r => r.Id != excludeReservationId
                 && r.RoomId == roomId
                 && r.Status != ReservationStatus.Cancelled
-                && r.Status != ReservationStatus.AutoCancelled
                 && startDate < r.EndDate
                 && endDate > r.StartDate);
 
