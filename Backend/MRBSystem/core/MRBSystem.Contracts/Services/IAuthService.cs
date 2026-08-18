@@ -27,4 +27,5 @@ public interface IAuthService
 
     Task<List<string>> GetUserRolesAsync(Guid userId);
     Task<object> GetAllUsersWithRolesAsync();
+    Task DeleteUserAsync(Guid userId);
 }

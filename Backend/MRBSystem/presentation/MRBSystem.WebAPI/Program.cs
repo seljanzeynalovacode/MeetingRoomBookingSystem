@@ -14,6 +14,7 @@ using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 using Serilog;
 using System.Text;
+using System.Threading.RateLimiting;
 
 namespace MRBSystem.WebAPI
 {
@@ -81,6 +82,30 @@ namespace MRBSystem.WebAPI
                           .AllowAnyHeader()
                           .AllowAnyMethod();
                 });
+            });
+
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddPolicy("LoginPolicy", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 5,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0
+                        }));
+
+                options.OnRejected = async (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    context.HttpContext.Response.ContentType = "application/json";
+                    await context.HttpContext.Response.WriteAsJsonAsync(new
+                    {
+                        statusCode = 429,
+                        message = "Çox sayda cəhd edildi. Zəhmət olmasa bir az sonra yenidən cəhd edin."
+                    }, cancellationToken);
+                };
             });
 
             builder.Services.AddDbContext<MRBAppDbContext>(options =>
@@ -256,6 +281,7 @@ namespace MRBSystem.WebAPI
             app.UseHttpsRedirection();
 
             app.UseCors("FrontendPolicy");
+            app.UseRateLimiter();
 
             app.UseAuthentication();
             app.UseAuthorization();

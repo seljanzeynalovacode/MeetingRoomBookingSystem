@@ -8,11 +8,12 @@ using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
 
-namespace MRBSystem.Infrasturucture.Services;
+namespace MRBSystem.Application.Services;
 
 public class RoomService : IRoomService
 {
     private readonly IGenericRepository<Room> _repository;
+    private readonly IGenericRepository<Floor> _floorRepository;
     private readonly IGenericRepository<Reservation> _reservationRepository;
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
     private readonly IGenericRepository<RoomEquipment> _roomEquipmentRepository;
@@ -20,12 +21,14 @@ public class RoomService : IRoomService
 
     public RoomService(
         IGenericRepository<Room> repository,
+        IGenericRepository<Floor> floorRepository,
         IGenericRepository<Reservation> reservationRepository,
         IGenericRepository<RoomBlackout> blackoutRepository,
         IGenericRepository<RoomEquipment> roomEquipmentRepository,
         IMapper mapper)
     {
         _repository = repository;
+        _floorRepository = floorRepository;
         _reservationRepository = reservationRepository;
         _blackoutRepository = blackoutRepository;
         _roomEquipmentRepository = roomEquipmentRepository;
@@ -34,6 +37,9 @@ public class RoomService : IRoomService
 
     public async Task<ResponseRoomDto> CreateAsync(CreateRoomDto dto)
     {
+        var floor = await _floorRepository.GetByIdAsync(dto.FloorId)
+            ?? throw new NotFoundException($"Floor with id {dto.FloorId} not found.");
+
         var entity = _mapper.Map<Room>(dto);
         await _repository.AddAsync(entity);
 
@@ -49,6 +55,9 @@ public class RoomService : IRoomService
     {
         var entity = await _repository.GetByIdAsync(id)
             ?? throw new NotFoundException($"Room with id {id} not found.");
+
+        var floor = await _floorRepository.GetByIdAsync(dto.FloorId)
+            ?? throw new NotFoundException($"Floor with id {dto.FloorId} not found.");
 
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
@@ -208,6 +217,13 @@ public class RoomService : IRoomService
             .OrderBy(r => r.StartDate)
             .ToListAsync();
 
+        var blackouts = await _blackoutRepository.GetQueryable()
+            .Where(b => b.RoomId == roomId
+                && b.StartDate < rangeEndExclusive
+                && b.EndDate > rangeStart)
+            .OrderBy(b => b.StartDate)
+            .ToListAsync();
+
         var days = new List<RoomCalendarDto>();
 
         for (var day = rangeStart; day < rangeEndExclusive; day = day.AddDays(1))
@@ -228,12 +244,24 @@ public class RoomService : IRoomService
                 })
                 .ToList();
 
+            var dayBlackouts = blackouts
+                .Where(b => b.StartDate < dayEnd && b.EndDate > dayStart)
+                .Select(b => new CalendarBlackoutDto
+                {
+                    BlackoutId = b.Id,
+                    StartDate = b.StartDate,
+                    EndDate = b.EndDate,
+                    Reason = b.Reason
+                })
+                .ToList();
+
             days.Add(new RoomCalendarDto
             {
                 RoomId = room.Id,
                 RoomName = room.Name,
                 Date = day,
-                Reservations = dayReservations
+                Reservations = dayReservations,
+                Blackouts = dayBlackouts
             });
         }
 

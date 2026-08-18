@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.EquipmentDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
 
-namespace MRBSystem.Infrasturucture.Services;
+namespace MRBSystem.Application.Services;
 
 public class EquipmentService : IEquipmentService
 {
@@ -28,11 +29,9 @@ public class EquipmentService : IEquipmentService
     }
     public async Task<ResponseEquipmentDto> GetByIdAsync(Guid id)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null)
-        {
-            throw new Exception($"Equipment with id {id} not found.");
-        }
+        var entity = await _repository.GetByIdAsync(id)
+            ?? throw new NotFoundException($"Equipment with id {id} not found.");
+
         return _mapper.Map<ResponseEquipmentDto>(entity);
     }
     public async Task<ICollection<ResponseEquipmentDto>> GetAllAsync()
@@ -42,14 +41,11 @@ public class EquipmentService : IEquipmentService
     }
     public async Task<ResponseEquipmentDto> UpdateAsync(Guid id, UpdateEquipmentDto dto)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null)
-        {
-            throw new Exception($"Equipment with id {id} not found.");
-        }
+        var entity = await _repository.GetByIdAsync(id)
+            ?? throw new NotFoundException($"Equipment with id {id} not found.");
+
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);
         return _mapper.Map<ResponseEquipmentDto>(entity);
-
     }
 }

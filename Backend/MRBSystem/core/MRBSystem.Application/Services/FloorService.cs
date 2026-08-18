@@ -6,25 +6,33 @@ using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
 
-namespace MRBSystem.Infrasturucture.Services;
+namespace MRBSystem.Application.Services;
 
 public class FloorService : IFloorService
 {
-    private readonly IGenericRepository<Floor> _repository;
+    private readonly IGenericRepository<Floor> _floorrepository;
+    private readonly IGenericRepository<Building> _buildingRepository;
     private readonly IMapper _mapper;
 
-    public FloorService(IGenericRepository<Floor> repository, IMapper mapper)
+    public FloorService(
+        IGenericRepository<Floor> repository,
+        IGenericRepository<Building> buildingRepository,
+        IMapper mapper)
     {
-        _repository = repository;
+        _floorrepository = repository;
+        _buildingRepository = buildingRepository;
         _mapper = mapper;
     }
 
     public async Task<ResponseFloorDto> CreateAsync(CreateFloorDto dto)
     {
-        var entity = _mapper.Map<Floor>(dto);
-        await _repository.AddAsync(entity);
+        var building = await _buildingRepository.GetByIdAsync(dto.BuildingId)
+            ?? throw new NotFoundException($"Building with id {dto.BuildingId} not found.");
 
-        var created = await _repository.GetQueryable()
+        var entity = _mapper.Map<Floor>(dto);
+        await _floorrepository.AddAsync(entity);
+
+        var created = await _floorrepository.GetQueryable()
             .Include(f => f.Building)
             .FirstAsync(f => f.Id == entity.Id);
 
@@ -33,13 +41,16 @@ public class FloorService : IFloorService
 
     public async Task<ResponseFloorDto> UpdateAsync(Guid id, UpdateFloorDto dto)
     {
-        var entity = await _repository.GetByIdAsync(id)
+        var entity = await _floorrepository.GetByIdAsync(id)
             ?? throw new NotFoundException($"Floor with id {id} not found.");
 
-        _mapper.Map(dto, entity);
-        await _repository.UpdateAsync(entity);
+        var building = await _buildingRepository.GetByIdAsync(dto.BuildingId)
+            ?? throw new NotFoundException($"Building with id {dto.BuildingId} not found.");
 
-        var updated = await _repository.GetQueryable()
+        _mapper.Map(dto, entity);
+        await _floorrepository.UpdateAsync(entity);
+
+        var updated = await _floorrepository.GetQueryable()
             .Include(f => f.Building)
             .FirstAsync(f => f.Id == id);
 
@@ -48,12 +59,12 @@ public class FloorService : IFloorService
 
     public async Task DeleteAsync(Guid id)
     {
-        await _repository.DeleteAsync(id);
+        await _floorrepository.DeleteAsync(id);
     }
 
     public async Task<ResponseFloorDto> GetByIdAsync(Guid id)
     {
-        var entity = await _repository.GetQueryable()
+        var entity = await _floorrepository.GetQueryable()
             .Include(f => f.Building)
             .FirstOrDefaultAsync(f => f.Id == id)
             ?? throw new NotFoundException($"Floor with id {id} not found.");
@@ -63,7 +74,7 @@ public class FloorService : IFloorService
 
     public async Task<ICollection<ResponseFloorDto>> GetAllAsync()
     {
-        var entities = await _repository.GetQueryable()
+        var entities = await _floorrepository.GetQueryable()
             .Include(f => f.Building)
             .ToListAsync();
 

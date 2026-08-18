@@ -32,7 +32,16 @@ namespace MRBSystem.WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("user/{userId:guid}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetByUserId(Guid userId)
+        {
+            var result = await _reservationService.GetByUserIdAsync(userId);
+            return Ok(result);
+        }
+
         [HttpGet("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _reservationService.GetByIdAsync(id);

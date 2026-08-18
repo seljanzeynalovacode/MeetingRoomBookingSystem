@@ -11,16 +11,29 @@ namespace MRBSystem.Application.Services;
 public class RoomBlackoutService : IRoomBlackoutService
 {
     private readonly IGenericRepository<RoomBlackout> _repository;
+    private readonly IGenericRepository<Room> _roomRepository;
     private readonly IMapper _mapper;
 
-    public RoomBlackoutService(IGenericRepository<RoomBlackout> repository, IMapper mapper)
+    public RoomBlackoutService(
+        IGenericRepository<RoomBlackout> repository,
+        IGenericRepository<Room> roomRepository,
+        IMapper mapper)
     {
         _repository = repository;
+        _roomRepository = roomRepository;
         _mapper = mapper;
     }
 
     public async Task<ResponseRoomBlackoutDto> CreateAsync(CreateRoomBlackoutDto dto)
     {
+        if (dto.StartDate >= dto.EndDate)
+        {
+            throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
+
+        var room = await _roomRepository.GetByIdAsync(dto.RoomId)
+            ?? throw new NotFoundException($"Room with id {dto.RoomId} not found.");
+
         var entity = _mapper.Map<RoomBlackout>(dto);
         await _repository.AddAsync(entity);
 
@@ -33,6 +46,11 @@ public class RoomBlackoutService : IRoomBlackoutService
 
     public async Task<ResponseRoomBlackoutDto> UpdateAsync(Guid id, UpdateRoomBlackoutDto dto)
     {
+        if (dto.StartDate >= dto.EndDate)
+        {
+            throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
+
         var entity = await _repository.GetByIdAsync(id)
             ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
 

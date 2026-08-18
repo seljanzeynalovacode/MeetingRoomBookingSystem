@@ -180,6 +180,22 @@
   },
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/Auths/users/{userId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
     "Method": "GetUserRoles",
     "RelativePath": "api/Auths/users/{userId}/roles",
     "HttpMethod": "GET",
@@ -782,6 +798,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.ReservationsController",
+    "Method": "GetByUserId",
+    "RelativePath": "api/Reservations/user/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

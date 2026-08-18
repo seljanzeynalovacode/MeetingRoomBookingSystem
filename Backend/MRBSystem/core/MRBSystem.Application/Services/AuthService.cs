@@ -24,6 +24,10 @@ public class AuthService : IAuthService
     private readonly SignInManager<AppUser> _signInManager;
     private readonly RoleManager<AppRole> _roleManager;
     private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
+    private readonly IGenericRepository<Reservation> _reservationRepository;
+    private readonly IGenericRepository<Comment> _commentRepository;
+    private readonly IGenericRepository<Like> _likeRepository;
+    private readonly ICurrentUserService _currentUser;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthService> _logger;
@@ -34,6 +38,10 @@ public class AuthService : IAuthService
         SignInManager<AppUser> signInManager,
         RoleManager<AppRole> roleManager,
         IGenericRepository<RefreshToken> refreshTokenRepository,
+        IGenericRepository<Reservation> reservationRepository,
+        IGenericRepository<Comment> commentRepository,
+        IGenericRepository<Like> likeRepository,
+        ICurrentUserService currentUser,
         IConfiguration configuration,
         IMapper mapper,
         ILogger<AuthService> logger,
@@ -43,12 +51,15 @@ public class AuthService : IAuthService
         _signInManager = signInManager;
         _roleManager = roleManager;
         _refreshTokenRepository = refreshTokenRepository;
+        _reservationRepository = reservationRepository;
+        _commentRepository = commentRepository;
+        _likeRepository = likeRepository;
+        _currentUser = currentUser;
         _configuration = configuration;
         _mapper = mapper;
         _logger = logger;
         _emailService = emailService;
     }
-
     public async Task<UserResponseDto> RegisterAsync(RegisterDto dto)
     {
         if (dto.Password != dto.ConfirmPassword)
@@ -242,7 +253,55 @@ public class AuthService : IAuthService
         }
         _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
     }
+    public async Task DeleteUserAsync(Guid userId)
+    {
+        if (userId == _currentUser.UserId)
+        {
+            _logger.LogWarning("Admin {UserId} attempted to delete their own account.", userId);
+            throw new InvalidOperationException("Öz hesabınızı silə bilməzsiniz.");
+        }
 
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            _logger.LogWarning("Attempt to delete a non-existent user with ID: {UserId}", userId);
+            throw new NotFoundException($"User with id {userId} not found.");
+        }
+
+        var hasReservations = await _reservationRepository.GetQueryable()
+            .AnyAsync(r => r.ReservedByUserId == userId);
+        if (hasReservations)
+        {
+            throw new InvalidOperationException(
+                "Bu istifadəçinin mövcud rezervasiyaları var, silinə bilməz.");
+        }
+
+        var hasComments = await _commentRepository.GetQueryable()
+            .AnyAsync(c => c.UserId == userId);
+        if (hasComments)
+        {
+            throw new InvalidOperationException(
+                "Bu istifadəçinin mövcud şərhləri var, silinə bilməz.");
+        }
+
+        var hasLikes = await _likeRepository.GetQueryable()
+            .AnyAsync(l => l.UserId == userId);
+        if (hasLikes)
+        {
+            throw new InvalidOperationException(
+                "Bu istifadəçinin mövcud bəyənmələri var, silinə bilməz.");
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogError("Failed to delete user {UserId}. Errors: {Errors}", userId, errors);
+            throw new InvalidOperationException(errors);
+        }
+
+        _logger.LogInformation("User {UserId} deleted successfully.", userId);
+    }
     public async Task<ResponseAppRoleDto> CreateRoleAsync(CreateAppRoleDto dto)
     {
         if (await _roleManager.RoleExistsAsync(dto.Name))

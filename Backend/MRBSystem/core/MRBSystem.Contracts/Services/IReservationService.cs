@@ -10,4 +10,6 @@ public interface IReservationService
     Task<ResponseReservationDto> GetByIdAsync(Guid id);
     Task<ICollection<ResponseReservationDto>> GetAllAsync();
     Task<ICollection<ResponseReservationDto>> GetMyReservationsAsync();
+
+    Task<ICollection<ResponseReservationDto>> GetByUserIdAsync(Guid userId);
 }

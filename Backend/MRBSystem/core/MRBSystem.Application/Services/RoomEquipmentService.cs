@@ -11,15 +11,37 @@ namespace MRBSystem.Application.Services;
 public class RoomEquipmentService : IRoomEquipmentService
 {
     private readonly IGenericRepository<RoomEquipment> _repository;
+    private readonly IGenericRepository<Room> _roomRepository;
+    private readonly IGenericRepository<Equipment> _equipmentRepository;
     private readonly IMapper _mapper;
 
-    public RoomEquipmentService(IGenericRepository<RoomEquipment> repository, IMapper mapper)
+    public RoomEquipmentService(
+        IGenericRepository<RoomEquipment> repository,
+        IGenericRepository<Room> roomRepository,
+        IGenericRepository<Equipment> equipmentRepository,
+        IMapper mapper)
     {
         _repository = repository;
+        _roomRepository = roomRepository;
+        _equipmentRepository = equipmentRepository;
         _mapper = mapper;
     }
+
     public async Task<ResponseRoomEquipmentDto> CreateAsync(CreateRoomEquipmentDto dto)
     {
+        var room = await _roomRepository.GetByIdAsync(dto.RoomId)
+            ?? throw new NotFoundException($"Room with id {dto.RoomId} not found.");
+
+       var equipment =  await _equipmentRepository.GetByIdAsync(dto.EquipmentId)
+            ?? throw new NotFoundException($"Equipment with id {dto.EquipmentId} not found.");
+
+        var alreadyExists = await _repository.GetQueryable()
+            .AnyAsync(re => re.RoomId == dto.RoomId && re.EquipmentId == dto.EquipmentId);
+        if (alreadyExists)
+        {
+            throw new InvalidOperationException("This equipment is already assigned to the room.");
+        }
+
         var entity = _mapper.Map<RoomEquipment>(dto);
         await _repository.AddAsync(entity);
 
@@ -29,6 +51,7 @@ public class RoomEquipmentService : IRoomEquipmentService
 
         return _mapper.Map<ResponseRoomEquipmentDto>(created);
     }
+
     public async Task<ResponseRoomEquipmentDto> UpdateAsync(Guid id, UpdateRoomEquipmentDto dto)
     {
         var entity = await _repository.GetByIdAsync(id)

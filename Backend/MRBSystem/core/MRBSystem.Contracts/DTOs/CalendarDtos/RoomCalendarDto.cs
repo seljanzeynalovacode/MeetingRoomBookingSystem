@@ -7,4 +7,6 @@ public record RoomCalendarDto
     public DateTime Date { get; set; }
     public ICollection<CalendarReservationDto> Reservations { get; set; }
         = new List<CalendarReservationDto>();
+    public ICollection<CalendarBlackoutDto> Blackouts { get; set; }
+        = new List<CalendarBlackoutDto>();
 }

@@ -5,7 +5,7 @@ using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
 
-namespace MRBSystem.Infrasturucture.Services;
+namespace MRBSystem.Application.Services;
 
 public class BuildingService : IBuildingService
 {

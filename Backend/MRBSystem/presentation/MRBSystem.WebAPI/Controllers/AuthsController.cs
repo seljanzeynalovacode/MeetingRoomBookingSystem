@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.DTOs.AuthDtos;
 using MRBSystem.Contracts.Services;
@@ -27,6 +28,7 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpPost("admin/login")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> AdminLogin([FromBody] LoginDto dto)
         {
             var result = await _authService.AdminLoginAsync(dto);
@@ -34,6 +36,7 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpPost("admin/login-2fa")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> VerifyAdmin2FA([FromBody] Verify2FADto dto)
         {
             var result = await _authService.VerifyAdmin2FAAsync(dto);
@@ -41,6 +44,7 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpPost("user/login")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> UserLogin([FromBody] LoginDto dto)
         {
             var result = await _authService.UserLoginAsync(dto);
@@ -106,7 +110,7 @@ namespace MRBSystem.WebAPI.Controllers
 
         // user rol elaqesi
         [HttpGet("users/{userId:guid}/roles")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserRoles(Guid userId)
         {
             var result = await _authService.GetUserRolesAsync(userId);
@@ -134,6 +138,13 @@ namespace MRBSystem.WebAPI.Controllers
         public async Task<IActionResult> RemoveRole(Guid userId, string roleName)
         {
             await _authService.RemoveRoleFromUserAsync(userId, roleName);
+            return NoContent();
+        }
+        [HttpDelete("users/{userId:guid}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(Guid userId)
+        {
+            await _authService.DeleteUserAsync(userId);
             return NoContent();
         }
     }
