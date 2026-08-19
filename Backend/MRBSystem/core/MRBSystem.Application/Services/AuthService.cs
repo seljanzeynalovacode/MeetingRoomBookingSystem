@@ -11,6 +11,7 @@ using MRBSystem.Contracts.DTOs.AuthDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -32,6 +33,7 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly ILogger<AuthService> _logger;
     private readonly IEmailService _emailService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public AuthService(
         UserManager<AppUser> userManager,
@@ -45,7 +47,8 @@ public class AuthService : IAuthService
         IConfiguration configuration,
         IMapper mapper,
         ILogger<AuthService> logger,
-        IEmailService emailService)
+        IEmailService emailService,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -59,6 +62,7 @@ public class AuthService : IAuthService
         _mapper = mapper;
         _logger = logger;
         _emailService = emailService;
+        _unitOfWork = unitOfWork;
     }
     public async Task<UserResponseDto> RegisterAsync(RegisterDto dto)
     {
@@ -84,25 +88,31 @@ public class AuthService : IAuthService
             CreatedAt = DateTime.UtcNow
         };
 
-        var result = await _userManager.CreateAsync(user, dto.Password);
-        if (!result.Succeeded)
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            _logger.LogError("User creation failed for email: {Email}. Errors: {Errors}", dto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
-            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
-        }
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("User creation failed for email: {Email}. Errors: {Errors}", dto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
+                throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
 
-        const string defaultRole = "User";
-        if (!await _roleManager.RoleExistsAsync(defaultRole))
-        {
-            await _roleManager.CreateAsync(new AppRole { Name = defaultRole });
-        }
+            const string defaultRole = "User";
+            if (!await _roleManager.RoleExistsAsync(defaultRole))
+            {
+                await _roleManager.CreateAsync(new AppRole { Name = defaultRole });
+            }
 
-        await _userManager.AddToRoleAsync(user, defaultRole);
+            await _userManager.AddToRoleAsync(user, defaultRole);
+            return true;
+        }, IsolationLevel.ReadCommitted);
+
         _logger.LogInformation("User registered successfully with email: {Email}", dto.Email);
 
         var response = _mapper.Map<UserResponseDto>(user);
         response.Roles = (await _userManager.GetRolesAsync(user)).ToList();
         return response;
+    
     }
 
     public async Task<LoginResponseDto> AdminLoginAsync(LoginDto dto)

@@ -5,6 +5,7 @@ using MRBSystem.Contracts.DTOs.CommentDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
+using System.Data;
 
 namespace MRBSystem.Application.Services;
 
@@ -14,17 +15,20 @@ public class CommentService : ICommentService
     private readonly IGenericRepository<Like> _likeRepository;
     private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CommentService(
         IGenericRepository<Comment> repository,
         IGenericRepository<Like> likeRepository,
         ICurrentUserService currentUser,
-        IMapper mapper)
+        IMapper mapper,
+        IUnitOfWork unitOfWork)
     {
         _repository = repository;
         _likeRepository = likeRepository;
         _currentUser = currentUser;
         _mapper = mapper;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ResponseCommentDto> CreateAsync(CreateCommentDto dto)
@@ -80,7 +84,11 @@ public class CommentService : ICommentService
             throw new UnauthorizedAccessException("You can only delete your own comments.");
         }
 
-        await DeleteWithRepliesAsync(id);
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            await DeleteWithRepliesAsync(id);
+            return true;
+        }, IsolationLevel.ReadCommitted);
     }
 
     public async Task<DetailedCommentDto> GetByIdAsync(Guid id)

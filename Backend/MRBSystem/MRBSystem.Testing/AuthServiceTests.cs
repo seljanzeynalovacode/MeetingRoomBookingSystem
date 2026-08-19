@@ -50,18 +50,19 @@ public class AuthServiceTests : IDisposable
         // SignInManager ve RoleManager DeleteUserAsync-de istifade olunmur,
         // Castle Proxy-nin bunlari mock etmesi kovrek oldugu ucun birbasa null! otururuk
         _authService = new AuthService(
-            _userManagerMock.Object,
-            null!,
-            null!,
-            new GenericRepository<RefreshToken>(_context),
-            new GenericRepository<Reservation>(_context),
-            new GenericRepository<Comment>(_context),
-            new GenericRepository<Like>(_context),
-            currentUser.Object,
-            configuration.Object,
-            mapperConfig.CreateMapper(),
-            NullLogger<AuthService>.Instance,
-            emailService.Object);
+           _userManagerMock.Object,
+           null!,
+           null!,
+           new GenericRepository<RefreshToken>(_context),
+           new GenericRepository<Reservation>(_context),
+           new GenericRepository<Comment>(_context),
+           new GenericRepository<Like>(_context),
+           currentUser.Object,
+           configuration.Object,
+           mapperConfig.CreateMapper(),
+           NullLogger<AuthService>.Instance,
+           emailService.Object,
+           new UnitOfWork(_context));
     }
 
     [Fact]

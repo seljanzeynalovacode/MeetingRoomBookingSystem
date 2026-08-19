@@ -51,7 +51,8 @@ public class CommentServiceTests : IDisposable
             new GenericRepository<Comment>(_context),
             new GenericRepository<Like>(_context),
             currentUser.Object,
-            mapperConfig.CreateMapper());
+            mapperConfig.CreateMapper(),
+            new UnitOfWork(_context));
     }
 
     [Fact]

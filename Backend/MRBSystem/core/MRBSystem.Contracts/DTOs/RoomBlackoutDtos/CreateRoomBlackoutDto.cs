@@ -1,9 +1,23 @@
-﻿namespace MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record CreateRoomBlackoutDto
+namespace MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
+
+public record CreateRoomBlackoutDto : IValidatableObject
 {
     public Guid RoomId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+
+    [Required, StringLength(500, MinimumLength = 3)]
     public string Reason { get; set; } = null!;
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (StartDate >= EndDate)
+        {
+            yield return new ValidationResult(
+                "StartDate EndDate-dən əvvəl olmalıdır.",
+                new[] { nameof(StartDate), nameof(EndDate) });
+        }
+    }
 }
