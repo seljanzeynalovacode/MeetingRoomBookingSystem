@@ -154,6 +154,7 @@ public class ParticipantServiceTests : IDisposable
         };
         _context.Participants.Add(participant);
         await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
         return participant;
     }
 

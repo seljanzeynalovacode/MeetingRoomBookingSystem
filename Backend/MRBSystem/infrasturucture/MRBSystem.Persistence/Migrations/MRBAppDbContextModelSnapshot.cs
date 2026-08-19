@@ -677,7 +677,7 @@ namespace MRBSystem.Persistence.Migrations
                     b.HasOne("MRBSystem.Domain.Entities.Building", "Building")
                         .WithMany()
                         .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Building");
@@ -773,7 +773,7 @@ namespace MRBSystem.Persistence.Migrations
                     b.HasOne("MRBSystem.Domain.Entities.Floor", "Floor")
                         .WithMany()
                         .HasForeignKey("FloorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Floor");

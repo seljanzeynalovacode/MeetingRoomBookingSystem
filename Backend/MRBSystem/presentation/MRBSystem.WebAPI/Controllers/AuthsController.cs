@@ -12,13 +12,13 @@ namespace MRBSystem.WebAPI.Controllers
     public class AuthsController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
 
-        public AuthsController(IAuthService authService)
+        public AuthsController(IAuthService authService, IRoleService roleService)
         {
             _authService = authService;
+            _roleService = roleService;
         }
-
-     
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -40,7 +40,7 @@ namespace MRBSystem.WebAPI.Controllers
         public async Task<IActionResult> VerifyAdmin2FA([FromBody] Verify2FADto dto)
         {
             var result = await _authService.VerifyAdmin2FAAsync(dto);
-            return Ok(result); // Bu artıq TokenResponseDto (Access & Refresh token) qaytaracaq
+            return Ok(result);
         }
 
         [HttpPost("user/login")]
@@ -57,6 +57,21 @@ namespace MRBSystem.WebAPI.Controllers
             var result = await _authService.RefreshTokenAsync(dto.RefreshToken);
             return Ok(result);
         }
+        [HttpPost("confirm-email")]
+        [EnableRateLimiting("LoginPolicy")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto dto)
+        {
+            await _authService.ConfirmEmailAsync(dto);
+            return NoContent();
+        }
+
+        [HttpPost("resend-confirmation-email")]
+        [EnableRateLimiting("LoginPolicy")]
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailDto dto)
+        {
+            await _authService.ResendConfirmationEmailAsync(dto);
+            return Ok(new { message = "Əgər bu email mövcuddursa və təsdiqlənməyibsə, yeni kod göndərildi." });
+        }
 
         [HttpPost("logout")]
         [Authorize]
@@ -66,13 +81,27 @@ namespace MRBSystem.WebAPI.Controllers
             await _authService.LogoutAsync(userId);
             return NoContent();
         }
+        [HttpPost("forgot-password")]
+        [EnableRateLimiting("LoginPolicy")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            await _authService.ForgotPasswordAsync(dto);
+            return Ok(new { message = "Əgər bu email mövcuddursa, şifrə bərpa kodu göndərildi." });
+        }
 
+        [HttpPost("reset-password")]
+        [EnableRateLimiting("LoginPolicy")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            await _authService.ResetPasswordAsync(dto);
+            return NoContent();
+        }
 
         [HttpGet("roles")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllRoles()
         {
-            var result = await _authService.GetAllRolesAsync();
+            var result = await _roleService.GetAllRolesAsync();
             return Ok(result);
         }
 
@@ -80,7 +109,7 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetRoleById(Guid id)
         {
-            var result = await _authService.GetRoleByIdAsync(id);
+            var result = await _roleService.GetRoleByIdAsync(id);
             return Ok(result);
         }
 
@@ -88,7 +117,7 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRole([FromBody] CreateAppRoleDto dto)
         {
-            var result = await _authService.CreateRoleAsync(dto);
+            var result = await _roleService.CreateRoleAsync(dto);
             return CreatedAtAction(nameof(GetRoleById), new { id = result.Id }, result);
         }
 
@@ -96,7 +125,7 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRole(Guid id, [FromBody] UpdateAppRoleDto dto)
         {
-            var result = await _authService.UpdateRoleAsync(id, dto);
+            var result = await _roleService.UpdateRoleAsync(id, dto);
             return Ok(result);
         }
 
@@ -104,16 +133,15 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(Guid id)
         {
-            await _authService.DeleteRoleAsync(id);
+            await _roleService.DeleteRoleAsync(id);
             return NoContent();
         }
 
-        // user rol elaqesi
         [HttpGet("users/{userId:guid}/roles")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserRoles(Guid userId)
         {
-            var result = await _authService.GetUserRolesAsync(userId);
+            var result = await _roleService.GetUserRolesAsync(userId);
             return Ok(result);
         }
 
@@ -121,7 +149,7 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsersWithRoles()
         {
-            var result = await _authService.GetAllUsersWithRolesAsync();
+            var result = await _roleService.GetAllUsersWithRolesAsync();
             return Ok(result);
         }
 
@@ -129,7 +157,7 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignRole(Guid userId, string roleName)
         {
-            await _authService.AssignRoleToUserAsync(userId, roleName);
+            await _roleService.AssignRoleToUserAsync(userId, roleName);
             return NoContent();
         }
 
@@ -137,9 +165,10 @@ namespace MRBSystem.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveRole(Guid userId, string roleName)
         {
-            await _authService.RemoveRoleFromUserAsync(userId, roleName);
+            await _roleService.RemoveRoleFromUserAsync(userId, roleName);
             return NoContent();
         }
+
         [HttpDelete("users/{userId:guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid userId)

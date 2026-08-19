@@ -13,19 +13,10 @@ public interface IAuthService
     Task<UserResponseDto> RegisterAsync(RegisterDto dto);
     Task<TokenResponseDto> RefreshTokenAsync(string refreshToken);
     Task LogoutAsync(Guid userId);
+    Task ForgotPasswordAsync(ForgotPasswordDto dto);
+    Task ResetPasswordAsync(ResetPasswordDto dto);
+    Task ConfirmEmailAsync(ConfirmEmailDto dto);
+    Task ResendConfirmationEmailAsync(ResendConfirmationEmailDto dto);
 
-    // Rol
-    Task<ResponseAppRoleDto> CreateRoleAsync(CreateAppRoleDto dto);
-    Task<ResponseAppRoleDto> UpdateRoleAsync(Guid id, UpdateAppRoleDto dto);
-    Task DeleteRoleAsync(Guid id);
-    Task<ResponseAppRoleDto> GetRoleByIdAsync(Guid id);
-    Task<ICollection<ResponseAppRoleDto>> GetAllRolesAsync();
-
-    // Usere rol elaqesi
-    Task AssignRoleToUserAsync(Guid userId, string roleName);
-    Task RemoveRoleFromUserAsync(Guid userId, string roleName);
-
-    Task<List<string>> GetUserRolesAsync(Guid userId);
-    Task<object> GetAllUsersWithRolesAsync();
     Task DeleteUserAsync(Guid userId);
 }

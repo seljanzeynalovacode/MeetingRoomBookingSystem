@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
@@ -35,6 +36,10 @@ public class ExceptionMiddleware
             UnauthorizedAccessException => (HttpStatusCode.Unauthorized, exception.Message),
             ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
             InvalidOperationException => (HttpStatusCode.Conflict, exception.Message),
+            DbUpdateConcurrencyException => (HttpStatusCode.Conflict,
+                "Bu qeyd siz oxuduqdan sonra başqası tərəfindən dəyişdirilib və ya silinib. Zəhmət olmasa səhifəni yeniləyib yenidən cəhd edin."),
+            DbUpdateException => (HttpStatusCode.Conflict,
+                "Bu qeydin əlaqəli məlumatları mövcuddur, əməliyyat yerinə yetirilə bilmədi."),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };
 

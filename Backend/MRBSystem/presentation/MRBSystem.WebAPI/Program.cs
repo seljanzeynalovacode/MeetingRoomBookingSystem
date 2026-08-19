@@ -117,13 +117,17 @@ namespace MRBSystem.WebAPI
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+
+                // Token provider təyin edilir
+                options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
 
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
                 options.Lockout.AllowedForNewUsers = true;
             })
-.AddEntityFrameworkStores<MRBAppDbContext>()
-.AddDefaultTokenProviders();
+ .AddEntityFrameworkStores<MRBAppDbContext>() 
+ .AddDefaultTokenProviders(); // DİQQƏT: Email Token provider-in işləməsi üçün bu şərtdir!
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -138,6 +142,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IRoomEquipmentService, RoomEquipmentService>();
             builder.Services.AddScoped<IRoomBlackoutService, RoomBlackoutService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ICommentService, CommentService>();

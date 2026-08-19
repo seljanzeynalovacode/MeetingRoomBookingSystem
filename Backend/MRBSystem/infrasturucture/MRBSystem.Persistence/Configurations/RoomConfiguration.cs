@@ -17,7 +17,7 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
         builder.HasOne(r => r.Floor)
             .WithMany()
             .HasForeignKey(r => r.FloorId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(r => r.FloorId);
     }

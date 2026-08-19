@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MRBSystem.Application.Exceptions;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
 using MRBSystem.Persistence.Data;
@@ -25,9 +26,10 @@ public class GenericRepository<T> : IGenericRepository<T>where T : BaseEntity, n
     public async Task DeleteAsync(Guid id)
     {
         var entity = await _dbSet.FindAsync(id);
-
         if (entity is null)
-            return;
+        {
+            throw new NotFoundException($"{typeof(T).Name} with id {id} not found.");
+        }
 
         _dbSet.Remove(entity);
 
@@ -36,12 +38,12 @@ public class GenericRepository<T> : IGenericRepository<T>where T : BaseEntity, n
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        return await _dbSet.AsNoTracking().ToListAsync();
     }
 
     public async Task<T?> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public async Task UpdateAsync(T entity)
@@ -54,6 +56,6 @@ public class GenericRepository<T> : IGenericRepository<T>where T : BaseEntity, n
     }
     public IQueryable<T> GetQueryable()
     {
-        return _dbSet.AsQueryable();
+        return _dbSet.AsNoTracking();
     }
 }

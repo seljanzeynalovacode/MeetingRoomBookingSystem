@@ -33,6 +33,38 @@
   },
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "ConfirmEmail",
+    "RelativePath": "api/Auths/confirm-email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.ConfirmEmailDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/Auths/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.ForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
     "Method": "Logout",
     "RelativePath": "api/Auths/logout",
     "HttpMethod": "POST",
@@ -68,6 +100,38 @@
       {
         "Name": "dto",
         "Type": "MRBSystem.Contracts.DTOs.AuthDtos.RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "ResendConfirmationEmail",
+    "RelativePath": "api/Auths/resend-confirmation-email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.ResendConfirmationEmailDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/Auths/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.ResetPasswordDto",
         "IsRequired": true
       }
     ],

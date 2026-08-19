@@ -160,11 +160,135 @@
         }
       }
     },
+    "/api/Auths/confirm-email": {
+      "post": {
+        "tags": [
+          "Auths"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmEmailDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmEmailDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auths/resend-confirmation-email": {
+      "post": {
+        "tags": [
+          "Auths"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendConfirmationEmailDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendConfirmationEmailDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendConfirmationEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auths/logout": {
       "post": {
         "tags": [
           "Auths"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auths/forgot-password": {
+      "post": {
+        "tags": [
+          "Auths"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auths/reset-password": {
+      "post": {
+        "tags": [
+          "Auths"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1742,36 +1866,70 @@
   },
   "components": {
     "schemas": {
+      "ConfirmEmailDto": {
+        "required": [
+          "email",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "format": "email"
+          },
+          "token": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateAppRoleDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 256,
+            "minLength": 2,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "CreateBuildingDto": {
+        "required": [
+          "address",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
           },
           "address": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 300,
+            "minLength": 3,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "CreateCommentDto": {
+        "required": [
+          "content"
+        ],
         "type": "object",
         "properties": {
           "content": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
           },
           "parentCommentId": {
             "type": "string",
@@ -1782,23 +1940,33 @@
         "additionalProperties": false
       },
       "CreateEquipmentDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 2,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "CreateFloorDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string"
           },
           "levelNumber": {
+            "maximum": 500,
+            "minimum": -5,
             "type": "integer",
             "format": "int32"
           },
@@ -1822,10 +1990,15 @@
             "nullable": true
           },
           "guestEmail": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
+            "format": "email",
             "nullable": true
           },
           "guestName": {
+            "maxLength": 200,
+            "minLength": 2,
             "type": "string",
             "nullable": true
           }
@@ -1833,11 +2006,15 @@
         "additionalProperties": false
       },
       "CreateReservationDto": {
+        "required": [
+          "title"
+        ],
         "type": "object",
         "properties": {
           "title": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
           },
           "startDate": {
             "type": "string",
@@ -1855,6 +2032,9 @@
         "additionalProperties": false
       },
       "CreateRoomBlackoutDto": {
+        "required": [
+          "reason"
+        ],
         "type": "object",
         "properties": {
           "roomId": {
@@ -1870,20 +2050,27 @@
             "format": "date-time"
           },
           "reason": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 500,
+            "minLength": 3,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "CreateRoomDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string"
           },
           "capacity": {
+            "maximum": 1000,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
@@ -1909,22 +2096,45 @@
             "format": "uuid"
           },
           "quantity": {
+            "maximum": 1000,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           }
         },
         "additionalProperties": false
       },
-      "LoginDto": {
+      "ForgotPasswordDto": {
+        "required": [
+          "email"
+        ],
         "type": "object",
         "properties": {
           "email": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
-            "nullable": true
+            "format": "email"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginDto": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "format": "email"
           },
           "password": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "rememberMe": {
             "type": "boolean"
@@ -1933,41 +2143,105 @@
         "additionalProperties": false
       },
       "RefreshTokenRequestDto": {
+        "required": [
+          "refreshToken"
+        ],
         "type": "object",
         "properties": {
           "refreshToken": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "RegisterDto": {
+        "required": [
+          "confirmPassword",
+          "email",
+          "firstName",
+          "lastName",
+          "password",
+          "username"
+        ],
         "type": "object",
         "properties": {
           "firstName": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string"
           },
           "lastName": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string"
           },
           "username": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 256,
+            "minLength": 3,
+            "type": "string"
           },
           "email": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
           "password": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 100,
+            "minLength": 6,
+            "type": "string"
           },
           "confirmPassword": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResendConfirmationEmailDto": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
-            "nullable": true
+            "format": "email"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResetPasswordDto": {
+        "required": [
+          "confirmNewPassword",
+          "email",
+          "newPassword",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "format": "email"
+          },
+          "token": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newPassword": {
+            "maxLength": 100,
+            "minLength": 6,
+            "type": "string"
+          },
+          "confirmNewPassword": {
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -2001,6 +2275,8 @@
             "nullable": true
           },
           "capacity": {
+            "maximum": 1000,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           }
@@ -2008,57 +2284,81 @@
         "additionalProperties": false
       },
       "UpdateAppRoleDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 256,
+            "minLength": 2,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "UpdateBuildingDto": {
+        "required": [
+          "address",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
           },
           "address": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 300,
+            "minLength": 3,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "UpdateCommentDto": {
+        "required": [
+          "content"
+        ],
         "type": "object",
         "properties": {
           "content": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "UpdateEquipmentDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 2,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "UpdateFloorDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string"
           },
           "levelNumber": {
+            "maximum": 500,
+            "minimum": -5,
             "type": "integer",
             "format": "int32"
           },
@@ -2070,17 +2370,25 @@
         "additionalProperties": false
       },
       "UpdateParticipantDto": {
+        "required": [
+          "responseStatus"
+        ],
         "type": "object",
         "properties": {
           "responseStatus": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "guestEmail": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
+            "format": "email",
             "nullable": true
           },
           "guestName": {
+            "maxLength": 200,
+            "minLength": 2,
             "type": "string",
             "nullable": true
           }
@@ -2088,11 +2396,15 @@
         "additionalProperties": false
       },
       "UpdateReservationDto": {
+        "required": [
+          "title"
+        ],
         "type": "object",
         "properties": {
           "title": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
           },
           "startDate": {
             "type": "string",
@@ -2110,6 +2422,9 @@
         "additionalProperties": false
       },
       "UpdateRoomBlackoutDto": {
+        "required": [
+          "reason"
+        ],
         "type": "object",
         "properties": {
           "startDate": {
@@ -2121,20 +2436,27 @@
             "format": "date-time"
           },
           "reason": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 500,
+            "minLength": 3,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "UpdateRoomDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 150,
+            "minLength": 1,
+            "type": "string"
           },
           "capacity": {
+            "maximum": 1000,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
@@ -2152,6 +2474,8 @@
         "type": "object",
         "properties": {
           "quantity": {
+            "maximum": 1000,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           }
@@ -2159,15 +2483,23 @@
         "additionalProperties": false
       },
       "Verify2FADto": {
+        "required": [
+          "code",
+          "email"
+        ],
         "type": "object",
         "properties": {
           "email": {
+            "maxLength": 256,
+            "minLength": 0,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
           "code": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 6,
+            "minLength": 6,
+            "pattern": "^\\d{6}$",
+            "type": "string"
           },
           "rememberMe": {
             "type": "boolean"

@@ -109,10 +109,23 @@ public class AuthService : IAuthService
 
         _logger.LogInformation("User registered successfully with email: {Email}", dto.Email);
 
+        try
+        {
+            var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var subject = "Email Ünvanının Təsdiqlənməsi";
+            var body = $"Salam {user.FirstName},\n\nQeydiyyatınızı tamamlamaq üçün aşağıdakı kodu istifadə edin:\n\n{confirmationToken}\n\nBu tələbi siz etməmisinizsə, bu mesajı nəzərə almayın.";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email confirmation to {Email} after successful registration.", dto.Email);
+        }
+
         var response = _mapper.Map<UserResponseDto>(user);
         response.Roles = (await _userManager.GetRolesAsync(user)).ToList();
         return response;
-    
     }
 
     public async Task<LoginResponseDto> AdminLoginAsync(LoginDto dto)
@@ -137,6 +150,12 @@ public class AuthService : IAuthService
 
         if (!passwordCheck.Succeeded)
         {
+            if (passwordCheck.IsNotAllowed)
+            {
+                _logger.LogWarning("Admin login blocked - email not confirmed: {Email}", dto.Email);
+                throw new UnauthorizedAccessException("Email ünvanınız təsdiqlənməyib. Zəhmət olmasa email-inizi yoxlayın.");
+            }
+
             if (passwordCheck.IsLockedOut)
             {
                 _logger.LogWarning("Admin account locked out after too many failed attempts: {Email}", dto.Email);
@@ -148,6 +167,8 @@ public class AuthService : IAuthService
         }
 
         if (!await _userManager.IsInRoleAsync(user, "Admin"))
+
+            if (!await _userManager.IsInRoleAsync(user, "Admin"))
         {
             _logger.LogWarning("User {Email} attempted to access Admin login without Admin role.", dto.Email);
             throw new UnauthorizedAccessException(genericError);
@@ -158,7 +179,15 @@ public class AuthService : IAuthService
         var subject = "Admin Panel - İki Mərhələli Təsdiq Kodu";
         var body = $"Salam {user.FirstName},\n\nSizin Admin panelə giriş üçün təsdiq kodunuz: {code}\n\nBu kodun etibarlılıq müddəti qısadır.";
 
-        await _emailService.SendEmailAsync(user.Email, subject, body);
+        try
+        {
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send 2FA code email to {Email}", user.Email);
+            throw new InvalidOperationException("Təsdiq kodu göndərilə bilmədi. Zəhmət olmasa bir az sonra yenidən cəhd edin.");
+        }
 
         _logger.LogInformation("2FA Code generated and sent to email: {Email}", user.Email);
 
@@ -230,6 +259,12 @@ public class AuthService : IAuthService
 
         if (!passwordCheck.Succeeded)
         {
+            if (passwordCheck.IsNotAllowed)
+            {
+                _logger.LogWarning("User login blocked - email not confirmed: {Email}", dto.Email);
+                throw new UnauthorizedAccessException("Email ünvanınız təsdiqlənməyib. Zəhmət olmasa email-inizi yoxlayın.");
+            }
+
             if (passwordCheck.IsLockedOut)
             {
                 _logger.LogWarning("User account locked out after too many failed attempts: {Email}", dto.Email);
@@ -241,6 +276,8 @@ public class AuthService : IAuthService
         }
 
         if (!await _userManager.IsInRoleAsync(user, "User"))
+
+            if (!await _userManager.IsInRoleAsync(user, "User"))
         {
             _logger.LogWarning("User {Email} attempted to access User login without User role.", dto.Email);
             throw new UnauthorizedAccessException(genericError);
@@ -312,163 +349,100 @@ public class AuthService : IAuthService
 
         _logger.LogInformation("User {UserId} deleted successfully.", userId);
     }
-    public async Task<ResponseAppRoleDto> CreateRoleAsync(CreateAppRoleDto dto)
+    public async Task ForgotPasswordAsync(ForgotPasswordDto dto)
     {
-        if (await _roleManager.RoleExistsAsync(dto.Name))
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user is not null)
         {
-            _logger.LogWarning("Attempt to create an existing role: {RoleName}", dto.Name);
-            throw new InvalidOperationException($"Role '{dto.Name}' already exists.");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var subject = "Şifrənin Bərpası";
+            var body = $"Salam {user.FirstName},\n\nŞifrənizi bərpa etmək üçün aşağıdakı kodu istifadə edin:\n\n{token}\n\nBu tələbi siz etməmisinizsə, bu mesajı nəzərə almayın.";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body);
+
+            _logger.LogInformation("Password reset token generated and sent to email: {Email}", dto.Email);
+        }
+        else
+        {
+            _logger.LogWarning("Password reset requested for non-existent email: {Email}", dto.Email);
+        }
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordDto dto)
+    {
+        const string genericError = "Şifrə bərpası uğursuz oldu. Kod yanlış, vaxtı bitib və ya email yanlışdır.";
+
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
+        {
+            _logger.LogWarning("Password reset attempted for non-existent email: {Email}", dto.Email);
+            throw new InvalidOperationException(genericError);
         }
 
-        var role = _mapper.Map<AppRole>(dto);
-        var result = await _roleManager.CreateAsync(role);
+        var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
 
         if (!result.Succeeded)
         {
-            _logger.LogError("Role creation failed for role: {RoleName}. Errors: {Errors}", dto.Name, string.Join(", ", result.Errors.Select(e => e.Description)));
-            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            _logger.LogWarning("Password reset failed for email: {Email}. Errors: {Errors}",
+                dto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
+            throw new InvalidOperationException(genericError);
         }
-        _logger.LogInformation("Role created successfully: {RoleName}", dto.Name);
 
-        return _mapper.Map<ResponseAppRoleDto>(role);
+        _logger.LogInformation("Password successfully reset for email: {Email}", dto.Email);
     }
-
-    public async Task<ResponseAppRoleDto> UpdateRoleAsync(Guid id, UpdateAppRoleDto dto)
+    public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
     {
-        var role = await _roleManager.FindByIdAsync(id.ToString());
-        if (role == null)
+        const string genericError = "Email təsdiqlənmə kodu yanlışdır, vaxtı bitib və ya email yanlışdır.";
+
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
         {
-            _logger.LogWarning("Attempt to update a non-existent role with ID: {RoleId}", id);
-            throw new NotFoundException($"Role with id {id} not found.");
+            _logger.LogWarning("Email confirmation attempted for non-existent email: {Email}", dto.Email);
+            throw new InvalidOperationException(genericError);
         }
 
-        role.Name = dto.Name;
-        var result = await _roleManager.UpdateAsync(role);
-
-        if (!result.Succeeded)
+        if (user.EmailConfirmed)
         {
-            _logger.LogError("Role update failed for role ID: {RoleId}. Errors: {Errors}", id, string.Join(", ", result.Errors.Select(e => e.Description)));
-            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
-        }
-        _logger.LogInformation("Role updated successfully: {RoleName} (ID: {RoleId})", dto.Name, id);
-        return _mapper.Map<ResponseAppRoleDto>(role);
-    }
-
-    public async Task DeleteRoleAsync(Guid id)
-    {
-        var role = await _roleManager.FindByIdAsync(id.ToString());
-        if (role == null)
-        {
-            _logger.LogWarning("Attempt to delete a non-existent role with ID: {RoleId}", id);
-            throw new NotFoundException($"Role with id {id} not found.");
-        }
-        _logger.LogInformation("Role deleted successfully: {RoleName} (ID: {RoleId})", role.Name, id);
-
-        await _roleManager.DeleteAsync(role);
-    }
-
-    public async Task<ResponseAppRoleDto> GetRoleByIdAsync(Guid id)
-    {
-        var role = await _roleManager.FindByIdAsync(id.ToString());
-        if (role == null)
-        {
-            _logger.LogWarning("Attempt to retrieve a non-existent role with ID: {RoleId}", id);
-            throw new NotFoundException($"Role with id {id} not found.");
-        }
-        _logger.LogInformation("Role retrieved successfully: {RoleName} (ID: {RoleId})", role.Name, id);
-        return _mapper.Map<ResponseAppRoleDto>(role);
-    }
-
-    public async Task<ICollection<ResponseAppRoleDto>> GetAllRolesAsync()
-    {
-        var roles = await _roleManager.Roles.ToListAsync();
-        _logger.LogInformation("Retrieved all roles. Total count: {Count}", roles.Count);
-        return _mapper.Map<ICollection<ResponseAppRoleDto>>(roles);
-    }
-
-    public async Task AssignRoleToUserAsync(Guid userId, string roleName)
-    {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null)
-        {
-            _logger.LogWarning("Attempt to assign role '{RoleName}' to a non-existent user with ID: {UserId}", roleName, userId);
-            throw new NotFoundException($"User with id {userId} not found.");
-        }
-
-        if (!await _roleManager.RoleExistsAsync(roleName))
-        {
-            _logger.LogWarning("Attempt to assign a non-existent role '{RoleName}' to user with ID: {UserId}", roleName, userId);
-            throw new NotFoundException($"Role '{roleName}' not found.");
-        }
-
-        if (await _userManager.IsInRoleAsync(user, roleName))
-        {
-            _logger.LogInformation("User with ID: {UserId} is already assigned to role '{RoleName}'. No action taken.", userId, roleName);
+            _logger.LogInformation("Email confirmation attempted for already-confirmed email: {Email}", dto.Email);
             return;
         }
 
-        var result = await _userManager.AddToRoleAsync(user, roleName);
+        var result = await _userManager.ConfirmEmailAsync(user, dto.Token);
+
         if (!result.Succeeded)
         {
-            _logger.LogError("Failed to assign role '{RoleName}' to user with ID: {UserId}. Errors: {Errors}", roleName, userId, string.Join(", ", result.Errors.Select(e => e.Description)));
-            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            _logger.LogWarning("Email confirmation failed for email: {Email}. Errors: {Errors}",
+                dto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
+            throw new InvalidOperationException(genericError);
         }
-        _logger.LogInformation("Role '{RoleName}' successfully assigned to user with ID: {UserId}", roleName, userId);
+
+        _logger.LogInformation("Email successfully confirmed for: {Email}", dto.Email);
     }
-    public async Task<List<string>> GetUserRolesAsync(Guid userId)
+
+    public async Task ResendConfirmationEmailAsync(ResendConfirmationEmailDto dto)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null)
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user is not null && !user.EmailConfirmed)
         {
-            _logger.LogWarning("Attempt to retrieve roles for a non-existent user with ID: {UserId}", userId);
-            throw new NotFoundException($"User with id {userId} not found.");
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var subject = "Email Ünvanının Təsdiqlənməsi";
+            var body = $"Salam {user.FirstName},\n\nQeydiyyatınızı tamamlamaq üçün aşağıdakı kodu istifadə edin:\n\n{token}\n\nBu tələbi siz etməmisinizsə, bu mesajı nəzərə almayın.";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body);
+
+            _logger.LogInformation("Email confirmation resent to: {Email}", dto.Email);
         }
-
-        var roles = await _userManager.GetRolesAsync(user);
-        _logger.LogInformation("Retrieved roles for user ID: {UserId}. Roles: {Roles}", userId, string.Join(", ", roles));
-
-        return roles.ToList();
-    }
-
-    public async Task<object> GetAllUsersWithRolesAsync()
-    {
-        var users = await _userManager.Users.ToListAsync();
-        var userList = new List<object>();
-
-        foreach (var user in users)
+        else
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            userList.Add(new
-            {
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.UserName,
-                user.Email,
-                Roles = roles
-            });
-        }
-
-        _logger.LogInformation("Retrieved all users with their roles. Total count: {Count}", users.Count);
-        return userList;
-    }
-    public async Task RemoveRoleFromUserAsync(Guid userId, string roleName)
-    {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-
-        if (user == null)
-        {
-            _logger.LogWarning("Attempt to remove role '{RoleName}' from a non-existent user with ID: {UserId}", roleName, userId);
-            throw new NotFoundException($"User with id {userId} not found.");
-        }
-
-        var result = await _userManager.RemoveFromRoleAsync(user, roleName);
-        if (!result.Succeeded)
-        {
-            _logger.LogError("Failed to remove role '{RoleName}' from user with ID: {UserId}. Errors: {Errors}", roleName, userId, string.Join(", ", result.Errors.Select(e => e.Description)));
-            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            _logger.LogWarning("Email confirmation resend requested for non-existent or already-confirmed email: {Email}", dto.Email);
         }
     }
+
+
     public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken)
     {
         var tokenHash = HashToken(refreshToken);

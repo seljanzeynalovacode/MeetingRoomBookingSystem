@@ -75,6 +75,7 @@ public class NotificationServiceTests :IDisposable
         var notification = new Notification { UserId = userId, Title = "T", Message = "M", Type = NotificationType.Created, ScheduledFor = DateTime.UtcNow };
         _context.Notifications.Add(notification);
         await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
 
         var service = CreateService(userId);
         await service.MarkAsReadAsync(notification.Id);

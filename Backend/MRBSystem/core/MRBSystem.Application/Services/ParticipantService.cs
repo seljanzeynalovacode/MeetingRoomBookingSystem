@@ -86,14 +86,29 @@ public class ParticipantService : IParticipantService
     {
         var entity = await _repository.GetQueryable()
             .Include(p => p.User)
+            .Include(p => p.Reservation)
             .FirstOrDefaultAsync(p => p.Id == id)
             ?? throw new NotFoundException($"Participant with id {id} not found.");
+
+        EnsureCanRespond(entity, entity.Reservation);
 
         return _mapper.Map<ResponseParticipantDto>(entity);
     }
 
     public async Task<ICollection<ResponseParticipantDto>> GetByReservationIdAsync(Guid reservationId)
     {
+        var reservation = await _reservationRepository.GetByIdAsync(reservationId)
+            ?? throw new NotFoundException($"Reservation with id {reservationId} not found.");
+
+        var isOwnerOrAdmin = reservation.ReservedByUserId == _currentUser.UserId || _currentUser.IsInRole("Admin");
+        var isParticipant = await _repository.GetQueryable()
+            .AnyAsync(p => p.ReservationId == reservationId && p.UserId == _currentUser.UserId);
+
+        if (!isOwnerOrAdmin && !isParticipant)
+        {
+            throw new UnauthorizedAccessException("Bu rezervasiyanın iştirakçılarına baxmaq hüququnuz yoxdur.");
+        }
+
         var entities = await _repository.GetQueryable()
             .Where(p => p.ReservationId == reservationId)
             .Include(p => p.User)
