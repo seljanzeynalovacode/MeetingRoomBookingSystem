@@ -4,6 +4,7 @@ using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
+using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
 
 namespace MRBSystem.Application.Services;
@@ -12,15 +13,18 @@ public class RoomBlackoutService : IRoomBlackoutService
 {
     private readonly IGenericRepository<RoomBlackout> _repository;
     private readonly IGenericRepository<Room> _roomRepository;
+    private readonly IGenericRepository<Reservation> _reservationRepository;
     private readonly IMapper _mapper;
 
     public RoomBlackoutService(
-        IGenericRepository<RoomBlackout> repository,
-        IGenericRepository<Room> roomRepository,
-        IMapper mapper)
+    IGenericRepository<RoomBlackout> repository,
+    IGenericRepository<Room> roomRepository,
+    IGenericRepository<Reservation> reservationRepository,
+    IMapper mapper)
     {
         _repository = repository;
         _roomRepository = roomRepository;
+        _reservationRepository = reservationRepository;
         _mapper = mapper;
     }
 
@@ -33,6 +37,17 @@ public class RoomBlackoutService : IRoomBlackoutService
 
         var room = await _roomRepository.GetByIdAsync(dto.RoomId)
             ?? throw new NotFoundException($"Room with id {dto.RoomId} not found.");
+
+        var hasConflict = await _reservationRepository.GetQueryable()
+            .AnyAsync(r => r.RoomId == dto.RoomId
+                && r.Status != ReservationStatus.Cancelled
+                && dto.StartDate < r.EndDate
+                && dto.EndDate > r.StartDate);
+
+        if (hasConflict)
+        {
+            throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yaradıla bilməz.");
+        }
 
         var entity = _mapper.Map<RoomBlackout>(dto);
         await _repository.AddAsync(entity);
@@ -53,6 +68,17 @@ public class RoomBlackoutService : IRoomBlackoutService
 
         var entity = await _repository.GetByIdAsync(id)
             ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
+
+        var hasConflict = await _reservationRepository.GetQueryable()
+            .AnyAsync(r => r.RoomId == entity.RoomId
+                && r.Status != ReservationStatus.Cancelled
+                && dto.StartDate < r.EndDate
+                && dto.EndDate > r.StartDate);
+
+        if (hasConflict)
+        {
+            throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yenilənə bilməz.");
+        }
 
         _mapper.Map(dto, entity);
         await _repository.UpdateAsync(entity);

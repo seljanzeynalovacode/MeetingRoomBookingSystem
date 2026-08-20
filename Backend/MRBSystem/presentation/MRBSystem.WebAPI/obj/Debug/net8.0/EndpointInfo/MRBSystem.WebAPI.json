@@ -1868,8 +1868,8 @@
     "schemas": {
       "ConfirmEmailDto": {
         "required": [
-          "email",
-          "token"
+          "confirmationCode",
+          "email"
         ],
         "type": "object",
         "properties": {
@@ -1879,7 +1879,7 @@
             "type": "string",
             "format": "email"
           },
-          "token": {
+          "confirmationCode": {
             "minLength": 1,
             "type": "string"
           }

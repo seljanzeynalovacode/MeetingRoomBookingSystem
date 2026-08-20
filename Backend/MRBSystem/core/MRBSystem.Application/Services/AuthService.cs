@@ -409,7 +409,7 @@ public class AuthService : IAuthService
             return;
         }
 
-        var result = await _userManager.ConfirmEmailAsync(user, dto.Token);
+        var result = await _userManager.ConfirmEmailAsync(user, dto.ConfirmationCode);
 
         if (!result.Succeeded)
         {

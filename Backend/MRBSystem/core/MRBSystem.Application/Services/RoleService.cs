@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
+using MRBSystem.Contracts.DTOs.AppUserDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 
@@ -147,27 +148,20 @@ public class RoleService : IRoleService
         return roles.ToList();
     }
 
-    public async Task<object> GetAllUsersWithRolesAsync()
+    public async Task<ICollection<UserResponseDto>> GetAllUsersWithRolesAsync()
     {
         var users = await _userManager.Users.ToListAsync();
-        var userList = new List<object>();
+        var result = new List<UserResponseDto>();
 
         foreach (var user in users)
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            userList.Add(new
-            {
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.UserName,
-                user.Email,
-                Roles = roles
-            });
+            var dto = _mapper.Map<UserResponseDto>(user);
+            dto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
+            result.Add(dto);
         }
 
         _logger.LogInformation("Retrieved all users with their roles. Total count: {Count}", users.Count);
-        return userList;
+        return result;
     }
 
     public async Task RemoveRoleFromUserAsync(Guid userId, string roleName)

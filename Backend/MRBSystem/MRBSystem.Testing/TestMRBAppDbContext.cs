@@ -10,14 +10,5 @@ public class TestMRBAppDbContext : MRBAppDbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<Reservation>()
-            .Property(r => r.RowVersion)
-            .IsRequired(false)
-            .ValueGeneratedNever();
-    }
 }
 

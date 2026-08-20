@@ -47,6 +47,7 @@ public class RoomEquipmentService : IRoomEquipmentService
 
         var created = await _repository.GetQueryable()
             .Include(re => re.Equipment)
+            .Include(re => re.Room)
             .FirstAsync(re => re.Id == entity.Id);
 
         return _mapper.Map<ResponseRoomEquipmentDto>(created);
@@ -62,6 +63,7 @@ public class RoomEquipmentService : IRoomEquipmentService
 
         var updated = await _repository.GetQueryable()
             .Include(re => re.Equipment)
+            .Include(re => re.Room)
             .FirstAsync(re => re.Id == id);
 
         return _mapper.Map<ResponseRoomEquipmentDto>(updated);
@@ -76,6 +78,7 @@ public class RoomEquipmentService : IRoomEquipmentService
     {
         var entity = await _repository.GetQueryable()
             .Include(re => re.Equipment)
+            .Include(re => re.Room)
             .FirstOrDefaultAsync(re => re.Id == id)
             ?? throw new NotFoundException($"RoomEquipment with id {id} not found.");
 
@@ -85,6 +88,7 @@ public class RoomEquipmentService : IRoomEquipmentService
     {
         var entities = await _repository.GetQueryable()
             .Include(re => re.Equipment)
+            .Include(re => re.Room)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseRoomEquipmentDto>>(entities);

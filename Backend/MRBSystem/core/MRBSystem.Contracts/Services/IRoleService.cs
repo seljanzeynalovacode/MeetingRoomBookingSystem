@@ -1,4 +1,5 @@
 ﻿using MRBSystem.Contracts.DTOs.AppRoleDtos;
+using MRBSystem.Contracts.DTOs.AppUserDtos;
 
 namespace MRBSystem.Contracts.Services;
 
@@ -14,5 +15,5 @@ public interface IRoleService
     Task RemoveRoleFromUserAsync(Guid userId, string roleName);
 
     Task<List<string>> GetUserRolesAsync(Guid userId);
-    Task<object> GetAllUsersWithRolesAsync();
+    Task<ICollection<UserResponseDto>> GetAllUsersWithRolesAsync();
 }

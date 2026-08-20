@@ -59,19 +59,7 @@ public static class NotificationTemplates
             MRBSystem
             """
             ),
-            NotificationType.Reminder => (
-                "Xatırlatma",
-                $"""
-            Hörmətli {firstName} {lastName},
-            Meeting room rezervasiyanız tezliklə başlayır.
-            Meeting: {meetingTitle}
-            Otaq: {roomName}
-            Tarix: {date}
-            Saat: {startTime} - {endTime}
-            Hörmətlə,
-            MRBSystem
-            """
-            ),
+           
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
     }

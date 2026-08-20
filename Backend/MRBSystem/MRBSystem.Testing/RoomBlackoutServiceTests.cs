@@ -35,6 +35,7 @@ public class RoomBlackoutServiceTests : IDisposable
         _service = new RoomBlackoutService(
             new GenericRepository<RoomBlackout>(_context),
             new GenericRepository<Room>(_context),
+            new GenericRepository<Reservation>(_context),
             mapperConfig.CreateMapper());
 
         SeedRoom();

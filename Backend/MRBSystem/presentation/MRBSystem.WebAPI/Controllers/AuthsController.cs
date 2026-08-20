@@ -21,6 +21,7 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             var result = await _authService.RegisterAsync(dto);

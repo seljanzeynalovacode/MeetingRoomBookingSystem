@@ -32,8 +32,9 @@ public class EquipmentServiceTests : IDisposable
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
         _service = new EquipmentService(
-            new GenericRepository<Equipment>(_context),
-            mapperConfig.CreateMapper());
+     new GenericRepository<Equipment>(_context),
+     new GenericRepository<RoomEquipment>(_context),
+     mapperConfig.CreateMapper());
     }
 
     [Fact]

@@ -12,6 +12,5 @@ public class Reservation : BaseEntity
     public AppUser ReservedByUser { get; set; } = null!;
     public Guid RoomId { get; set; }
     public Room Room { get; set; } = null!;
-    public byte[] RowVersion { get; set; } = null!;
 
 }

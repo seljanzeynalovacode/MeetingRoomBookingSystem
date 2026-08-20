@@ -55,7 +55,9 @@ public class CustomProfile : Profile
 
         //  RoomEquipment 
         CreateMap<RoomEquipment, ResponseRoomEquipmentDto>()
-            .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
+            .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name))
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
+
         CreateMap<CreateRoomEquipmentDto, RoomEquipment>(MemberList.Source);
         CreateMap<UpdateRoomEquipmentDto, RoomEquipment>(MemberList.Source);
 

@@ -1,6 +1,4 @@
-﻿using MRBSystem.Contracts.DTOs.BaseDtos;
-
-namespace MRBSystem.Contracts.DTOs.AppUserDtos;
+﻿namespace MRBSystem.Contracts.DTOs.AppUserDtos;
 
 public record UserResponseDto 
 {

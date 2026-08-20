@@ -18,8 +18,6 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .HasConversion<string>()
             .HasMaxLength(20);
 
-        builder.Property(r => r.RowVersion)
-            .IsRowVersion();
 
         builder.HasOne(r => r.ReservedByUser)
             .WithMany()

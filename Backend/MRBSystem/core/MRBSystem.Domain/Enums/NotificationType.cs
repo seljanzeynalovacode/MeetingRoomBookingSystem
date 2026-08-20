@@ -4,6 +4,5 @@ public enum NotificationType
 {
     Created,
     Updated,
-    Cancelled,
-    Reminder
+    Cancelled
 }
