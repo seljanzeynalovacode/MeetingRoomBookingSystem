@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Təqvim — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <header class="topnav">
+    <a href="dashboard.html" style="display:contents;">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+    </a>
+
+    <div class="nav-right">
+      <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
+      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
+      <div class="avatar-chip" id="avatarChip">
+        <span class="av" id="avatarInitials">--</span>
+        <span class="name" id="avatarName">İstifadəçi</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="avatar-menu" id="avatarMenu">
+          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="dash-alert" id="alertBox"></div>
+
+  <div class="calendar-layout">
+    <div class="calendar-header-row">
+      <div>
+        <h2>Təqvim</h2>
+        <p class="calendar-subtitle" id="calendarSubtitle"></p>
+      </div>
+
+      <div class="calendar-controls">
+        <button class="icon-btn" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+        <span class="date-label" id="dateLabel"></span>
+        <button class="icon-btn" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn btn-secondary btn-sm" id="todayBtn">Bu gün</button>
+        <div class="view-toggle">
+          <button type="button" id="dayViewBtn" class="active"><i class="bi bi-calendar-day"></i> Gün</button>
+          <button type="button" id="weekViewBtn"><i class="bi bi-calendar-week"></i> Həftə</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="room-picker-row">
+      <label class="field-label" for="roomSelect" style="margin:0;">Otaq</label>
+      <select class="input" id="roomSelect"></select>
+    </div>
+
+    <div id="calendarContent"></div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/roomCalendar.js"></script>
+</body>
+</html>

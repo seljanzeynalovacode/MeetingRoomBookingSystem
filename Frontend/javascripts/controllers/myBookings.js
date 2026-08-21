@@ -1,0 +1,167 @@
+import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
+import { getMyReservations, cancelReservation } from "../api/reservationsApi.js";
+import { logout } from "../api/authApi.js";
+import { openBookingModal } from "../components/bookingModal.js";
+import { showAlert, clearAlert } from "../components/alert.js";
+
+if (!isLoggedIn()) {
+  window.location.href = "login.html";
+}
+
+const alertBox = document.getElementById("alertBox");
+const toastEl = document.getElementById("toast");
+const listEl = document.getElementById("reservationList");
+
+const avatarChip = document.getElementById("avatarChip");
+const avatarMenu = document.getElementById("avatarMenu");
+const avatarInitials = document.getElementById("avatarInitials");
+const avatarName = document.getElementById("avatarName");
+const logoutBtn = document.getElementById("logoutBtn");
+
+let reservations = [];
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+function parseJwt(token) {
+  try {
+    const payload = token.split(".")[1];
+    const json = decodeURIComponent(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+        .split("")
+        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+        .join("")
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+function getDisplayIdentity() {
+  const token = getAccessToken();
+  if (!token) return { initials: "--", name: "İstifadəçi" };
+
+  const claims = parseJwt(token) || {};
+  const givenName = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"] || "";
+  const surname = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"] || "";
+  const email = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] || claims["email"] || "";
+
+  const name = givenName ? `${givenName} ${surname}`.trim() : email ? email.split("@")[0] : "İstifadəçi";
+  const initials = givenName && surname ? (givenName[0] + surname[0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+
+  return { initials, name };
+}
+
+let toastTimer = null;
+function showToast(message) {
+  toastEl.innerHTML = `<div class="alert alert-success" style="margin:0;"><i class="bi bi-check-circle"></i><span>${escapeHtml(message)}</span></div>`;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2600);
+}
+
+function formatRange(startIso, endIso) {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+  const dateStr = start.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" });
+  const startTime = start.toTimeString().slice(0, 5);
+  const endTime = end.toTimeString().slice(0, 5);
+  return `${dateStr}, ${startTime}–${endTime}`;
+}
+
+function statusBadgeHtml(status) {
+  if (status === "Cancelled") {
+    return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
+  }
+  return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
+}
+
+function createReservationCardHtml(r) {
+  const actions =
+    r.status === "Confirmed"
+      ? `<button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}">Redaktə et</button>
+         <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}">Ləğv et</button>`
+      : "";
+
+  return `
+    <div class="card reservation-card">
+      <div class="reservation-card-body">
+        <div class="reservation-card-head">
+          <h4>${escapeHtml(r.title)}</h4>
+          ${statusBadgeHtml(r.status)}
+        </div>
+        <div class="reservation-card-meta">
+          <span><i class="bi bi-door-open"></i>${escapeHtml(r.roomName)}</span>
+          <span><i class="bi bi-clock"></i>${formatRange(r.startDate, r.endDate)}</span>
+        </div>
+        <div class="reservation-card-actions">${actions}</div>
+      </div>
+    </div>`;
+}
+
+function renderReservations() {
+  if (!reservations.length) {
+    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>Hələ rezervasiyanız yoxdur.</div>`;
+    return;
+  }
+  listEl.innerHTML = reservations.map(createReservationCardHtml).join("");
+}
+
+async function loadReservations() {
+  try {
+    reservations = await getMyReservations();
+    renderReservations();
+  } catch (err) {
+    showAlert(alertBox, err.message);
+  }
+}
+
+listEl.addEventListener("click", (e) => {
+  const editBtn = e.target.closest(".edit-btn");
+  const cancelBtn = e.target.closest(".cancel-btn");
+
+  if (editBtn) {
+    const r = reservations.find((x) => x.id === editBtn.dataset.id);
+    if (!r) return;
+    openBookingModal({
+      mode: "edit",
+      reservation: r,
+      onSuccess: () => {
+        showToast("Rezervasiya yeniləndi.");
+        loadReservations();
+      },
+    });
+  }
+
+  if (cancelBtn) {
+    if (!confirm("Bu rezervasiyanı ləğv etmək istədiyinizə əminsiniz?")) return;
+    clearAlert(alertBox);
+    cancelReservation(cancelBtn.dataset.id)
+      .then(() => {
+        showToast("Rezervasiya ləğv edildi.");
+        loadReservations();
+      })
+      .catch((err) => showAlert(alertBox, err.message));
+  }
+});
+
+avatarChip.addEventListener("click", (e) => {
+  e.stopPropagation();
+  avatarMenu.classList.toggle("open");
+});
+document.addEventListener("click", () => avatarMenu.classList.remove("open"));
+
+logoutBtn.addEventListener("click", async () => {
+  await logout();
+  window.location.href = "login.html";
+});
+
+const { initials, name } = getDisplayIdentity();
+avatarInitials.textContent = initials;
+avatarName.textContent = name;
+
+loadReservations();

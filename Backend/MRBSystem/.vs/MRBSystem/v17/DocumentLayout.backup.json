@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -16,10 +20,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.application\\mapper\\customprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|solutionrelative:core\\mrbsystem.application\\mapper\\customprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\mrbsystem.testing\\authservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -612,11 +612,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "secrets.json",
               "DocumentMoniker": "C:\\Users\\ACER\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
@@ -634,20 +634,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Program.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Program.cs",
               "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Program.cs",
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Program.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAcwB4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAiwHMAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-18T12:12:54.234Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "AuthService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\AuthService.cs",
@@ -684,7 +684,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "CustomProfile.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
@@ -697,7 +697,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\appsettings.Development.json",

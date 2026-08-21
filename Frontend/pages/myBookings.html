@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rezervasiyalarım — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <header class="topnav">
+    <a href="dashboard.html" style="display:contents;">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+    </a>
+
+        <div class="nav-right">
+      <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
+      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
+      <div class="avatar-chip" id="avatarChip">
+        <span class="av" id="avatarInitials">--</span>
+        <span class="name" id="avatarName">İstifadəçi</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="avatar-menu" id="avatarMenu">
+          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="dash-alert" id="alertBox"></div>
+
+  <div class="reservations-layout">
+    <div class="content-head">
+      <h2>Rezervasiyalarım</h2>
+    </div>
+
+    <div class="reservation-list" id="reservationList"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="../javascripts/controllers/myBookings.js"></script>
+</body>
+</html>

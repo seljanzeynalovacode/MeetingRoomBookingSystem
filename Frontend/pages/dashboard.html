@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Otaqlar — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <header class="topnav">
+    <div class="brand-mark">
+      <span class="logo">M</span>
+      <span class="wordmark">MeetingRoomBooking</span>
+    </div>
+
+        <form class="search-cluster" id="searchForm">
+      <div class="search-field">
+        <i class="bi bi-calendar3"></i>
+        <input type="date" id="searchDate" name="searchDate" />
+      </div>
+      <div class="search-div"></div>
+      <div class="search-field search-field-time">
+        <i class="bi bi-clock"></i>
+        <input type="time" id="searchStart" name="searchStart" />
+        <span class="time-sep">–</span>
+        <input type="time" id="searchEnd" name="searchEnd" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm" id="searchBtn"><i class="bi bi-search"></i>Axtar</button>
+    </form>
+
+       <div class="nav-right">
+      
+            <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
+      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
+      <div class="avatar-chip" id="avatarChip">
+        <span class="av" id="avatarInitials">--</span>
+        <span class="name" id="avatarName">İstifadəçi</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="avatar-menu" id="avatarMenu">
+          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+        </div>
+        
+      </div>
+      <button class="icon-btn" id="resetSearchBtn" title="Bütün otaqlara qayıt"><i class="bi bi-arrow-counterclockwise"></i></button>
+    </div>
+  </header>
+
+  <div class="dash-alert" id="alertBox"></div>
+
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="card filter-card">
+        <h3><i class="bi bi-sliders"></i>Filtrlər</h3>
+
+        <div class="filter-group">
+          <label class="field-label" for="buildingSelect">Bina</label>
+          <select class="input" id="buildingSelect">
+            <option value="">Bina seçin</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="field-label" for="floorSelect">Mərtəbə</label>
+          <select class="input" id="floorSelect">
+            <option value="">Bütün mərtəbələr</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="field-label" for="capacityInput">Minimum tutum</label>
+          <div class="input-wrap">
+            <i class="bi bi-people leading-icon"></i>
+            <input type="number" class="input has-icon" id="capacityInput" min="1" max="1000" value="1" />
+          </div>
+        </div>
+
+        <div class="filter-group" style="margin-bottom: 0.5rem;">
+          <label class="field-label">Avadanlıq</label>
+          <div class="chip-toggle-group" id="equipmentChips"></div>
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-block btn-sm" id="resetFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Filtrləri sıfırla</button>
+      </div>
+    </aside>
+
+    <main>
+            <div class="content-head">
+        <h2 id="resultsTitle">Otaqlar <span class="count" id="resultsCount"></span></h2>
+      </div>
+
+      <p class="catalog-hint" id="catalogHint">Bu, bütün otaqların ümumi siyahısıdır. Konkret tarix/saat üçün dəqiq mövcudluğu yoxlamaq üçün yuxarıdan axtarış edin.</p>
+
+      <div class="room-grid" id="roomGrid"></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="../javascripts/controllers/dashboard.js"></script>
+</body>
+</html>
