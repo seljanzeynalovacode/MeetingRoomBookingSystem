@@ -26,8 +26,6 @@ public class AuthService : IAuthService
     private readonly RoleManager<AppRole> _roleManager;
     private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
     private readonly IGenericRepository<Reservation> _reservationRepository;
-    private readonly IGenericRepository<Comment> _commentRepository;
-    private readonly IGenericRepository<Like> _likeRepository;
     private readonly ICurrentUserService _currentUser;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
@@ -41,8 +39,6 @@ public class AuthService : IAuthService
         RoleManager<AppRole> roleManager,
         IGenericRepository<RefreshToken> refreshTokenRepository,
         IGenericRepository<Reservation> reservationRepository,
-        IGenericRepository<Comment> commentRepository,
-        IGenericRepository<Like> likeRepository,
         ICurrentUserService currentUser,
         IConfiguration configuration,
         IMapper mapper,
@@ -55,8 +51,6 @@ public class AuthService : IAuthService
         _roleManager = roleManager;
         _refreshTokenRepository = refreshTokenRepository;
         _reservationRepository = reservationRepository;
-        _commentRepository = commentRepository;
-        _likeRepository = likeRepository;
         _currentUser = currentUser;
         _configuration = configuration;
         _mapper = mapper;
@@ -321,22 +315,6 @@ public class AuthService : IAuthService
         {
             throw new InvalidOperationException(
                 "Bu istifadəçinin mövcud rezervasiyaları var, silinə bilməz.");
-        }
-
-        var hasComments = await _commentRepository.GetQueryable()
-            .AnyAsync(c => c.UserId == userId);
-        if (hasComments)
-        {
-            throw new InvalidOperationException(
-                "Bu istifadəçinin mövcud şərhləri var, silinə bilməz.");
-        }
-
-        var hasLikes = await _likeRepository.GetQueryable()
-            .AnyAsync(l => l.UserId == userId);
-        if (hasLikes)
-        {
-            throw new InvalidOperationException(
-                "Bu istifadəçinin mövcud bəyənmələri var, silinə bilməz.");
         }
 
         var result = await _userManager.DeleteAsync(user);

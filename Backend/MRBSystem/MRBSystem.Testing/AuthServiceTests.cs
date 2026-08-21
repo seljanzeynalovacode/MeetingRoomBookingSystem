@@ -47,19 +47,17 @@ public class AuthServiceTests : IDisposable
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
         _authService = new AuthService(
-            _userManagerMock.Object,
-            null!,
-            null!,
-            new GenericRepository<RefreshToken>(_context),
-            new GenericRepository<Reservation>(_context),
-            new GenericRepository<Comment>(_context),
-            new GenericRepository<Like>(_context),
-            currentUser.Object,
-            configuration.Object,
-            mapperConfig.CreateMapper(),
-            NullLogger<AuthService>.Instance,
-            _emailServiceMock.Object,
-            new UnitOfWork(_context));
+     _userManagerMock.Object,
+     null!,
+     null!,
+     new GenericRepository<RefreshToken>(_context),
+     new GenericRepository<Reservation>(_context),
+     currentUser.Object,
+     configuration.Object,
+     mapperConfig.CreateMapper(),
+     NullLogger<AuthService>.Instance,
+     _emailServiceMock.Object,
+     new UnitOfWork(_context));
     }
 
     [Fact]

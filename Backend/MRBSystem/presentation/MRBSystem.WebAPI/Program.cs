@@ -25,11 +25,9 @@ namespace MRBSystem.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             Log.Logger = new LoggerConfiguration()
-               .ReadFrom.Configuration(builder.Configuration)
-               .WriteTo.Console()
-               .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-               .Enrich.FromLogContext()
-               .CreateLogger();
+                 .ReadFrom.Configuration(builder.Configuration)
+                 .Enrich.FromLogContext()
+                 .CreateLogger();
 
             builder.Host.UseSerilog();
 
@@ -145,7 +143,6 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IRoleService, RoleService>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
-            builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEmailService, EmailService>();

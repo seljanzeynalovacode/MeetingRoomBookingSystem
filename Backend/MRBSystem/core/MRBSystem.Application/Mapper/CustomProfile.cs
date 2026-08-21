@@ -2,7 +2,6 @@
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.DTOs.AppUserDtos;
 using MRBSystem.Contracts.DTOs.BuildingDtos;
-using MRBSystem.Contracts.DTOs.CommentDtos;
 using MRBSystem.Contracts.DTOs.EquipmentDtos;
 using MRBSystem.Contracts.DTOs.FloorDtos;
 using MRBSystem.Contracts.DTOs.NotificationDtos;
@@ -78,23 +77,7 @@ public class CustomProfile : Profile
         CreateMap<CreateReservationDto, Reservation>(MemberList.Source);
         CreateMap<UpdateReservationDto, Reservation>(MemberList.Source);
 
-        //  Comment 
-        CreateMap<Comment, ResponseCommentDto>()
-            .ForMember(dest => dest.UserName,
-                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
-            .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
-            .ForMember(dest => dest.RepliesCount, opt => opt.MapFrom(src => src.Replies.Count))
-            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore());
-
-        CreateMap<Comment, DetailedCommentDto>()
-            .ForMember(dest => dest.UserName,
-                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
-            .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
-            .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore());
-
-        CreateMap<CreateCommentDto, Comment>(MemberList.Source);
-        CreateMap<UpdateCommentDto, Comment>(MemberList.Source);
-
+        
         //  Participant 
         CreateMap<Participant, ResponseParticipantDto>()
             .ForMember(dest => dest.ResponseStatus, opt => opt.MapFrom(src => src.ResponseStatus.ToString()))
