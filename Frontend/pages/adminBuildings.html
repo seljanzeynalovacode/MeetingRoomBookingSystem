@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Binalar — Admin — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+      <nav class="admin-nav">
+        <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+        <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+        <a href="adminBuildings.html" class="active"><i class="bi bi-building"></i>Binalar</a>
+        <a href="adminFloors.html"><i class="bi bi-layers"></i>Mərtəbələr</a>
+        <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+        <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>Binalar</h1>
+          <p>Sistemdəki binaları idarə edin.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="addBuildingBtn"><i class="bi bi-plus-lg"></i>Yeni bina</button>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="card">
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ad</th>
+                <th>Ünvan</th>
+                <th>Əməliyyatlar</th>
+              </tr>
+            </thead>
+            <tbody id="buildingsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="buildingModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="buildingModalTitle">Yeni bina</h3>
+        <button type="button" class="modal-close" id="buildingModalClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div id="buildingModalAlert"></div>
+
+      <form id="buildingForm" novalidate>
+        <div class="field">
+          <label class="field-label" for="buildingName">Ad</label>
+          <div class="input-wrap">
+            <i class="bi bi-building leading-icon"></i>
+            <input type="text" class="input has-icon" id="buildingName" required minlength="2" maxlength="200" placeholder="Baş Ofis" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="buildingAddress">Ünvan</label>
+          <div class="input-wrap">
+            <i class="bi bi-geo-alt leading-icon"></i>
+            <input type="text" class="input has-icon" id="buildingAddress" required minlength="3" maxlength="300" placeholder="Bakı, Nərimanov r." />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="buildingModalCancelBtn">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="buildingModalSubmitBtn">Yarat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminBuildings.js"></script>
+</body>
+</html>

@@ -19,3 +19,32 @@ export function getAllFloors() {
 export function getAllEquipment() {
   return apiFetch("/equipments", { auth: true });
 }
+
+export function createBuilding(dto) {
+  return apiFetch("/buildings", { method: "POST", body: dto, auth: true });
+}
+export function updateBuilding(id, dto) {
+  return apiFetch(`/buildings/${id}`, { method: "PUT", body: dto, auth: true });
+}
+export function deleteBuilding(id) {
+  return apiFetch(`/buildings/${id}`, { method: "DELETE", auth: true });
+}
+
+export function createFloor(dto) {
+  return apiFetch("/floors", { method: "POST", body: dto, auth: true });
+}
+export function updateFloor(id, dto) {
+  return apiFetch(`/floors/${id}`, { method: "PUT", body: dto, auth: true });
+}
+export function deleteFloor(id) {
+  return apiFetch(`/floors/${id}`, { method: "DELETE", auth: true });
+}
+export function createRoom(dto) {
+  return apiFetch("/rooms", { method: "POST", body: dto, auth: true });
+}
+export function updateRoom(id, dto) {
+  return apiFetch(`/rooms/${id}`, { method: "PUT", body: dto, auth: true });
+}
+export function deleteRoom(id) {
+  return apiFetch(`/rooms/${id}`, { method: "DELETE", auth: true });
+}

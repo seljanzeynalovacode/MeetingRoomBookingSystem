@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+           <nav class="admin-nav">
+        <a href="adminDashboard.html" class="active"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+        <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+        <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+        <a href="adminFloors.html"><i class="bi bi-layers"></i>Mərtəbələr</a>
+        <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+        <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>Ana səhifə</h1>
+          <p>Sistemin ümumi vəziyyətinə baxış.</p>
+        </div>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-icon violet"><i class="bi bi-door-open"></i></span>
+          <div>
+            <div class="stat-value" id="statRoomCount">—</div>
+            <div class="stat-label">Otaq</div>
+          </div>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-icon amber"><i class="bi bi-building"></i></span>
+          <div>
+            <div class="stat-value" id="statBuildingCount">—</div>
+            <div class="stat-label">Bina</div>
+          </div>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-icon green"><i class="bi bi-people"></i></span>
+          <div>
+            <div class="stat-value" id="statUserCount">—</div>
+            <div class="stat-label">İstifadəçi</div>
+          </div>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-icon violet"><i class="bi bi-calendar-check"></i></span>
+          <div>
+            <div class="stat-value" id="statReservationCount">—</div>
+            <div class="stat-label">Aktiv rezervasiya</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="admin-section-title">Statistika</p>
+
+      <div class="charts-grid">
+        <div class="card chart-card">
+          <div class="chart-card-head">
+            <h3>Pik rezervasiya saatları</h3>
+            <span class="chart-highlight" id="peakHourBadge"></span>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="peakHoursChart"></canvas></div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-head"><h3>Rezervasiya statusları</h3></div>
+          <div class="chart-canvas-wrap"><canvas id="statusDonutChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="chart-card-head"><h3>Otaqlar üzrə istifadə</h3></div>
+        <div class="chart-canvas-wrap wide"><canvas id="roomUsageChart"></canvas></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script type="module" src="../javascripts/controllers/adminDashboard.js"></script>
+</body>
+</html>

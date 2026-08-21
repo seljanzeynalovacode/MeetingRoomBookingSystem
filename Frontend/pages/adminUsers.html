@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İstifadəçilər — Admin — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+          <nav class="admin-nav">
+        <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+        <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        <a href="adminUsers.html" class="active"><i class="bi bi-people"></i>İstifadəçilər</a>
+        <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+        <a href="adminFloors.html"><i class="bi bi-layers"></i>Mərtəbələr</a>
+        <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+        <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>İstifadəçilər və rollar</h1>
+          <p>İstifadəçilərə rol təyin edin, rolları idarə edin.</p>
+        </div>
+      </div>
+
+      <div id="alertBox"></div>
+
+           <div class="card role-manage-card">
+        <div class="rm-header">
+          <span class="rm-header-icon"><i class="bi bi-tags"></i></span>
+          <div>
+            <h3>Rollar</h3>
+            <p>Sistemdəki rolları idarə edin</p>
+          </div>
+          <span class="rm-count" id="roleCount">0 rol</span>
+        </div>
+
+        <div class="rm-list" id="roleList"></div>
+
+        <div class="rm-add-row">
+          <div class="input-wrap">
+            <i class="bi bi-plus-circle leading-icon"></i>
+            <input type="text" class="input has-icon" id="newRoleInput" placeholder="Yeni rol adı daxil edin" minlength="2" maxlength="256" />
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="addRoleBtn"><i class="bi bi-plus-lg"></i>Rol yarat</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ad Soyad</th>
+                <th>Email</th>
+                <th>İstifadəçi adı</th>
+                <th>Rollar</th>
+                <th>Rol əlavə et</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminUsers.js"></script>
+</body>
+</html>

@@ -15,3 +15,7 @@ export function cancelReservation(id) {
 export function getMyReservations() {
   return apiFetch("/reservations/my", { auth: true });
 }
+
+export function getAllReservationsAdmin() {
+  return apiFetch("/reservations", { auth: true });
+}

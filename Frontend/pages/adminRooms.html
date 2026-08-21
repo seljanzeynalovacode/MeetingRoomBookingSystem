@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Otaqlar — Admin — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <span class="logo">M</span>
+        <span class="wordmark">MRBSystem</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+      <nav class="admin-nav">
+        <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+        <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+        <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+        <a href="adminFloors.html"><i class="bi bi-layers"></i>Mərtəbələr</a>
+        <a href="adminRooms.html" class="active"><i class="bi bi-door-open"></i>Otaqlar</a>
+        <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>Otaqlar</h1>
+          <p>Sistemdəki otaqları idarə edin.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="addRoomBtn"><i class="bi bi-plus-lg"></i>Yeni otaq</button>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="card filter-toolbar">
+        <div class="filter-toolbar-row">
+          <div class="filter-group-inline">
+            <label class="field-label">Bina</label>
+            <select class="input" id="filterBuilding"><option value="">Hamısı</option></select>
+          </div>
+          <div class="filter-group-inline">
+            <label class="field-label">Mərtəbə</label>
+            <select class="input" id="filterFloor"><option value="">Hamısı</option></select>
+          </div>
+          <div class="filter-group-inline">
+            <label class="field-label">Status</label>
+            <select class="input" id="filterStatus">
+              <option value="">Hamısı</option>
+              <option value="active">Aktiv</option>
+              <option value="inactive">Deaktiv</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ad</th>
+                <th>Tutum</th>
+                <th>Mərtəbə</th>
+                <th>Bina</th>
+                <th>Status</th>
+                <th>Əməliyyatlar</th>
+              </tr>
+            </thead>
+            <tbody id="roomsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="roomModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="roomModalTitle">Yeni otaq</h3>
+        <button type="button" class="modal-close" id="roomModalClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div id="roomModalAlert"></div>
+
+      <form id="roomForm" novalidate>
+        <div class="field">
+          <label class="field-label" for="roomName">Ad</label>
+          <div class="input-wrap">
+            <i class="bi bi-door-open leading-icon"></i>
+            <input type="text" class="input has-icon" id="roomName" required minlength="1" maxlength="150" placeholder="Konfrans Zalı A" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="roomCapacity">Tutum</label>
+          <div class="input-wrap">
+            <i class="bi bi-people leading-icon"></i>
+            <input type="number" class="input has-icon" id="roomCapacity" required min="1" max="1000" placeholder="10" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="roomModalBuilding">Bina</label>
+          <select class="input" id="roomModalBuilding"></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="roomModalFloor">Mərtəbə</label>
+          <select class="input" id="roomModalFloor" required></select>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label class="remember"><input type="checkbox" id="roomIsActive" checked />Aktiv</label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="roomModalCancelBtn">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="roomModalSubmitBtn">Yarat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminRooms.js"></script>
+</body>
+</html>
