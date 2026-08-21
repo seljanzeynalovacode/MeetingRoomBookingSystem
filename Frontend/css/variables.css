@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: oklch(98% 0.007 75);
+  --surface: oklch(99.3% 0.004 75);
+  --surface-raised: #ffffff;
+  --text-primary: oklch(21% 0.02 55);
+  --text-secondary: oklch(46% 0.018 55);
+  --text-muted: oklch(62% 0.012 55);
+  --border: oklch(90% 0.008 70);
+  --border-strong: oklch(83% 0.01 70);
+
+  --violet-50: oklch(96% 0.02 292);
+  --violet-100: oklch(92% 0.045 292);
+  --violet-300: oklch(78% 0.12 292);
+  --violet-500: oklch(58% 0.19 292);
+  --violet-600: oklch(50% 0.19 292);
+  --violet-700: oklch(40% 0.17 292);
+  --violet-900: oklch(24% 0.1 292);
+
+  --amber-50: oklch(96% 0.03 75);
+  --amber-100: oklch(92% 0.06 75);
+  --amber-300: oklch(82% 0.12 75);
+  --amber-500: oklch(72% 0.17 75);
+  --amber-600: oklch(62% 0.17 70);
+  --amber-700: oklch(45% 0.14 65);
+
+  --green-100: oklch(94% 0.05 148);
+  --green-500: oklch(60% 0.15 148);
+  --green-700: oklch(38% 0.12 148);
+
+  --red-100: oklch(94% 0.04 25);
+  --red-500: oklch(58% 0.19 25);
+  --red-700: oklch(40% 0.16 25);
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(40,25,10,0.05);
+  --shadow-md: 0 6px 16px -4px rgba(40,25,10,0.10), 0 2px 6px -2px rgba(40,25,10,0.06);
+  --shadow-lg: 0 24px 60px -14px rgba(40,25,10,0.20), 0 8px 20px -8px rgba(40,25,10,0.10);
+  --glow-violet: 0 0 0 4px oklch(58% 0.19 292 / 0.16);
+  --glow-amber: 0 0 0 4px oklch(72% 0.17 75 / 0.22);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email təsdiqi — MRBSystem</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="../css/style.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="scene">
+    <div class="blob blob-violet"></div>
+    <div class="blob blob-amber"></div>
+
+    <div class="stage">
+      <div class="auth-card text-center">
+        <div class="brand-mark">
+          <span class="logo">M</span>
+          <span class="wordmark">MRBSystem</span>
+        </div>
+
+        <div class="icon-orb"><i class="bi bi-envelope-check"></i></div>
+
+        <h1>Email-i təsdiqləyin</h1>
+        <p class="lede">6 rəqəmli təsdiq kodu email ünvanınıza göndərildi.</p>
+
+        <div id="alertBox"></div>
+
+        <div class="field" style="max-width: 260px; margin: 0 auto 1.1rem; text-align: left;">
+          <label class="field-label" for="email">Email</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope leading-icon"></i>
+            <input type="email" class="input has-icon" id="email" name="Email" required maxlength="256" />
+          </div>
+        </div>
+
+        <form id="confirmForm" novalidate>
+          <div class="otp-row" id="otpRow">
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
+            Təsdiqlə <i class="bi bi-check2"></i>
+          </button>
+        </form>
+
+        <div class="resend-row">
+          Kod gəlmədi? <span id="resendWrap"><span class="timer" id="timer">0:60</span> sonra <a href="#" id="resendLink" class="disabled">yenidən göndər</a></span>
+        </div>
+
+        <p class="foot-line"><a href="login.html"><i class="bi bi-arrow-left"></i> Girişə qayıt</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/confirmEmail.js"></script>
+</body>
+</html>

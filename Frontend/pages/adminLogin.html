@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin girişi — MRBSystem</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+<style>
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.35s var(--ease); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+  <div class="scene">
+    <div class="blob blob-violet"></div>
+    <div class="blob blob-amber"></div>
+
+    <div class="stage">
+      <div class="auth-card">
+        <div class="brand-mark">
+          <span class="logo">M</span>
+          <span class="wordmark">MRBSystem</span>
+        </div>
+
+        <div id="alertBox"></div>
+
+        <div class="step active" id="step1">
+          <h1>Admin girişi</h1>
+          <p class="lede">İdarəetmə panelinə daxil olmaq üçün hesab məlumatlarınızı daxil edin.</p>
+
+          <form id="adminLoginForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="email">Email</label>
+              <div class="input-wrap">
+                <i class="bi bi-envelope leading-icon"></i>
+                <input type="email" class="input has-icon" id="email" name="Email" placeholder="admin@mrbsystem.com" required maxlength="256" />
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom: 0">
+              <label class="field-label" for="password">Şifrə</label>
+              <div class="input-wrap">
+                <i class="bi bi-lock leading-icon"></i>
+                <input type="password" class="input has-icon" id="password" name="Password" placeholder="••••••••" required style="padding-right: 2.6rem" />
+                <button type="button" class="toggle-eye" id="toggleEye" aria-label="Şifrəni göstər">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="row-between">
+              <label class="remember"><input type="checkbox" id="rememberMe" name="RememberMe" />Məni xatırla</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="step1SubmitBtn">
+              Davam et <i class="bi bi-arrow-right"></i>
+            </button>
+          </form>
+
+          <p class="foot-line"><a href="login.html"><i class="bi bi-arrow-left"></i> İstifadəçi girişinə qayıt</a></p>
+        </div>
+
+        <div class="step" id="step2">
+          <div class="icon-orb"><i class="bi bi-shield-lock"></i></div>
+          <h1 style="text-align:center">2FA Təsdiq kodu</h1>
+          <p class="lede" style="text-align:center"><span id="step2EmailLabel">email</span> ünvanına göndərilən 6 rəqəmli kodu daxil edin.</p>
+
+          <form id="admin2faForm" novalidate>
+            <div class="otp-row" id="otpRow">
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+              <input class="otp-box" maxlength="1" inputmode="numeric" pattern="\d" />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="step2SubmitBtn">
+              Təsdiqlə <i class="bi bi-check2"></i>
+            </button>
+          </form>
+
+          <p class="foot-line"><a href="#" id="backToStep1"><i class="bi bi-arrow-left"></i> Geri qayıt</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminLogin.js"></script>
+</body>
+</html>

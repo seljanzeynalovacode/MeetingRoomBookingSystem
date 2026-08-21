@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daxil ol — MRBSystem</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="../css/style.css" rel="stylesheet" />
+      <style>
+            .stage { position: relative; }
+      </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="blob blob-violet"></div>
+    <div class="blob blob-amber"></div>
+
+   
+
+      <div class="auth-card">
+        <div class="brand-mark">
+          <span class="logo">M</span>
+          <span class="wordmark">MRBSystem</span>
+        </div>
+
+        <h1>Xoş gəlmisiniz</h1>
+        <p class="lede">Hesabınıza daxil olun və rezervasiyalarınızı idarə edin.</p>
+
+        <div id="alertBox"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label class="field-label" for="email">Email</label>
+            <div class="input-wrap">
+              <i class="bi bi-envelope leading-icon"></i>
+              <input type="email" class="input has-icon" id="email" name="Email" placeholder="ad@nümunə.com" required maxlength="256" />
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom: 0">
+            <label class="field-label" for="password">Şifrə</label>
+            <div class="input-wrap">
+              <i class="bi bi-lock leading-icon"></i>
+              <input type="password" class="input has-icon" id="password" name="Password" placeholder="••••••••" required style="padding-right: 2.6rem" />
+              <button type="button" class="toggle-eye" id="toggleEye" aria-label="Şifrəni göstər">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="row-between">
+            <label class="remember"><input type="checkbox" id="rememberMe" name="RememberMe" />Məni xatırla</label>
+            <a href="forgotPassword.html">Şifrəni unutmusunuz?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
+            Daxil ol <i class="bi bi-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="divider">VƏ YA</div>
+
+        <p class="foot-line">Hesabınız yoxdur? <a href="register.html">Qeydiyyatdan keçin</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/login.js"></script>
+</body>
+</html>
