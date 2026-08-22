@@ -74,6 +74,14 @@ function getDisplayIdentity() {
 
   return { initials, name };
 }
+function getRoles() {
+  const token = getAccessToken();
+  if (!token) return [];
+  const claims = parseJwt(token) || {};
+  const roleClaim = claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (!roleClaim) return [];
+  return Array.isArray(roleClaim) ? roleClaim : [roleClaim];
+}
 
 let toastTimer = null;
 function showToast(message) {
@@ -302,6 +310,10 @@ async function init() {
   const { initials, name } = getDisplayIdentity();
   avatarInitials.textContent = initials;
   avatarName.textContent = name;
+
+    if (getRoles().includes("Admin")) {
+    document.getElementById("adminPanelLink").style.display = "";
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   searchDateInput.value = today;

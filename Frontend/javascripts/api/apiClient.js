@@ -7,23 +7,23 @@ const STORAGE_KEYS = {
 };
 
 export function getAccessToken() {
-  return localStorage.getItem(STORAGE_KEYS.accessToken);
+  return sessionStorage.getItem(STORAGE_KEYS.accessToken);
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem(STORAGE_KEYS.refreshToken);
+  return sessionStorage.getItem(STORAGE_KEYS.refreshToken);
 }
 
 export function setTokens(tokenResponse) {
-  localStorage.setItem(STORAGE_KEYS.accessToken, tokenResponse.accessToken);
-  localStorage.setItem(STORAGE_KEYS.refreshToken, tokenResponse.refreshToken);
-  localStorage.setItem(STORAGE_KEYS.expiresAt, tokenResponse.expiresAt);
+  sessionStorage.setItem(STORAGE_KEYS.accessToken, tokenResponse.accessToken);
+  sessionStorage.setItem(STORAGE_KEYS.refreshToken, tokenResponse.refreshToken);
+  sessionStorage.setItem(STORAGE_KEYS.expiresAt, tokenResponse.expiresAt);
 }
 
 export function clearTokens() {
-  localStorage.removeItem(STORAGE_KEYS.accessToken);
-  localStorage.removeItem(STORAGE_KEYS.refreshToken);
-  localStorage.removeItem(STORAGE_KEYS.expiresAt);
+  sessionStorage.removeItem(STORAGE_KEYS.accessToken);
+  sessionStorage.removeItem(STORAGE_KEYS.refreshToken);
+  sessionStorage.removeItem(STORAGE_KEYS.expiresAt);
 }
 
 export function isLoggedIn() {

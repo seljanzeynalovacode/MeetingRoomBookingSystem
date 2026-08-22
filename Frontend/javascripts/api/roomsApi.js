@@ -48,3 +48,12 @@ export function updateRoom(id, dto) {
 export function deleteRoom(id) {
   return apiFetch(`/rooms/${id}`, { method: "DELETE", auth: true });
 }
+export function createEquipment(dto) {
+  return apiFetch("/equipments", { method: "POST", body: dto, auth: true });
+}
+export function updateEquipment(id, dto) {
+  return apiFetch(`/equipments/${id}`, { method: "PUT", body: dto, auth: true });
+}
+export function deleteEquipment(id) {
+  return apiFetch(`/equipments/${id}`, { method: "DELETE", auth: true });
+}

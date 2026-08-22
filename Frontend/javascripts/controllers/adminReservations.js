@@ -1,4 +1,4 @@
-import { isLoggedIn } from "../api/apiClient.js";
+import { requireAdmin } from "../components/adminGuard.js";
 import { logout } from "../api/authApi.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
@@ -6,9 +6,7 @@ import { getAllReservationsAdmin, cancelReservation } from "../api/reservationsA
 import { getParticipantsByReservation } from "../api/participantsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 
-if (!isLoggedIn()) {
-  window.location.href = "login.html";
-}
+requireAdmin();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -194,7 +192,7 @@ clearFiltersBtn.addEventListener("click", () => {
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
-  window.location.href = "login.html";
+  window.location.href = "adminLogin.html";
 });
 
 async function loadData() {

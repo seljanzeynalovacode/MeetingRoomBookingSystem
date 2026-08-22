@@ -1,15 +1,13 @@
-import { isLoggedIn } from "../api/apiClient.js";
-import { logout } from "../api/authApi.js";
+import { requireAdmin } from "../components/adminGuard.js";
 import { getAllRooms, getAllFloors, getAllBuildings, createRoom, updateRoom, deleteRoom } from "../api/roomsApi.js";
+import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 
-if (!isLoggedIn()) {
-  window.location.href = "login.html";
-}
+requireAdmin();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
-const tableBody = document.getElementById("roomsTableBody");
+const roomsContainer = document.getElementById("roomsContainer");
 const addRoomBtn = document.getElementById("addRoomBtn");
 
 const filterBuilding = document.getElementById("filterBuilding");
@@ -129,12 +127,6 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-function statusBadgeHtml(isActive) {
-  return isActive
-    ? `<span class="badge badge-neutral"><span class="badge-dot"></span>Aktiv</span>`
-    : `<span class="badge badge-inactive"><span class="badge-dot"></span>Deaktiv</span>`;
-}
-
 function getFilteredRooms() {
   return rooms.filter((r) => {
     if (filterFloor.value && r.floorId !== filterFloor.value) return false;
@@ -148,41 +140,69 @@ function getFilteredRooms() {
   });
 }
 
+function createRoomMiniCardHtml(r) {
+  const badge = r.isActive
+    ? `<span class="badge badge-neutral"><span class="badge-dot"></span>Aktiv</span>`
+    : `<span class="badge badge-inactive"><span class="badge-dot"></span>Deaktiv</span>`;
+
+  return `
+    <div class="room-mini-card">
+      <div class="room-mini-top">
+        <div>
+          <h4>${escapeHtml(r.name)}</h4>
+          <p>${escapeHtml(r.floorName)}</p>
+        </div>
+        ${badge}
+      </div>
+      <div class="room-mini-meta">
+        <span><i class="bi bi-people"></i>${r.capacity}</span>
+      </div>
+      <div class="room-mini-actions">
+        <button class="icon-action-btn edit-room-btn" data-id="${r.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+        <button class="icon-action-btn delete-room-btn" data-id="${r.id}" title="Sil"><i class="bi bi-trash"></i></button>
+      </div>
+    </div>`;
+}
+
+function createRoomSectionHtml(buildingName, roomsInBuilding) {
+  const cardsHtml = roomsInBuilding.map(createRoomMiniCardHtml).join("");
+  return `
+    <div class="room-section">
+      <div class="room-section-header">
+        <i class="bi bi-building"></i>
+        <h3>${escapeHtml(buildingName)}</h3>
+        <span class="room-section-count">${roomsInBuilding.length} otaq</span>
+      </div>
+      <div class="room-mini-grid">${cardsHtml}</div>
+    </div>`;
+}
+
 function renderRooms() {
   const rows = getFilteredRooms();
 
   if (!rows.length) {
-    tableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding:2rem;">Otaq tapılmadı.</td></tr>`;
+    roomsContainer.innerHTML = `<div class="empty-state"><i class="bi bi-door-open"></i>Otaq tapılmadı.</div>`;
     return;
   }
 
-  tableBody.innerHTML = rows
-    .map(
-      (r) => `
-    <tr>
-      <td>${escapeHtml(r.name)}</td>
-      <td>${r.capacity}</td>
-      <td>${escapeHtml(r.floorName)}</td>
-      <td>${escapeHtml(r.buildingName)}</td>
-      <td>${statusBadgeHtml(r.isActive)}</td>
-      <td>
-        <div class="row-actions">
-          <button class="icon-action-btn edit-btn" data-id="${r.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-          <button class="icon-action-btn delete-btn" data-id="${r.id}" title="Sil"><i class="bi bi-trash"></i></button>
-        </div>
-      </td>
-    </tr>`
-    )
+  const grouped = new Map();
+  rows.forEach((r) => {
+    if (!grouped.has(r.buildingName)) grouped.set(r.buildingName, []);
+    grouped.get(r.buildingName).push(r);
+  });
+
+  roomsContainer.innerHTML = Array.from(grouped.entries())
+    .map(([buildingName, roomsInBuilding]) => createRoomSectionHtml(buildingName, roomsInBuilding))
     .join("");
 
-  tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+  roomsContainer.querySelectorAll(".edit-room-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const r = rooms.find((x) => x.id === btn.dataset.id);
       if (r) openModal(r);
     });
   });
 
-  tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
+  roomsContainer.querySelectorAll(".delete-room-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!confirm("Bu otağı silmək istədiyinizə əminsiniz?")) return;
       clearAlert(alertBox);
@@ -217,7 +237,6 @@ async function loadRooms() {
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
-  window.location.href = "login.html";
+  window.location.href = "adminLogin.html";
 });
-
 loadRooms();

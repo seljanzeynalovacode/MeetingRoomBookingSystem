@@ -16,16 +16,26 @@
       </div>
       <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
 
-      <nav class="admin-nav">
-        <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
-        <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
-        <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
-        <a href="adminBuildings.html" class="active"><i class="bi bi-building"></i>Binalar</a>
-        <a href="adminFloors.html"><i class="bi bi-layers"></i>Mərtəbələr</a>
-        <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
-        <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
-        <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
-      </nav>
+            <div class="admin-nav-groups">
+        <div class="nav-section-label">Ümumi</div>
+        <nav class="admin-nav">
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        </nav>
+
+        <div class="nav-section-label">Struktur</div>
+        <nav class="admin-nav">
+          <a href="adminBuildings.html" class="active"><i class="bi bi-building"></i>Binalar</a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+          <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        </nav>
+
+        <div class="nav-section-label">Fəaliyyət</div>
+        <nav class="admin-nav">
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+        </nav>
+      </div>
 
       <div class="admin-sidebar-footer">
         <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
@@ -33,31 +43,28 @@
       </div>
     </aside>
 
-    <main class="admin-main">
+    <main class="admin-main" style="max-width: 1400px;">
       <div class="admin-topbar">
         <div>
           <h1>Binalar</h1>
-          <p>Sistemdəki binaları idarə edin.</p>
+          <p>Binaları və mərtəbələrini idarə edin.</p>
         </div>
-        <button type="button" class="btn btn-primary" id="addBuildingBtn"><i class="bi bi-plus-lg"></i>Yeni bina</button>
-      </div>
-
-      <div id="alertBox"></div>
-
-      <div class="card">
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Ad</th>
-                <th>Ünvan</th>
-                <th>Əməliyyatlar</th>
-              </tr>
-            </thead>
-            <tbody id="buildingsTableBody"></tbody>
-          </table>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-outline" id="addFloorBtn"><i class="bi bi-plus-lg"></i>Yeni mərtəbə</button>
+          <button type="button" class="btn btn-primary" id="addBuildingBtn"><i class="bi bi-plus-lg"></i>Yeni bina</button>
         </div>
       </div>
+            <div id="alertBox"></div>
+
+            <div class="search-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" id="buildingSearchInput" placeholder="Bina adı və ya ünvana görə axtar..." />
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="resetSearchBtn"><i class="bi bi-arrow-counterclockwise"></i>Yenilə</button>
+      </div>
+
+      <div class="buildings-grid" id="buildingsGrid"></div>
     </main>
   </div>
 
@@ -79,7 +86,7 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" style="margin-bottom:0;">
           <label class="field-label" for="buildingAddress">Ünvan</label>
           <div class="input-wrap">
             <i class="bi bi-geo-alt leading-icon"></i>
@@ -90,6 +97,42 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="buildingModalCancelBtn">İmtina</button>
           <button type="submit" class="btn btn-primary" id="buildingModalSubmitBtn">Yarat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="floorModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="floorModalTitle">Yeni mərtəbə</h3>
+        <button type="button" class="modal-close" id="floorModalClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div id="floorModalAlert"></div>
+
+      <form id="floorForm" novalidate>
+        <div class="field">
+          <label class="field-label" for="floorBuilding">Bina</label>
+          <select class="input" id="floorBuilding" required></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="floorName">Ad</label>
+          <div class="input-wrap">
+            <i class="bi bi-layers leading-icon"></i>
+            <input type="text" class="input has-icon" id="floorName" required minlength="1" maxlength="150" placeholder="3-cü mərtəbə" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label" for="floorLevel">Səviyyə nömrəsi</label>
+          <input type="number" class="input" id="floorLevel" required min="-5" max="500" placeholder="3" />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="floorModalCancelBtn">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="floorModalSubmitBtn">Yarat</button>
         </div>
       </form>
     </div>

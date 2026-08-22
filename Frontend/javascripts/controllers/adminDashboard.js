@@ -1,13 +1,11 @@
-import { isLoggedIn } from "../api/apiClient.js";
+import { requireAdmin } from "../components/adminGuard.js";
 import { logout } from "../api/authApi.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin } from "../api/reservationsApi.js";
 import { showAlert } from "../components/alert.js";
 
-if (!isLoggedIn()) {
-  window.location.href = "login.html";
-}
+requireAdmin();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -33,7 +31,7 @@ Chart.defaults.color = CHART_COLORS.text;
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
-  window.location.href = "login.html";
+  window.location.href = "adminLogin.html";
 });
 
 function buildPeakHoursChart(reservations) {
@@ -89,19 +87,27 @@ function buildStatusDonutChart(reservations) {
   });
 }
 
-function buildRoomUsageChart(reservations) {
+function buildRoomUsageChart(reservations, rooms) {
+  const roomMap = new Map(rooms.map((r) => [r.id, r]));
   const counts = {};
+
   reservations.forEach((r) => {
-    counts[r.roomName] = (counts[r.roomName] || 0) + 1;
+    counts[r.roomId] = (counts[r.roomId] || 0) + 1;
   });
 
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const sorted = Object.entries(counts)
+    .map(([roomId, count]) => {
+      const room = roomMap.get(roomId);
+      const label = room ? `${room.name} · ${room.buildingName}` : "Naməlum otaq";
+      return { label, count };
+    })
+    .sort((a, b) => b.count - a.count);
 
   new Chart(document.getElementById("roomUsageChart"), {
     type: "bar",
     data: {
-      labels: sorted.map(([name]) => name),
-      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: CHART_COLORS.amber, borderRadius: 6, maxBarThickness: 30 }],
+      labels: sorted.map((s) => s.label),
+      datasets: [{ data: sorted.map((s) => s.count), backgroundColor: CHART_COLORS.amber, borderRadius: 6, maxBarThickness: 30 }],
     },
     options: {
       responsive: true,
@@ -139,7 +145,7 @@ async function init() {
 
     buildPeakHoursChart(reservations);
     buildStatusDonutChart(reservations);
-    buildRoomUsageChart(reservations);
+    buildRoomUsageChart(reservations, rooms);
   } catch (err) {
     showAlert(alertBox, err.message);
   }

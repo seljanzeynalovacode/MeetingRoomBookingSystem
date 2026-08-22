@@ -1,4 +1,4 @@
-import { isLoggedIn } from "../api/apiClient.js";
+import { requireAdmin } from "../components/adminGuard.js";
 import { logout } from "../api/authApi.js";
 import {
   getAllRoles,
@@ -11,9 +11,7 @@ import {
 } from "../api/adminApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 
-if (!isLoggedIn()) {
-  window.location.href = "login.html";
-}
+requireAdmin();
 
 const alertBox = document.getElementById("alertBox");
 const roleListEl = document.getElementById("roleList");
@@ -180,7 +178,7 @@ async function loadUsers() {
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
-  window.location.href = "login.html";
+  window.location.href = "adminLogin.html";
 });
 
 async function init() {

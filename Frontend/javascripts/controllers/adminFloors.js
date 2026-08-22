@@ -157,7 +157,7 @@ async function loadFloors() {
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
-  window.location.href = "login.html";
+  window.location.href = "adminLogin.html";
 });
 
 loadFloors();
