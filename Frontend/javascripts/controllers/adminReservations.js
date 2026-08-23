@@ -12,6 +12,7 @@ const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
 const tableBody = document.getElementById("reservationsTableBody");
 
+const filterUser = document.getElementById("filterUser");
 const filterBuilding = document.getElementById("filterBuilding");
 const filterRoom = document.getElementById("filterRoom");
 const filterStatus = document.getElementById("filterStatus");
@@ -74,7 +75,12 @@ function populateRoomFilterOptions(buildingName) {
 }
 
 function applyFilters(rows) {
+  const userTerm = filterUser.value.trim().toLocaleLowerCase("az");
   return rows.filter((row) => {
+    if (userTerm) {
+      const haystack = `${row.fullName} ${row.email} ${row.userName}`.toLocaleLowerCase("az");
+      if (!haystack.includes(userTerm)) return false;
+    }
     if (filterBuilding.value && row.buildingName !== filterBuilding.value) return false;
     if (filterRoom.value && row.roomId !== filterRoom.value) return false;
     if (filterStatus.value && row.status !== filterStatus.value) return false;
@@ -179,8 +185,10 @@ filterBuilding.addEventListener("change", () => {
   renderTable();
 });
 [filterRoom, filterStatus, filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderTable));
+filterUser.addEventListener("input", renderTable);
 
 clearFiltersBtn.addEventListener("click", () => {
+  filterUser.value = "";
   filterBuilding.value = "";
   populateRoomFilterOptions("");
   filterRoom.value = "";

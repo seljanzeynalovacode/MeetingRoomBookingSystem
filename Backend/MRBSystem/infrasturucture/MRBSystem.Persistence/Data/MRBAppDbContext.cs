@@ -26,4 +26,11 @@ public class MRBAppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MRBAppDbContext).Assembly);
     }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        configurationBuilder.Properties<DateTime>().HaveConversion<UtcDateTimeConverter>();
+    }
 }

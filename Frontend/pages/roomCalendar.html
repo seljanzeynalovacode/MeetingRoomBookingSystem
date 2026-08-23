@@ -16,8 +16,9 @@
       </div>
     </a>
 
-    <div class="nav-right">
+       <div class="nav-right">
       <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
+      <a href="roomCalendar.html" class="btn btn-ghost btn-sm active"><i class="bi bi-calendar3"></i>Təqvim</a>
       <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
       <div class="avatar-chip" id="avatarChip">
         <span class="av" id="avatarInitials">--</span>
@@ -51,7 +52,9 @@
       </div>
     </div>
 
-    <div class="room-picker-row">
+        <div class="room-picker-row">
+      <label class="field-label" for="buildingSelect" style="margin:0;">Bina</label>
+      <select class="input" id="buildingSelect"><option value="">Bütün binalar</option></select>
       <label class="field-label" for="roomSelect" style="margin:0;">Otaq</label>
       <select class="input" id="roomSelect"></select>
     </div>

@@ -369,6 +369,8 @@ body.dashboard-body { padding-top: 76px; }
 .search-cluster .btn { margin-left: auto; flex-shrink: 0; }
 
 .nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: auto; }
+.nav-right a.active,
+.nav-right a.active:hover { background: var(--violet-500); color: #fff; }
 .icon-btn {
   width: 40px; height: 40px; border-radius: var(--r-sm);
   display: flex; align-items: center; justify-content: center;
@@ -408,6 +410,8 @@ body.dashboard-body { padding-top: 76px; }
   display: flex; align-items: center; gap: 8px; cursor: pointer;
 }
 .avatar-menu button:hover { background: var(--violet-50); color: var(--violet-700); }
+.avatar-menu button#logoutBtn { color: var(--red-700); }
+.avatar-menu button#logoutBtn:hover { background: var(--red-100); color: var(--red-700); }
 
 .dash-layout {
   display: grid;

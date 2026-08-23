@@ -14,21 +14,23 @@ public class RoleService : IRoleService
 {
     private readonly RoleManager<AppRole> _roleManager;
     private readonly UserManager<AppUser> _userManager;
+    private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
     private readonly ILogger<RoleService> _logger;
 
     public RoleService(
         RoleManager<AppRole> roleManager,
         UserManager<AppUser> userManager,
+        ICurrentUserService currentUser,
         IMapper mapper,
         ILogger<RoleService> logger)
     {
         _roleManager = roleManager;
         _userManager = userManager;
+        _currentUser = currentUser;
         _mapper = mapper;
         _logger = logger;
     }
-
     public async Task<ResponseAppRoleDto> CreateRoleAsync(CreateAppRoleDto dto)
     {
         if (await _roleManager.RoleExistsAsync(dto.Name))
@@ -166,6 +168,12 @@ public class RoleService : IRoleService
 
     public async Task RemoveRoleFromUserAsync(Guid userId, string roleName)
     {
+        if (userId == _currentUser.UserId && roleName == "Admin")
+        {
+            _logger.LogWarning("Admin {UserId} attempted to remove their own Admin role.", userId);
+            throw new InvalidOperationException("Öz Admin rolunuzu silə bilməzsiniz.");
+        }
+
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
         if (user == null)

@@ -19,6 +19,14 @@ const newRoleInput = document.getElementById("newRoleInput");
 const addRoleBtn = document.getElementById("addRoleBtn");
 const usersTableBody = document.getElementById("usersTableBody");
 const logoutBtn = document.getElementById("logoutBtn");
+const userSearchInput = document.getElementById("userSearchInput");
+const resetUserSearchBtn = document.getElementById("resetUserSearchBtn");
+
+userSearchInput.addEventListener("input", renderUsers);
+resetUserSearchBtn.addEventListener("click", () => {
+  userSearchInput.value = "";
+  renderUsers();
+});
 
 let roles = [];
 let users = [];
@@ -124,7 +132,23 @@ function renderUsers() {
     usersTableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding:2rem;">İstifadəçi tapılmadı.</td></tr>`;
     return;
   }
-  usersTableBody.innerHTML = users.map(createUserRowHtml).join("");
+
+  const searchTerm = userSearchInput.value.trim().toLocaleLowerCase("az");
+  const matched = searchTerm
+    ? users.filter(
+        (u) =>
+          `${u.firstName} ${u.lastName}`.toLocaleLowerCase("az").includes(searchTerm) ||
+          (u.email || "").toLocaleLowerCase("az").includes(searchTerm) ||
+          (u.userName || "").toLocaleLowerCase("az").includes(searchTerm)
+      )
+    : users;
+
+  if (!matched.length) {
+    usersTableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding:2rem;">Axtarışa uyğun istifadəçi tapılmadı.</td></tr>`;
+    return;
+  }
+
+  usersTableBody.innerHTML = matched.map(createUserRowHtml).join("");
 
   usersTableBody.querySelectorAll(".assign-role-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {

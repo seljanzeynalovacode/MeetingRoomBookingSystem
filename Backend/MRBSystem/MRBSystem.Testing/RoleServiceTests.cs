@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using MRBSystem.Application.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
+using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 
@@ -52,7 +54,10 @@ public class RoleServiceTests
 
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
-        _service = new RoleService(_roleManager, _userManager, mapperConfig.CreateMapper(), NullLogger<RoleService>.Instance);
+        var currentUser = new Mock<ICurrentUserService>();
+        currentUser.Setup(x => x.UserId).Returns(Guid.NewGuid());
+
+        _service = new RoleService(_roleManager, _userManager, currentUser.Object, mapperConfig.CreateMapper(), NullLogger<RoleService>.Instance);
     }
 
     [Fact]

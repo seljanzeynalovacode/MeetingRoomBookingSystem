@@ -3,16 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|solutionrelative:infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\infrasturucture\\mrbsystem.persistence\\data\\utcdatetimeconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|solutionrelative:infrasturucture\\mrbsystem.persistence\\data\\utcdatetimeconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\mrbsystem.testing\\roleservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|solutionrelative:mrbsystem.testing\\roleservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.application\\services\\roleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|solutionrelative:core\\mrbsystem.application\\services\\roleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\reservationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\reservationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\logs\\log-20260821.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\logs\\log-20260821.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.domain\\enums\\reservationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\enums\\reservationstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\presentation\\mrbsystem.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,10 +82,6 @@
       "RelativeMoniker": "D:0:0:{A535DBE1-4E91-41DD-B359-0FADBBCC4103}|presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj|solutionrelative:presentation\\mrbsystem.webapi\\logs\\log-20260813.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BA26EF59-03A9-42E0-B9E2-E1EE13ADF150}|infrasturucture\\MRBSystem.Persistence\\MRBSystem.Persistence.csproj|solutionrelative:infrasturucture\\mrbsystem.persistence\\data\\mrbappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.application\\services\\roomequipmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|solutionrelative:core\\mrbsystem.application\\services\\roomequipmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -98,10 +114,6 @@
       "RelativeMoniker": "D:0:0:{88C66B74-BDDF-428D-BDBD-F10E7FC72883}|core\\MRBSystem.Domain\\MRBSystem.Domain.csproj|solutionrelative:core\\mrbsystem.domain\\entities\\roomblackout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\mrbsystem.testing\\roleservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|solutionrelative:mrbsystem.testing\\roleservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\mrbsystem.testing\\equipmentservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7BBBDFBB-1CA1-4112-8CA4-D2BF06EE0A45}|MRBSystem.Testing\\MRBSystem.Testing.csproj|solutionrelative:mrbsystem.testing\\equipmentservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -124,10 +136,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C4FBF86D-0915-41C5-A4CE-EB6B9833310C}|core\\MRBSystem.Contracts\\MRBSystem.Contracts.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.contracts\\services\\iroomblackoutservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C4FBF86D-0915-41C5-A4CE-EB6B9833310C}|core\\MRBSystem.Contracts\\MRBSystem.Contracts.csproj|solutionrelative:core\\mrbsystem.contracts\\services\\iroomblackoutservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.application\\services\\roleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D116776B-11B1-4CC1-91F4-C02DCCD4D11E}|core\\MRBSystem.Application\\MRBSystem.Application.csproj|solutionrelative:core\\mrbsystem.application\\services\\roleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C4FBF86D-0915-41C5-A4CE-EB6B9833310C}|core\\MRBSystem.Contracts\\MRBSystem.Contracts.csproj|c:\\users\\acer\\documents\\code academy\\meetingroombookingsystem\\backend\\mrbsystem\\core\\mrbsystem.contracts\\services\\iroleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -616,11 +624,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "secrets.json",
               "DocumentMoniker": "C:\\Users\\ACER\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\\secrets.json",
@@ -632,61 +640,38 @@
               "IsPinned": true
             },
             {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20260823105750_FixDateTimeUtc.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs",
+              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs",
+              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260823105750_FixDateTimeUtc.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-23T10:57:50.619Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UtcDateTimeConverter.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\UtcDateTimeConverter.cs",
+              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Data\\UtcDateTimeConverter.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\UtcDateTimeConverter.cs",
+              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Data\\UtcDateTimeConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-23T10:54:34.277Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "log-20260821.txt",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
-              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
-              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-08-21T22:44:04.505Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "BuildingServiceTests.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\BuildingServiceTests.cs",
-              "RelativeDocumentMoniker": "MRBSystem.Testing\\BuildingServiceTests.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\BuildingServiceTests.cs",
-              "RelativeToolTip": "MRBSystem.Testing\\BuildingServiceTests.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAA7wCYAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T21:27:56.179Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AuthServiceTests.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\AuthServiceTests.cs",
-              "RelativeDocumentMoniker": "MRBSystem.Testing\\AuthServiceTests.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\AuthServiceTests.cs",
-              "RelativeToolTip": "MRBSystem.Testing\\AuthServiceTests.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T21:10:24.949Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CustomProfile.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
-              "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
-              "RelativeToolTip": "core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAQwAMAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-10T11:36:20.521Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
@@ -698,7 +683,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "RoomsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\RoomsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\RoomsController.cs",
@@ -706,12 +691,111 @@
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Controllers\\RoomsController.cs",
               "ViewState": "AgIAADUAAAAAAAAAAAAswCgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-13T08:19:06.424Z",
+              "WhenOpened": "2026-08-13T08:19:06.424Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ReservationStatus.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
+              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T10:11:17.459Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RoleService.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoleService.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\RoleService.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoleService.cs",
+              "RelativeToolTip": "core\\MRBSystem.Application\\Services\\RoleService.cs",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAiwLAAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T13:07:07.511Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MRBAppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-09T13:32:08.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CustomProfile.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
+              "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
+              "RelativeToolTip": "core\\MRBSystem.Application\\Mapper\\CustomProfile.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAQwAMAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-10T11:36:20.521Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "RoleServiceTests.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoleServiceTests.cs",
+              "RelativeDocumentMoniker": "MRBSystem.Testing\\RoleServiceTests.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoleServiceTests.cs",
+              "RelativeToolTip": "MRBSystem.Testing\\RoleServiceTests.cs",
+              "ViewState": "AgIAAIcAAAAAAAAAAAAIwD4AAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-20T09:46:16.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AuthServiceTests.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\AuthServiceTests.cs",
+              "RelativeDocumentMoniker": "MRBSystem.Testing\\AuthServiceTests.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\AuthServiceTests.cs",
+              "RelativeToolTip": "MRBSystem.Testing\\AuthServiceTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-18T21:10:24.949Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BuildingServiceTests.cs",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\BuildingServiceTests.cs",
+              "RelativeDocumentMoniker": "MRBSystem.Testing\\BuildingServiceTests.cs",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\BuildingServiceTests.cs",
+              "RelativeToolTip": "MRBSystem.Testing\\BuildingServiceTests.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAA7wCYAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-18T21:27:56.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "log-20260821.txt",
+              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
+              "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
+              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
+              "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260821.txt",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-08-21T22:44:04.505Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Program.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Program.cs",
@@ -723,19 +807,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ReservationStatus.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
-              "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
-              "RelativeToolTip": "core\\MRBSystem.Domain\\Enums\\ReservationStatus.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-09T10:11:17.459Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "AuthService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\AuthService.cs",
@@ -747,7 +819,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "log-20260820.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260820.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260820.txt",
@@ -759,7 +831,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 17,
               "Title": "log-20260817.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260817.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260817.txt",
@@ -771,7 +843,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "log-20260819.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260819.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260819.txt",
@@ -783,19 +855,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "MRBAppDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
-              "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
-              "RelativeToolTip": "infrasturucture\\MRBSystem.Persistence\\Data\\MRBAppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-09T13:32:08.037Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 19,
               "Title": "log-20260813.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260813.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260813.txt",
@@ -807,7 +867,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 18,
               "Title": "log-20260814.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260814.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260814.txt",
@@ -819,7 +879,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 151,
+              "DocumentIndex": 153,
               "Title": "20260820115120_RemoveCandL.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260820115120_RemoveCandL.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260820115120_RemoveCandL.cs",
@@ -831,7 +891,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "RoomEquipmentService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoomEquipmentService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\RoomEquipmentService.cs",
@@ -843,7 +903,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "ResponseRoomEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\ResponseRoomEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\ResponseRoomEquipmentDto.cs",
@@ -855,7 +915,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "ConfirmEmailDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ConfirmEmailDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ConfirmEmailDto.cs",
@@ -867,7 +927,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 23,
               "Title": "UserResponseDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AppUserDtos\\UserResponseDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AppUserDtos\\UserResponseDto.cs",
@@ -879,7 +939,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "UpdateAppRoleDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\UpdateAppRoleDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\UpdateAppRoleDto.cs",
@@ -891,7 +951,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "ResponseAppRoleDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\ResponseAppRoleDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\ResponseAppRoleDto.cs",
@@ -903,7 +963,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "CreateAppRoleDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\CreateAppRoleDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AppRoleDtos\\CreateAppRoleDto.cs",
@@ -915,7 +975,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "RoomBlackout.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\RoomBlackout.cs",
@@ -927,19 +987,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "RoleServiceTests.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoleServiceTests.cs",
-              "RelativeDocumentMoniker": "MRBSystem.Testing\\RoleServiceTests.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoleServiceTests.cs",
-              "RelativeToolTip": "MRBSystem.Testing\\RoleServiceTests.cs",
-              "ViewState": "AgIAACYAAAAAAAAAAAAhwDQAAABJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-20T09:46:16.334Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 28,
               "Title": "EquipmentServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\EquipmentServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\EquipmentServiceTests.cs",
@@ -951,7 +999,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 29,
               "Title": "AuthsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\AuthsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\AuthsController.cs",
@@ -963,7 +1011,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 30,
               "Title": "RoomBlackoutServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoomBlackoutServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\RoomBlackoutServiceTests.cs",
@@ -975,7 +1023,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 31,
               "Title": "EquipmentService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\EquipmentService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\EquipmentService.cs",
@@ -987,7 +1035,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 32,
               "Title": "RoomBlackoutService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoomBlackoutService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\RoomBlackoutService.cs",
@@ -999,7 +1047,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 33,
               "Title": "IRoomBlackoutService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IRoomBlackoutService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IRoomBlackoutService.cs",
@@ -1011,19 +1059,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "RoleService.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoleService.cs",
-              "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\RoleService.cs",
-              "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoleService.cs",
-              "RelativeToolTip": "core\\MRBSystem.Application\\Services\\RoleService.cs",
-              "ViewState": "AgIAAJIAAAAAAAAAAAAAAJYAAAA0AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-19T13:07:07.511Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "IRoleService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IRoleService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IRoleService.cs",
@@ -1035,7 +1071,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "ExceptionMiddleware.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Exceptions\\ExceptionMiddleware.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Exceptions\\ExceptionMiddleware.cs",
@@ -1047,7 +1083,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "NotificationTemplates.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Teamplates\\NotificationTemplates.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Teamplates\\NotificationTemplates.cs",
@@ -1059,7 +1095,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "NotificationType.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\NotificationType.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\NotificationType.cs",
@@ -1071,7 +1107,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 150,
+              "DocumentIndex": 152,
               "Title": "20260820085857_RemoveRowVersionField.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260820085857_RemoveRowVersionField.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260820085857_RemoveRowVersionField.cs",
@@ -1083,7 +1119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 39,
               "Title": "ReservationConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\ReservationConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\ReservationConfiguration.cs",
@@ -1095,7 +1131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "Reservation.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Reservation.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Reservation.cs",
@@ -1107,7 +1143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 38,
               "Title": "TestMRBAppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\TestMRBAppDbContext.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\TestMRBAppDbContext.cs",
@@ -1119,7 +1155,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "TokenResponseDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\TokenResponseDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\TokenResponseDto.cs",
@@ -1131,7 +1167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 43,
               "Title": "ResetPasswordDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ResetPasswordDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ResetPasswordDto.cs",
@@ -1143,7 +1179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 44,
               "Title": "ResendConfirmationEmailDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ResendConfirmationEmailDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ResendConfirmationEmailDto.cs",
@@ -1155,7 +1191,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "RegisterDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\RegisterDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\RegisterDto.cs",
@@ -1167,7 +1203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "RefreshTokenRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\RefreshTokenRequestDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\RefreshTokenRequestDto.cs",
@@ -1179,7 +1215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "Verify2FADto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\Verify2FADto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\Verify2FADto.cs",
@@ -1191,7 +1227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "LoginResponseDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\LoginResponseDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\LoginResponseDto.cs",
@@ -1203,7 +1239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\LoginDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\LoginDto.cs",
@@ -1215,7 +1251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 49,
               "Title": "ForgotPasswordDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ForgotPasswordDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\AuthDtos\\ForgotPasswordDto.cs",
@@ -1227,7 +1263,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 50,
               "Title": "ReservationService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\ReservationService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\ReservationService.cs",
@@ -1239,7 +1275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 51,
               "Title": "CreateRoomBlackoutDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\CreateRoomBlackoutDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\CreateRoomBlackoutDto.cs",
@@ -1251,7 +1287,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 52,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IAuthService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IAuthService.cs",
@@ -1263,7 +1299,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 53,
               "Title": "NotificationServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\NotificationServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\NotificationServiceTests.cs",
@@ -1275,7 +1311,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 54,
               "Title": "ParticipantServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\ParticipantServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\ParticipantServiceTests.cs",
@@ -1287,7 +1323,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 56,
               "Title": "IGenericRepository.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Repository\\IGenericRepository.cs",
@@ -1299,7 +1335,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 57,
               "Title": "ParticipantService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\ParticipantService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\ParticipantService.cs",
@@ -1311,7 +1347,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 60,
               "Title": "CreateBuildingDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\CreateBuildingDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\CreateBuildingDto.cs",
@@ -1323,7 +1359,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 59,
               "Title": "FloorConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\FloorConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\FloorConfiguration.cs",
@@ -1335,7 +1371,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 55,
               "Title": "GenericRepository.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Repository\\GenericRepository.cs",
@@ -1347,7 +1383,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 61,
               "Title": "UpdateBuildingDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\UpdateBuildingDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\UpdateBuildingDto.cs",
@@ -1359,7 +1395,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 58,
               "Title": "RoomConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomConfiguration.cs",
@@ -1371,7 +1407,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "UpdateParticipantDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\UpdateParticipantDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\UpdateParticipantDto.cs",
@@ -1383,7 +1419,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "CreateParticipantDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\CreateParticipantDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\CreateParticipantDto.cs",
@@ -1395,7 +1431,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "UpdateReservationDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\UpdateReservationDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\UpdateReservationDto.cs",
@@ -1407,7 +1443,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 65,
               "Title": "CreateReservationDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\CreateReservationDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\CreateReservationDto.cs",
@@ -1419,7 +1455,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 66,
               "Title": "UpdateRoomBlackoutDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\UpdateRoomBlackoutDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\UpdateRoomBlackoutDto.cs",
@@ -1431,7 +1467,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 67,
               "Title": "UpdateRoomEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\UpdateRoomEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\UpdateRoomEquipmentDto.cs",
@@ -1443,7 +1479,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 68,
               "Title": "CreateRoomEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\CreateRoomEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomEquipmentDtos\\CreateRoomEquipmentDto.cs",
@@ -1455,7 +1491,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 69,
               "Title": "CreateEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\CreateEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\CreateEquipmentDto.cs",
@@ -1467,7 +1503,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 70,
               "Title": "UpdateEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\UpdateEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\UpdateEquipmentDto.cs",
@@ -1479,7 +1515,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 71,
               "Title": "RoomAvailabilityRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\RoomAvailabilityRequestDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\RoomAvailabilityRequestDto.cs",
@@ -1491,7 +1527,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 72,
               "Title": "UpdateRoomDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\UpdateRoomDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\UpdateRoomDto.cs",
@@ -1503,7 +1539,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 73,
               "Title": "CreateRoomDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\CreateRoomDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\CreateRoomDto.cs",
@@ -1515,7 +1551,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 74,
               "Title": "UpdateFloorDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\UpdateFloorDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\UpdateFloorDto.cs",
@@ -1527,7 +1563,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 75,
               "Title": "CreateFloorDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\CreateFloorDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\CreateFloorDto.cs",
@@ -1539,7 +1575,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 76,
               "Title": "ResponseBuildingDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\ResponseBuildingDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\BuildingDtos\\ResponseBuildingDto.cs",
@@ -1551,7 +1587,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 77,
               "Title": "AutoMapperConfigurationTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\AutoMapperConfigurationTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\AutoMapperConfigurationTests.cs",
@@ -1563,7 +1599,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 78,
               "Title": "FloorServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\FloorServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\FloorServiceTests.cs",
@@ -1575,7 +1611,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 79,
               "Title": "RoomEquipmentServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoomEquipmentServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\RoomEquipmentServiceTests.cs",
@@ -1587,7 +1623,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
+              "DocumentIndex": 80,
               "Title": "RoomServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\RoomServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\RoomServiceTests.cs",
@@ -1599,7 +1635,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 79,
+              "DocumentIndex": 81,
               "Title": "ReservationServiceTests.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\MRBSystem.Testing\\ReservationServiceTests.cs",
               "RelativeDocumentMoniker": "MRBSystem.Testing\\ReservationServiceTests.cs",
@@ -1611,7 +1647,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 149,
+              "DocumentIndex": 151,
               "Title": "20260818161802_isdelfieldisremoved.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818161802_isdelfieldisremoved.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818161802_isdelfieldisremoved.cs",
@@ -1623,7 +1659,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 83,
+              "DocumentIndex": 85,
               "Title": "FloorService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\FloorService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\FloorService.cs",
@@ -1635,7 +1671,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 80,
+              "DocumentIndex": 82,
               "Title": "NotificationDeliveryService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Infrasturucture\\Services\\NotificationDeliveryService.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Infrasturucture\\Services\\NotificationDeliveryService.cs",
@@ -1647,7 +1683,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 84,
+              "DocumentIndex": 86,
               "Title": "BuildingService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\BuildingService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\BuildingService.cs",
@@ -1659,7 +1695,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 82,
+              "DocumentIndex": 84,
               "Title": "RoomService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\RoomService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\RoomService.cs",
@@ -1671,7 +1707,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 81,
+              "DocumentIndex": 83,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\BaseEntity.cs",
@@ -1683,7 +1719,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 85,
+              "DocumentIndex": 87,
               "Title": "ReservationsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\ReservationsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\ReservationsController.cs",
@@ -1695,7 +1731,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 86,
+              "DocumentIndex": 88,
               "Title": "IReservationService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IReservationService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IReservationService.cs",
@@ -1707,7 +1743,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 88,
+              "DocumentIndex": 90,
               "Title": "CalendarBlackoutDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\CalendarBlackoutDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\CalendarBlackoutDto.cs",
@@ -1719,7 +1755,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 87,
+              "DocumentIndex": 89,
               "Title": "RoomCalendarDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\RoomCalendarDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\RoomCalendarDto.cs",
@@ -1731,7 +1767,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 89,
+              "DocumentIndex": 91,
               "Title": "log-20260818.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260818.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260818.txt",
@@ -1743,7 +1779,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 90,
+              "DocumentIndex": 92,
               "Title": "ParticipantConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\ParticipantConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\ParticipantConfiguration.cs",
@@ -1755,7 +1791,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 91,
+              "DocumentIndex": 93,
               "Title": "log-20260815.txt",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Logs\\log-20260815.txt",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Logs\\log-20260815.txt",
@@ -1767,7 +1803,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 147,
+              "DocumentIndex": 149,
               "Title": "20260818123701_delchekinfields.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818123701_delchekinfields.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818123701_delchekinfields.cs",
@@ -1779,7 +1815,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 148,
+              "DocumentIndex": 150,
               "Title": "20260818121805_delchekin.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818121805_delchekin.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260818121805_delchekin.cs",
@@ -1791,7 +1827,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 92,
+              "DocumentIndex": 94,
               "Title": "NotificationService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\NotificationService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\NotificationService.cs",
@@ -1803,7 +1839,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 93,
+              "DocumentIndex": 95,
               "Title": "NotificationConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\NotificationConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\NotificationConfiguration.cs",
@@ -1815,7 +1851,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 94,
+              "DocumentIndex": 96,
               "Title": "ResponseReservationDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\ResponseReservationDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ReservationDtos\\ResponseReservationDto.cs",
@@ -1827,7 +1863,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 95,
+              "DocumentIndex": 97,
               "Title": "IRoomService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IRoomService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IRoomService.cs",
@@ -1839,7 +1875,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 97,
+              "DocumentIndex": 99,
               "Title": "Room.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Room.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Room.cs",
@@ -1851,7 +1887,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 98,
+              "DocumentIndex": 100,
               "Title": "Equipment.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Equipment.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Equipment.cs",
@@ -1863,7 +1899,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 96,
+              "DocumentIndex": 98,
               "Title": "CalendarReservationDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\CalendarReservationDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\CalendarDtos\\CalendarReservationDto.cs",
@@ -1875,7 +1911,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 99,
+              "DocumentIndex": 101,
               "Title": "INotificationService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\INotificationService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\INotificationService.cs",
@@ -1887,7 +1923,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 100,
+              "DocumentIndex": 102,
               "Title": "BuildingsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\BuildingsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\BuildingsController.cs",
@@ -1899,7 +1935,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 101,
+              "DocumentIndex": 103,
               "Title": "RoomEquipmentsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\RoomEquipmentsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\RoomEquipmentsController.cs",
@@ -1911,7 +1947,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 102,
+              "DocumentIndex": 104,
               "Title": "RoomBlackoutsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\RoomBlackoutsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\RoomBlackoutsController.cs",
@@ -1923,7 +1959,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 103,
+              "DocumentIndex": 105,
               "Title": "NotificationsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\NotificationsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\NotificationsController.cs",
@@ -1935,7 +1971,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 104,
+              "DocumentIndex": 106,
               "Title": "FloorsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\FloorsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\FloorsController.cs",
@@ -1947,7 +1983,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 105,
+              "DocumentIndex": 107,
               "Title": "EquipmentsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\EquipmentsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\EquipmentsController.cs",
@@ -1959,7 +1995,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 106,
+              "DocumentIndex": 108,
               "Title": "20260817153606_DelOrganizer.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260817153606_DelOrganizer.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260817153606_DelOrganizer.cs",
@@ -1971,7 +2007,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 107,
+              "DocumentIndex": 109,
               "Title": "ParticipantsController.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Controllers\\ParticipantsController.cs",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Controllers\\ParticipantsController.cs",
@@ -1983,7 +2019,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 108,
+              "DocumentIndex": 110,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Repository\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Repository\\UnitOfWork.cs",
@@ -1995,7 +2031,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 109,
+              "DocumentIndex": 111,
               "Title": "IUnitOfWork.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Repository\\IUnitOfWork.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Repository\\IUnitOfWork.cs",
@@ -2007,7 +2043,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 110,
+              "DocumentIndex": 112,
               "Title": "CurrentUserService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Services\\CurrentUserService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Services\\CurrentUserService.cs",
@@ -2019,7 +2055,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 111,
+              "DocumentIndex": 113,
               "Title": "ICurrentUserService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\ICurrentUserService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\ICurrentUserService.cs",
@@ -2031,7 +2067,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 112,
+              "DocumentIndex": 114,
               "Title": "EmailService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Infrasturucture\\Services\\EmailService.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Infrasturucture\\Services\\EmailService.cs",
@@ -2043,7 +2079,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 113,
+              "DocumentIndex": 115,
               "Title": "ResponseNotificationDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\NotificationDtos\\ResponseNotificationDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\NotificationDtos\\ResponseNotificationDto.cs",
@@ -2055,7 +2091,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 114,
+              "DocumentIndex": 116,
               "Title": "Notification.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Notification.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Notification.cs",
@@ -2067,7 +2103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 115,
+              "DocumentIndex": 117,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\Properties\\launchSettings.json",
@@ -2079,7 +2115,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 116,
+              "DocumentIndex": 118,
               "Title": "MRBSystem.WebAPI.csproj",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\MRBSystem.WebAPI.csproj",
@@ -2091,7 +2127,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 117,
+              "DocumentIndex": 119,
               "Title": "ResponseRoomBlackoutDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\ResponseRoomBlackoutDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomBlackoutDtos\\ResponseRoomBlackoutDto.cs",
@@ -2103,7 +2139,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 118,
+              "DocumentIndex": 120,
               "Title": "ResponseStatus.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Enums\\ResponseStatus.cs",
@@ -2115,7 +2151,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 119,
+              "DocumentIndex": 121,
               "Title": "IParticipantService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IParticipantService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IParticipantService.cs",
@@ -2127,7 +2163,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 146,
+              "DocumentIndex": 148,
               "Title": "20260812095656_initDb.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Migrations\\20260812095656_initDb.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Migrations\\20260812095656_initDb.cs",
@@ -2139,7 +2175,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 120,
+              "DocumentIndex": 122,
               "Title": "IRoomEquipmentService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IRoomEquipmentService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IRoomEquipmentService.cs",
@@ -2151,7 +2187,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 121,
+              "DocumentIndex": 123,
               "Title": "IEquipmentService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IEquipmentService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IEquipmentService.cs",
@@ -2163,7 +2199,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 122,
+              "DocumentIndex": 124,
               "Title": "IFloorService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IFloorService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IFloorService.cs",
@@ -2175,7 +2211,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 123,
+              "DocumentIndex": 125,
               "Title": "IBuildingService.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\Services\\IBuildingService.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\Services\\IBuildingService.cs",
@@ -2187,7 +2223,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 124,
+              "DocumentIndex": 126,
               "Title": "NotFoundException.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Application\\Exceptions\\NotFoundException.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Application\\Exceptions\\NotFoundException.cs",
@@ -2199,7 +2235,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 125,
+              "DocumentIndex": 127,
               "Title": "ResponseAvailableRoomDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\ResponseAvailableRoomDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\ResponseAvailableRoomDto.cs",
@@ -2211,7 +2247,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 126,
+              "DocumentIndex": 128,
               "Title": "ResponseRoomDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\ResponseRoomDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\RoomDtos\\ResponseRoomDto.cs",
@@ -2223,7 +2259,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 127,
+              "DocumentIndex": 129,
               "Title": "ResponseParticipantDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\ResponseParticipantDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\ParticipantDtos\\ResponseParticipantDto.cs",
@@ -2235,7 +2271,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 128,
+              "DocumentIndex": 130,
               "Title": "ResponseFloorDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\ResponseFloorDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\FloorDtos\\ResponseFloorDto.cs",
@@ -2247,7 +2283,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 129,
+              "DocumentIndex": 131,
               "Title": "ResponseEquipmentDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\ResponseEquipmentDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\EquipmentDtos\\ResponseEquipmentDto.cs",
@@ -2259,7 +2295,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 130,
+              "DocumentIndex": 132,
               "Title": "BaseDto.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Contracts\\DTOs\\BaseDtos\\BaseDto.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Contracts\\DTOs\\BaseDtos\\BaseDto.cs",
@@ -2271,7 +2307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 132,
+              "DocumentIndex": 134,
               "Title": "Floor.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Floor.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Floor.cs",
@@ -2283,7 +2319,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 131,
+              "DocumentIndex": 133,
               "Title": "Building.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Building.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Building.cs",
@@ -2295,7 +2331,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 135,
+              "DocumentIndex": 137,
               "Title": "Participant.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\Participant.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\Participant.cs",
@@ -2307,7 +2343,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 134,
+              "DocumentIndex": 136,
               "Title": "RefreshToken.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RefreshToken.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\RefreshToken.cs",
@@ -2319,7 +2355,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 133,
+              "DocumentIndex": 135,
               "Title": "RoomEquipment.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\RoomEquipment.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\RoomEquipment.cs",
@@ -2331,7 +2367,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 136,
+              "DocumentIndex": 138,
               "Title": "AppUser.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppUser.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\AppUser.cs",
@@ -2343,7 +2379,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 137,
+              "DocumentIndex": 139,
               "Title": "AppRole.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\core\\MRBSystem.Domain\\Entities\\AppRole.cs",
               "RelativeDocumentMoniker": "core\\MRBSystem.Domain\\Entities\\AppRole.cs",
@@ -2355,7 +2391,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 138,
+              "DocumentIndex": 140,
               "Title": "RefreshTokenConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\RefreshTokenConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\RefreshTokenConfiguration.cs",
@@ -2367,7 +2403,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 139,
+              "DocumentIndex": 141,
               "Title": "RoomBlackoutConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomBlackoutConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomBlackoutConfiguration.cs",
@@ -2379,7 +2415,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 140,
+              "DocumentIndex": 142,
               "Title": "RoomEquipmentConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomEquipmentConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\RoomEquipmentConfiguration.cs",
@@ -2391,7 +2427,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 141,
+              "DocumentIndex": 143,
               "Title": "EquipmentConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\EquipmentConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\EquipmentConfiguration.cs",
@@ -2403,7 +2439,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 142,
+              "DocumentIndex": 144,
               "Title": "BuildingConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\BuildingConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\BuildingConfiguration.cs",
@@ -2415,7 +2451,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 143,
+              "DocumentIndex": 145,
               "Title": "AppUserConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Persistence\\Configurations\\AppUserConfiguration.cs",
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Persistence\\Configurations\\AppUserConfiguration.cs",
@@ -2427,7 +2463,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 144,
+              "DocumentIndex": 146,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\presentation\\MRBSystem.WebAPI\\appsettings.json",
               "RelativeDocumentMoniker": "presentation\\MRBSystem.WebAPI\\appsettings.json",
@@ -2439,7 +2475,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 145,
+              "DocumentIndex": 147,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\ACER\\Downloads\\AppDbContext.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Downloads\\AppDbContext.cs",

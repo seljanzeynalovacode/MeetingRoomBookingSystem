@@ -4,6 +4,8 @@ namespace MRBSystem.Application.Teamplates;
 
 public static class NotificationTemplates
 {
+    private static readonly TimeSpan BakuOffset = TimeSpan.FromHours(4); // Bakı UTC+4, DST yoxdur
+
     public static (string Title, string Message) Build(
         NotificationType type,
         string firstName,
@@ -13,9 +15,12 @@ public static class NotificationTemplates
         DateTime startDate,
         DateTime endDate)
     {
-        var date = startDate.ToString("dd.MM.yyyy");
-        var startTime = startDate.ToString("HH:mm");
-        var endTime = endDate.ToString("HH:mm");
+        var localStart = startDate.Add(BakuOffset);
+        var localEnd = endDate.Add(BakuOffset);
+
+        var date = localStart.ToString("dd.MM.yyyy");
+        var startTime = localStart.ToString("HH:mm");
+        var endTime = localEnd.ToString("HH:mm");
 
         return type switch
         {

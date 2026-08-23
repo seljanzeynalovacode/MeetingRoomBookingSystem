@@ -1,5 +1,5 @@
 import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
-import { getMyReservations, cancelReservation } from "../api/reservationsApi.js";
+import { getMyReservations, cancelReservation, updateReservation } from "../api/reservationsApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
@@ -80,10 +80,16 @@ function statusBadgeHtml(status) {
   return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
 }
 
+function isOngoing(r) {
+  const now = new Date();
+  return now >= new Date(r.startDate) && now < new Date(r.endDate);
+}
+
 function createReservationCardHtml(r) {
   const actions =
     r.status === "Confirmed"
       ? `<button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}">Redaktə et</button>
+         ${isOngoing(r) ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}">İndi bitir</button>` : ""}
          <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}">Ləğv et</button>`
       : "";
 
@@ -123,6 +129,7 @@ async function loadReservations() {
 listEl.addEventListener("click", (e) => {
   const editBtn = e.target.closest(".edit-btn");
   const cancelBtn = e.target.closest(".cancel-btn");
+  const endNowBtn = e.target.closest(".end-now-btn");
 
   if (editBtn) {
     const r = reservations.find((x) => x.id === editBtn.dataset.id);
@@ -143,6 +150,24 @@ listEl.addEventListener("click", (e) => {
     cancelReservation(cancelBtn.dataset.id)
       .then(() => {
         showToast("Rezervasiya ləğv edildi.");
+        loadReservations();
+      })
+      .catch((err) => showAlert(alertBox, err.message));
+  }
+
+  if (endNowBtn) {
+    const r = reservations.find((x) => x.id === endNowBtn.dataset.id);
+    if (!r) return;
+    if (!confirm("İclası indi bitirmək istədiyinizə əminsiniz? Otaq dərhal boşalacaq.")) return;
+    clearAlert(alertBox);
+    updateReservation(r.id, {
+      Title: r.title,
+      StartDate: r.startDate,
+      EndDate: new Date().toISOString(),
+      RoomId: r.roomId,
+    })
+      .then(() => {
+        showToast("Rezervasiya bağlandı, otaq boşaldı.");
         loadReservations();
       })
       .catch((err) => showAlert(alertBox, err.message));
