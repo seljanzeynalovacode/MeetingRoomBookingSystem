@@ -17,7 +17,7 @@ function parseJwt(token) {
 
 export function requireAdmin() {
   if (!isLoggedIn()) {
-    window.location.href = "login.html";
+    window.location.href = "adminLogin.html";
     return;
   }
 

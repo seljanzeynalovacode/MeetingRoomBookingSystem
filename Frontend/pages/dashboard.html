@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Otaqlar — MRBSystem</title>
+<title>Otaqlar — MeetingSpace</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
 <body class="dashboard-body">
   <header class="topnav">
     <div class="brand-mark">
-      <span class="logo">M</span>
-      <span class="wordmark">MeetingRoomBooking</span>
+      <i class="bi bi-calendar-check logo" style=" color: rgba(48, 21, 77, 1.00)"></i>
+      <span class="wordmark">MeetingSpace</span>
     </div>
 
         <form class="search-cluster" id="searchForm">
@@ -40,6 +40,7 @@
         <span class="name" id="avatarName">İstifadəçi</span>
         <i class="bi bi-chevron-down"></i>
         <div class="avatar-menu" id="avatarMenu">
+          <a href="profile.html"><i class="bi bi-person"></i>Profil</a>
           <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
         </div>
         
@@ -79,10 +80,14 @@
 
         <div class="filter-group" style="margin-bottom: 0.5rem;">
           <label class="field-label">Avadanlıq</label>
-          <div class="chip-toggle-group" id="equipmentChips"></div>
+          <select class="input" id="equipmentSelect">
+            <option value="">Avadanlıq seçin</option>
+          </select>
+          <div class="chip-toggle-group" id="equipmentChips" style="margin-top:8px;"></div>
         </div>
 
-        <button type="button" class="btn btn-ghost btn-block btn-sm" id="resetFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Filtrləri sıfırla</button>
+        <button type="button" class="btn btn-primary btn-block btn-sm" id="applyFiltersBtn"><i class="bi bi-funnel"></i>Filtrlə</button>
+        <button type="button" class="btn btn-ghost btn-block btn-sm" id="resetFiltersBtn" style="margin-top:8px;"><i class="bi bi-arrow-counterclockwise"></i>Filtrləri sıfırla</button>
       </div>
     </aside>
 

@@ -294,6 +294,52 @@ public class AuthService : IAuthService
         }
         _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
     }
+    public async Task<UserResponseDto> UpdateProfileAsync(UpdateProfileDto dto)
+    {
+        var user = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+            ?? throw new NotFoundException("İstifadəçi tapılmadı.");
+
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            _logger.LogError("Profile update failed for user {UserId}. Errors: {Errors}",
+                user.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+            throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+        }
+
+        if (!string.Equals(user.UserName, dto.UserName, StringComparison.Ordinal))
+        {
+            var userNameResult = await _userManager.SetUserNameAsync(user, dto.UserName);
+            if (!userNameResult.Succeeded)
+            {
+                _logger.LogWarning("Username change failed for user {UserId}. Errors: {Errors}",
+                    user.Id, string.Join(", ", userNameResult.Errors.Select(e => e.Description)));
+                throw new InvalidOperationException(string.Join(", ", userNameResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        _logger.LogInformation("User {UserId} updated their profile.", user.Id);
+        return _mapper.Map<UserResponseDto>(user);
+    }
+
+    public async Task ChangePasswordAsync(ChangePasswordDto dto)
+    {
+        var user = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+            ?? throw new NotFoundException("İstifadəçi tapılmadı.");
+
+        var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+        if (!result.Succeeded)
+        {
+            _logger.LogWarning("Password change failed for user {UserId}. Errors: {Errors}",
+                user.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+            throw new InvalidOperationException("Mövcud şifrə yanlışdır və ya yeni şifrə tələblərə uyğun deyil.");
+        }
+
+        _logger.LogInformation("User {UserId} changed their password.", user.Id);
+    }
     public async Task DeleteUserAsync(Guid userId)
     {
         if (userId == _currentUser.UserId)
@@ -491,7 +537,8 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
             new Claim(ClaimTypes.GivenName, user.FirstName),
-            new Claim(ClaimTypes.Surname, user.LastName)
+            new Claim(ClaimTypes.Surname, user.LastName),
+            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
         };
 
         foreach (var role in roles)

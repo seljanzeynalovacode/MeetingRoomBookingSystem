@@ -43,3 +43,11 @@ export async function logout() {
     clearTokens();
   }
 }
+
+export function updateProfile(dto) {
+  return apiFetch("/auths/profile", { method: "PUT", body: dto, auth: true });
+}
+
+export function changePassword(dto) {
+  return apiFetch("/auths/change-password", { method: "POST", body: dto, auth: true });
+}

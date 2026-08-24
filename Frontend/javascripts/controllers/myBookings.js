@@ -73,9 +73,18 @@ function formatRange(startIso, endIso) {
   return `${dateStr}, ${startTime}–${endTime}`;
 }
 
-function statusBadgeHtml(status) {
-  if (status === "Cancelled") {
+function getEffectiveStatus(status, endDate) {
+  if (status === "Cancelled") return "Cancelled";
+  return new Date(endDate) < new Date() ? "Completed" : "Confirmed";
+}
+
+function statusBadgeHtml(status, endDate) {
+  const effective = getEffectiveStatus(status, endDate);
+  if (effective === "Cancelled") {
     return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
+  }
+  if (effective === "Completed") {
+    return `<span class="badge badge-completed"><span class="badge-dot"></span>Tamamlanıb</span>`;
   }
   return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
 }
@@ -86,8 +95,9 @@ function isOngoing(r) {
 }
 
 function createReservationCardHtml(r) {
+  const effectiveStatus = getEffectiveStatus(r.status, r.endDate);
   const actions =
-    r.status === "Confirmed"
+    effectiveStatus === "Confirmed"
       ? `<button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}">Redaktə et</button>
          ${isOngoing(r) ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}">İndi bitir</button>` : ""}
          <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}">Ləğv et</button>`
@@ -98,7 +108,7 @@ function createReservationCardHtml(r) {
       <div class="reservation-card-body">
         <div class="reservation-card-head">
           <h4>${escapeHtml(r.title)}</h4>
-          ${statusBadgeHtml(r.status)}
+          ${statusBadgeHtml(r.status, r.endDate)}
         </div>
         <div class="reservation-card-meta">
           <span><i class="bi bi-door-open"></i>${escapeHtml(r.roomName)}</span>

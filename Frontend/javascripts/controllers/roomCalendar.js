@@ -165,7 +165,7 @@ function showEventPopover(item, anchorEl) {
   const bodyHtml =
     item.type === "blackout"
       ? `<div class="ep-row"><i class="bi bi-slash-circle"></i>Bloklanıb</div><div class="ep-row"><i class="bi bi-card-text"></i>${escapeHtml(item.title)}</div>`
-      : `<div class="ep-row"><i class="bi bi-person"></i>${escapeHtml(item.meta)}</div><div class="ep-row"><i class="bi bi-info-circle"></i>${escapeHtml(item.status === "Confirmed" ? "Təsdiqlənib" : item.status)}</div>`;
+      : `<div class="ep-row"><i class="bi bi-person"></i>${escapeHtml(item.meta)}</div><div class="ep-row"><i class="bi bi-info-circle"></i>${escapeHtml(new Date(item.end) < new Date() ? "Tamamlanıb" : "Təsdiqlənib")}</div>`;
 
   pop.innerHTML = `
     <div class="ep-head">

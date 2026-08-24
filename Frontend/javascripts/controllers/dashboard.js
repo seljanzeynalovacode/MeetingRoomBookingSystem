@@ -1,5 +1,6 @@
 import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
 import { getAllRooms, searchAvailableRooms, getAllBuildings, getAllFloors, getAllEquipment } from "../api/roomsApi.js";
+import { getAllRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
@@ -29,12 +30,17 @@ const buildingSelect = document.getElementById("buildingSelect");
 const floorSelect = document.getElementById("floorSelect");
 const capacityInput = document.getElementById("capacityInput");
 const equipmentChipsEl = document.getElementById("equipmentChips");
+const equipmentSelect = document.getElementById("equipmentSelect");
+const applyFiltersBtn = document.getElementById("applyFiltersBtn");
 const resetFiltersBtn = document.getElementById("resetFiltersBtn");
 
 const resultsTitle = document.getElementById("resultsTitle");
 const roomGrid = document.getElementById("roomGrid");
 
 let allFloors = [];
+let allCatalogRooms = [];
+let allRoomEquipment = [];
+let allEquipmentTypes = [];
 let currentRoomsList = [];
 const selectedEquipmentIds = new Set();
 const ROOM_ART_VARIANTS = ["rv-1", "rv-2", "rv-3", "rv-4"];
@@ -92,16 +98,50 @@ function showToast(message) {
 }
 
 function normalizeCatalogRoom(r) {
+  const roomEquipmentIds = allRoomEquipment.filter((re) => re.roomId === r.id).map((re) => re.equipmentId);
+  const equipmentNames = roomEquipmentIds
+    .map((id) => allEquipmentTypes.find((eq) => eq.id === id)?.name)
+    .filter(Boolean);
   return {
     id: r.id,
     name: r.name,
     capacity: r.capacity,
+    floorId: r.floorId,
     floorName: r.floorName,
     buildingName: r.buildingName,
-    equipment: null,
+    equipment: equipmentNames.length ? equipmentNames : null,
     isActive: r.isActive,
     mode: "catalog",
   };
+}
+
+function getFilteredCatalogRooms() {
+  const buildingId = buildingSelect.value;
+  const floorId = floorSelect.value;
+  const minCapacity = Number(capacityInput.value) || 1;
+
+  return allCatalogRooms.filter((r) => {
+    if (floorId) {
+      if (r.floorId !== floorId) return false;
+    } else if (buildingId) {
+      const floor = allFloors.find((f) => f.id === r.floorId);
+      if (!floor || floor.buildingId !== buildingId) return false;
+    }
+    if (r.capacity < minCapacity) return false;
+    if (selectedEquipmentIds.size) {
+      const roomEquipmentIds = new Set(allRoomEquipment.filter((re) => re.roomId === r.id).map((re) => re.equipmentId));
+      for (const eqId of selectedEquipmentIds) {
+        if (!roomEquipmentIds.has(eqId)) return false;
+      }
+    }
+    return true;
+  });
+}
+
+function applyCatalogFilters() {
+  clearAlert(alertBox);
+  const filtered = getFilteredCatalogRooms();
+  renderRooms(filtered.map(normalizeCatalogRoom), "catalog");
 }
 
 function normalizeSearchRoom(r) {
@@ -124,21 +164,38 @@ function populateFloorOptions(buildingId) {
     filtered.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
 }
 
-function renderEquipmentChips(list) {
-  equipmentChipsEl.innerHTML = "";
-  list.forEach((eq) => {
-    const chip = document.createElement("span");
-    chip.className = "chip-toggle";
-    chip.dataset.id = eq.id;
-    chip.innerHTML = `<i class="bi bi-check2"></i>${escapeHtml(eq.name)}`;
-    chip.addEventListener("click", () => {
-      chip.classList.toggle("active");
-      if (chip.classList.contains("active")) selectedEquipmentIds.add(eq.id);
-      else selectedEquipmentIds.delete(eq.id);
+function populateEquipmentSelect() {
+  const available = allEquipmentTypes.filter((eq) => !selectedEquipmentIds.has(eq.id));
+  equipmentSelect.innerHTML =
+    '<option value="">Avadanlıq seçin</option>' +
+    available.map((eq) => `<option value="${eq.id}">${escapeHtml(eq.name)}</option>`).join("");
+}
+
+function renderSelectedEquipmentChips() {
+  equipmentChipsEl.innerHTML = Array.from(selectedEquipmentIds)
+    .map((id) => {
+      const eq = allEquipmentTypes.find((e) => e.id === id);
+      if (!eq) return "";
+      return `<span class="chip-toggle active"><i class="bi bi-check2"></i>${escapeHtml(eq.name)}<button type="button" class="remove-equipment-chip" data-id="${id}" aria-label="Sil"><i class="bi bi-x"></i></button></span>`;
+    })
+    .join("");
+
+  equipmentChipsEl.querySelectorAll(".remove-equipment-chip").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectedEquipmentIds.delete(btn.dataset.id);
+      renderSelectedEquipmentChips();
+      populateEquipmentSelect();
     });
-    equipmentChipsEl.appendChild(chip);
   });
 }
+
+equipmentSelect.addEventListener("change", () => {
+  if (!equipmentSelect.value) return;
+  selectedEquipmentIds.add(equipmentSelect.value);
+  renderSelectedEquipmentChips();
+  populateEquipmentSelect();
+});
 
 function setHeader(mode, count) {
   const label = mode === "search" ? "Axtarış nəticələri" : "Otaqlar";
@@ -160,10 +217,6 @@ function createRoomCardHtml(room, idx) {
     statusBadge = `<span class="badge badge-inactive status-badge"><span class="badge-dot"></span>Deaktiv</span>`;
   }
 
-  const equipmentHtml =
-    room.equipment && room.equipment.length
-      ? room.equipment.map((e) => `<span class="chip">${escapeHtml(e)}</span>`).join("")
-      : "";
   const bookDisabled = !room.isActive ? "disabled" : "";
 
   return `
@@ -178,7 +231,7 @@ function createRoomCardHtml(room, idx) {
           <span><i class="bi bi-building"></i>${escapeHtml(room.buildingName)}, ${escapeHtml(room.floorName)}</span>
           <span><i class="bi bi-people"></i>${room.capacity}</span>
         </div>
-        <div class="r-chips">${equipmentHtml}</div>
+        <button type="button" class="room-equipment-link" data-room-id="${room.id}"><i class="bi bi-projector"></i>Avadanlıqlar</button>
         <div class="room-footer">
           <button class="btn btn-primary book-btn" data-room-id="${room.id}" ${bookDisabled}>Rezerv et</button>
         </div>
@@ -200,6 +253,7 @@ function renderRooms(list, mode = "catalog") {
 async function loadCatalog() {
   try {
     const rooms = await getAllRooms();
+    allCatalogRooms = rooms;
     renderRooms(rooms.map(normalizeCatalogRoom), "catalog");
   } catch (err) {
     showAlert(alertBox, err.message);
@@ -260,12 +314,15 @@ resetSearchBtn.addEventListener("click", () => {
   loadCatalog();
 });
 
+applyFiltersBtn.addEventListener("click", applyCatalogFilters);
+
 resetFiltersBtn.addEventListener("click", () => {
   buildingSelect.value = "";
   populateFloorOptions("");
   capacityInput.value = 1;
   selectedEquipmentIds.clear();
-  document.querySelectorAll("#equipmentChips .chip-toggle").forEach((c) => c.classList.remove("active"));
+  renderSelectedEquipmentChips();
+  populateEquipmentSelect();
   clearAlert(alertBox);
   loadCatalog();
 });
@@ -274,7 +331,66 @@ buildingSelect.addEventListener("change", () => {
   populateFloorOptions(buildingSelect.value);
 });
 
+let roomEquipmentPopoverOutsideHandler = null;
+function closeRoomEquipmentPopover() {
+  const existing = document.getElementById("roomEquipmentPopover");
+  if (existing) existing.remove();
+  if (roomEquipmentPopoverOutsideHandler) {
+    document.removeEventListener("click", roomEquipmentPopoverOutsideHandler);
+    roomEquipmentPopoverOutsideHandler = null;
+  }
+}
+
+function showRoomEquipmentPopover(roomId, anchorEl) {
+  closeRoomEquipmentPopover();
+  const rect = anchorEl.getBoundingClientRect();
+
+  const items = allRoomEquipment.filter((re) => re.roomId === roomId);
+
+  const pop = document.createElement("div");
+  pop.className = "event-popover";
+  pop.id = "roomEquipmentPopover";
+
+  const bodyHtml = items.length
+    ? items
+        .map((re) => {
+          const eq = allEquipmentTypes.find((e) => e.id === re.equipmentId);
+          return `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(eq ? eq.name : "Naməlum")} × ${re.quantity}</div>`;
+        })
+        .join("")
+    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>Avadanlıq təyin edilməyib</div>`;
+
+  pop.innerHTML = `
+    <div class="ep-head">
+      <strong>Avadanlıqlar</strong>
+      <button type="button" class="ep-close" aria-label="Bağla"><i class="bi bi-x"></i></button>
+    </div>
+    ${bodyHtml}
+  `;
+  document.body.appendChild(pop);
+
+  const top = window.scrollY + rect.bottom + 8;
+  const maxLeft = window.scrollX + document.documentElement.clientWidth - 276;
+  const left = Math.min(window.scrollX + rect.left, Math.max(maxLeft, 12));
+  pop.style.top = `${top}px`;
+  pop.style.left = `${left}px`;
+
+  pop.querySelector(".ep-close").addEventListener("click", closeRoomEquipmentPopover);
+
+  roomEquipmentPopoverOutsideHandler = (e) => {
+    if (!pop.contains(e.target) && e.target !== anchorEl) closeRoomEquipmentPopover();
+  };
+  setTimeout(() => document.addEventListener("click", roomEquipmentPopoverOutsideHandler), 0);
+}
+
 roomGrid.addEventListener("click", (e) => {
+  const equipmentBtn = e.target.closest(".room-equipment-link");
+  if (equipmentBtn) {
+    e.stopPropagation();
+    showRoomEquipmentPopover(equipmentBtn.dataset.roomId, equipmentBtn);
+    return;
+  }
+
   const btn = e.target.closest(".book-btn");
   if (!btn || btn.disabled) return;
   const room = currentRoomsList.find((r) => r.id === btn.dataset.roomId);
@@ -317,21 +433,22 @@ async function init() {
 
   const today = new Date().toISOString().slice(0, 10);
   searchDateInput.value = today;
-  searchStartInput.value = "09:00";
-  searchEndInput.value = "10:00";
 
   try {
-    const [buildings, floors, equipment] = await Promise.all([
+    const [buildings, floors, equipmentTypes, roomEquipmentListRes] = await Promise.all([
       getAllBuildings(),
       getAllFloors(),
       getAllEquipment(),
+      getAllRoomEquipment(),
     ]);
     allFloors = floors;
+    allEquipmentTypes = equipmentTypes;
+    allRoomEquipment = roomEquipmentListRes;
     buildingSelect.innerHTML =
       '<option value="">Bina seçin</option>' +
       buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
     populateFloorOptions("");
-    renderEquipmentChips(equipment);
+    populateEquipmentSelect();
   } catch (err) {
     showAlert(alertBox, err.message);
   }

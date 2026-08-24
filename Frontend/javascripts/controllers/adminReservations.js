@@ -36,8 +36,15 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function statusBadgeHtml(status) {
-  if (status === "Cancelled") return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
+function getEffectiveStatus(status, endDate) {
+  if (status === "Cancelled") return "Cancelled";
+  return new Date(endDate) < new Date() ? "Completed" : "Confirmed";
+}
+
+function statusBadgeHtml(status, endDate) {
+  const effective = getEffectiveStatus(status, endDate);
+  if (effective === "Cancelled") return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
+  if (effective === "Completed") return `<span class="badge badge-completed"><span class="badge-dot"></span>Tamamlanıb</span>`;
   return `<span class="badge badge-available"><span class="badge-dot"></span>Aktiv</span>`;
 }
 
@@ -83,7 +90,7 @@ function applyFilters(rows) {
     }
     if (filterBuilding.value && row.buildingName !== filterBuilding.value) return false;
     if (filterRoom.value && row.roomId !== filterRoom.value) return false;
-    if (filterStatus.value && row.status !== filterStatus.value) return false;
+    if (filterStatus.value && getEffectiveStatus(row.status, row.endDate) !== filterStatus.value) return false;
     if (filterFrom.value && new Date(row.startDate) < new Date(filterFrom.value)) return false;
     if (filterTo.value) {
       const toDate = new Date(filterTo.value);
@@ -111,11 +118,11 @@ function renderTable() {
       <td>${escapeHtml(row.email)}</td>
       <td>${escapeHtml(row.roomName)}</td>
       <td>${formatRange(row.startDate, row.endDate)}</td>
-      <td>${statusBadgeHtml(row.status)}</td>
+      <td>${statusBadgeHtml(row.status, row.endDate)}</td>
       <td>
         <div class="row-actions">
           <button class="btn btn-secondary btn-sm view-btn" data-id="${row.id}" title="Ətraflı bax"><i class="bi bi-eye"></i></button>
-          ${row.status === "Confirmed" ? `<button class="btn btn-outline btn-sm cancel-btn" data-id="${row.id}" title="Ləğv et"><i class="bi bi-x-circle"></i></button>` : ""}
+          ${getEffectiveStatus(row.status, row.endDate) === "Confirmed" ? `<button class="btn btn-outline btn-sm cancel-btn" data-id="${row.id}" title="Ləğv et"><i class="bi bi-x-circle"></i></button>` : ""}
         </div>
       </td>
     </tr>`
@@ -137,7 +144,7 @@ async function openDetails(id) {
     <div class="detail-row"><span class="dr-label">Təşkilatçı</span><span class="dr-value">${escapeHtml(row.fullName)}</span></div>
     <div class="detail-row"><span class="dr-label">Email</span><span class="dr-value">${escapeHtml(row.email)}</span></div>
     <div class="detail-row"><span class="dr-label">İstifadəçi adı</span><span class="dr-value">${escapeHtml(row.userName)}</span></div>
-    <div class="detail-row"><span class="dr-label">Status</span><span class="dr-value">${statusBadgeHtml(row.status)}</span></div>
+    <div class="detail-row"><span class="dr-label">Status</span><span class="dr-value">${statusBadgeHtml(row.status, row.endDate)}</span></div>
     <div class="detail-participants">
       <h4>Qonaqlar</h4>
       <div id="detailsParticipants" class="text-muted" style="font-size:12.5px;">Yüklənir...</div>

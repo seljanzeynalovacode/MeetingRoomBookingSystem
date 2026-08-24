@@ -1,5 +1,6 @@
 import { requireAdmin } from "../components/adminGuard.js";
-import { getAllRooms, getAllFloors, getAllBuildings, createRoom, updateRoom, deleteRoom } from "../api/roomsApi.js";
+import { getAllRooms, getAllFloors, getAllBuildings, getAllEquipment, createRoom, updateRoom, deleteRoom } from "../api/roomsApi.js";
+import { getAllRoomEquipment, createRoomEquipment, updateRoomEquipment, deleteRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 
@@ -26,10 +27,15 @@ const modalBuildingSelect = document.getElementById("roomModalBuilding");
 const modalFloorSelect = document.getElementById("roomModalFloor");
 const isActiveInput = document.getElementById("roomIsActive");
 const submitBtn = document.getElementById("roomModalSubmitBtn");
+const roomEquipmentField = document.getElementById("roomEquipmentField");
+const roomEquipmentChips = document.getElementById("roomEquipmentChips");
 
 let rooms = [];
 let floors = [];
 let buildings = [];
+let equipmentList = [];
+let roomEquipmentList = [];
+let currentRoomEquipment = [];
 let editingId = null;
 
 function escapeHtml(str) {
@@ -61,6 +67,55 @@ modalBuildingSelect.addEventListener("change", () => {
   populateModalFloorOptions(modalBuildingSelect.value);
 });
 
+function renderRoomEquipmentChips() {
+  roomEquipmentChips.innerHTML = "";
+  equipmentList.forEach((eq) => {
+    const assignment = currentRoomEquipment.find((re) => re.equipmentId === eq.id);
+    const chip = document.createElement("span");
+    chip.className = assignment ? "chip-toggle active" : "chip-toggle";
+    chip.innerHTML = `
+      <span class="chip-toggle-label"><i class="bi bi-check2"></i>${escapeHtml(eq.name)}</span>
+      <input type="number" class="chip-qty" min="1" max="1000" value="${assignment ? assignment.quantity : 1}" />
+    `;
+    chip.querySelector(".chip-toggle-label").addEventListener("click", () => toggleRoomEquipment(eq.id));
+    const qtyInput = chip.querySelector(".chip-qty");
+    qtyInput.addEventListener("click", (e) => e.stopPropagation());
+    qtyInput.addEventListener("change", () => updateRoomEquipmentQuantity(eq.id, Number(qtyInput.value)));
+    roomEquipmentChips.appendChild(chip);
+  });
+}
+
+async function toggleRoomEquipment(equipmentId) {
+  const existing = currentRoomEquipment.find((re) => re.equipmentId === equipmentId);
+  try {
+    if (existing) {
+      await deleteRoomEquipment(existing.id);
+      currentRoomEquipment = currentRoomEquipment.filter((re) => re.id !== existing.id);
+      roomEquipmentList = roomEquipmentList.filter((re) => re.id !== existing.id);
+    } else {
+      const created = await createRoomEquipment({ RoomId: editingId, EquipmentId: equipmentId, Quantity: 1 });
+      currentRoomEquipment.push(created);
+      roomEquipmentList.push(created);
+    }
+    renderRoomEquipmentChips();
+  } catch (err) {
+    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+  }
+}
+
+async function updateRoomEquipmentQuantity(equipmentId, quantity) {
+  const existing = currentRoomEquipment.find((re) => re.equipmentId === equipmentId);
+  if (!existing) return;
+  try {
+    const updated = await updateRoomEquipment(existing.id, { Quantity: quantity });
+    existing.quantity = updated.quantity;
+    const globalEntry = roomEquipmentList.find((re) => re.id === existing.id);
+    if (globalEntry) globalEntry.quantity = updated.quantity;
+  } catch (err) {
+    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+  }
+}
+
 function openModal(room) {
   editingId = room ? room.id : null;
   modalTitle.textContent = room ? "Otağı redaktə et" : "Yeni otaq";
@@ -79,6 +134,14 @@ function openModal(room) {
   modalBuildingSelect.value = buildingId;
   populateModalFloorOptions(buildingId);
   modalFloorSelect.value = room ? room.floorId : filterFloor.value || "";
+
+  if (room) {
+    roomEquipmentField.style.display = "";
+    currentRoomEquipment = roomEquipmentList.filter((re) => re.roomId === room.id);
+    renderRoomEquipmentChips();
+  } else {
+    roomEquipmentField.style.display = "none";
+  }
 
   modalAlert.innerHTML = "";
   modal.classList.add("open");
@@ -140,6 +203,53 @@ function getFilteredRooms() {
   });
 }
 
+let equipmentPopoverOutsideHandler = null;
+function closeEquipmentPopover() {
+  const existing = document.getElementById("equipmentPopover");
+  if (existing) existing.remove();
+  if (equipmentPopoverOutsideHandler) {
+    document.removeEventListener("click", equipmentPopoverOutsideHandler);
+    equipmentPopoverOutsideHandler = null;
+  }
+}
+
+function showEquipmentPopover(roomId, anchorEl) {
+  closeEquipmentPopover();
+  const rect = anchorEl.getBoundingClientRect();
+
+  const items = roomEquipmentList.filter((re) => re.roomId === roomId);
+
+  const pop = document.createElement("div");
+  pop.className = "event-popover";
+  pop.id = "equipmentPopover";
+
+  const bodyHtml = items.length
+    ? items.map((re) => `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(re.equipmentName)} × ${re.quantity}</div>`).join("")
+    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>Avadanlıq təyin edilməyib</div>`;
+
+  pop.innerHTML = `
+    <div class="ep-head">
+      <strong>Avadanlıqlar</strong>
+      <button type="button" class="ep-close" aria-label="Bağla"><i class="bi bi-x"></i></button>
+    </div>
+    ${bodyHtml}
+  `;
+  document.body.appendChild(pop);
+
+  const top = window.scrollY + rect.bottom + 8;
+  const maxLeft = window.scrollX + document.documentElement.clientWidth - 276;
+  const left = Math.min(window.scrollX + rect.left, Math.max(maxLeft, 12));
+  pop.style.top = `${top}px`;
+  pop.style.left = `${left}px`;
+
+  pop.querySelector(".ep-close").addEventListener("click", closeEquipmentPopover);
+
+  equipmentPopoverOutsideHandler = (e) => {
+    if (!pop.contains(e.target) && e.target !== anchorEl) closeEquipmentPopover();
+  };
+  setTimeout(() => document.addEventListener("click", equipmentPopoverOutsideHandler), 0);
+}
+
 function createRoomMiniCardHtml(r) {
   const badge = r.isActive
     ? `<span class="badge badge-neutral"><span class="badge-dot"></span>Aktiv</span>`
@@ -154,8 +264,9 @@ function createRoomMiniCardHtml(r) {
         </div>
         ${badge}
       </div>
-      <div class="room-mini-meta">
+      <div class="room-mini-meta" style="display:flex; align-items:center; justify-content:space-between;">
         <span><i class="bi bi-people"></i>${r.capacity}</span>
+        <button type="button" class="room-mini-equipment-link" data-room-id="${r.id}"><i class="bi bi-projector"></i>Avadanlıqlar</button>
       </div>
       <div class="room-mini-actions">
         <button class="icon-action-btn edit-room-btn" data-id="${r.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
@@ -195,6 +306,13 @@ function renderRooms() {
     .map(([buildingName, roomsInBuilding]) => createRoomSectionHtml(buildingName, roomsInBuilding))
     .join("");
 
+  roomsContainer.querySelectorAll(".room-mini-equipment-link").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showEquipmentPopover(btn.dataset.roomId, btn);
+    });
+  });
+
   roomsContainer.querySelectorAll(".edit-room-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const r = rooms.find((x) => x.id === btn.dataset.id);
@@ -219,10 +337,18 @@ function renderRooms() {
 async function loadRooms() {
   clearAlert(alertBox);
   try {
-    const [roomList, floorList, buildingList] = await Promise.all([getAllRooms(), getAllFloors(), getAllBuildings()]);
+    const [roomList, floorList, buildingList, equipmentListRes, roomEquipmentListRes] = await Promise.all([
+      getAllRooms(),
+      getAllFloors(),
+      getAllBuildings(),
+      getAllEquipment(),
+      getAllRoomEquipment(),
+    ]);
     rooms = roomList;
     floors = floorList;
     buildings = buildingList;
+    equipmentList = equipmentListRes;
+    roomEquipmentList = roomEquipmentListRes;
 
     filterBuilding.innerHTML =
       '<option value="">Hamısı</option>' + buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");

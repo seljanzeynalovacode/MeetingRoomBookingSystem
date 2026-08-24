@@ -21,7 +21,12 @@ const CHART_COLORS = {
   violetLight: "#C4B5F5",
   violetPeak: "#4C3A9E",
   amber: "#E8A23D",
+  green: "oklch(60% 0.15 148)",
+  red: "oklch(58% 0.19 25)",
   redLight: "#F5C2C0",
+  teal: "oklch(52% 0.11 200)",
+  yellow: "oklch(78% 0.15 95)",
+  mauve: "#c186bc",
   grid: "#E4E7EC",
   text: "#6B7684",
 };
@@ -67,14 +72,16 @@ function buildPeakHoursChart(reservations) {
 }
 
 function buildStatusDonutChart(reservations) {
-  const confirmed = reservations.filter((r) => r.status === "Confirmed").length;
+  const now = new Date();
+  const confirmed = reservations.filter((r) => r.status === "Confirmed" && new Date(r.endDate) >= now).length;
+  const completed = reservations.filter((r) => r.status === "Confirmed" && new Date(r.endDate) < now).length;
   const cancelled = reservations.filter((r) => r.status === "Cancelled").length;
 
   new Chart(document.getElementById("statusDonutChart"), {
     type: "doughnut",
     data: {
-      labels: ["Təsdiqlənib", "Ləğv edilib"],
-      datasets: [{ data: [confirmed, cancelled], backgroundColor: [CHART_COLORS.violet, CHART_COLORS.redLight], borderWidth: 0 }],
+      labels: ["Aktiv", "Tamamlanıb", "Ləğv edilib"],
+      datasets: [{ data: [confirmed, completed, cancelled], backgroundColor: [CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.red], borderWidth: 0 }],
     },
     options: {
       responsive: true,
@@ -107,7 +114,7 @@ function buildRoomUsageChart(reservations, rooms) {
     type: "bar",
     data: {
       labels: sorted.map((s) => s.label),
-      datasets: [{ data: sorted.map((s) => s.count), backgroundColor: CHART_COLORS.amber, borderRadius: 6, maxBarThickness: 30 }],
+      datasets: [{ data: sorted.map((s) => s.count), backgroundColor: CHART_COLORS.mauve, borderRadius: 6, maxBarThickness: 30 }],
     },
     options: {
       responsive: true,
@@ -134,7 +141,7 @@ async function init() {
     roomCountEl.textContent = rooms.length;
     buildingCountEl.textContent = buildings.length;
     userCountEl.textContent = users.length;
-    reservationCountEl.textContent = reservations.filter((r) => r.status === "Confirmed").length;
+    reservationCountEl.textContent = reservations.filter((r) => r.status === "Confirmed" && new Date(r.endDate) >= new Date()).length;
 
     if (!reservations.length) {
       document.querySelectorAll(".chart-canvas-wrap").forEach((el) => {

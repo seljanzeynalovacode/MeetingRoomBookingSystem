@@ -19,4 +19,6 @@ public interface IAuthService
     Task ResendConfirmationEmailAsync(ResendConfirmationEmailDto dto);
 
     Task DeleteUserAsync(Guid userId);
+    Task<UserResponseDto> UpdateProfileAsync(UpdateProfileDto dto);
+    Task ChangePasswordAsync(ChangePasswordDto dto);
 }

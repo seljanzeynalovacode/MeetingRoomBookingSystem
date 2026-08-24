@@ -98,6 +98,22 @@ namespace MRBSystem.WebAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
+        {
+            var result = await _authService.UpdateProfileAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            await _authService.ChangePasswordAsync(dto);
+            return NoContent();
+        }
+
         [HttpGet("roles")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllRoles()

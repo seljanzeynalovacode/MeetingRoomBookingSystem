@@ -33,6 +33,22 @@
   },
   {
     "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Auths/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.ChangePasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
     "Method": "ConfirmEmail",
     "RelativePath": "api/Auths/confirm-email",
     "HttpMethod": "POST",
@@ -71,6 +87,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.AuthsController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/Auths/profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.AuthDtos.UpdateProfileDto",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
