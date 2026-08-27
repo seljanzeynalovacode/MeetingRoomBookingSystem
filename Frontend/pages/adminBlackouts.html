@@ -54,6 +54,28 @@
 
       <div id="alertBox"></div>
 
+      <div class="card filter-toolbar">
+        <div class="filter-toolbar-row">
+          <div class="filter-group-inline">
+            <label class="field-label">Bina</label>
+            <select class="input" id="filterBuilding"><option value="">Hamısı</option></select>
+          </div>
+          <div class="filter-group-inline">
+            <label class="field-label">Otaq</label>
+            <select class="input" id="filterRoom"><option value="">Hamısı</option></select>
+          </div>
+          <div class="filter-group-inline">
+            <label class="field-label">Tarix (başlanğıc)</label>
+            <input type="date" class="input" id="filterFrom" />
+          </div>
+          <div class="filter-group-inline">
+            <label class="field-label">Tarix (son)</label>
+            <input type="date" class="input" id="filterTo" />
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
+        </div>
+      </div>
+
       <div class="blackout-list" id="blackoutsList"></div>
     </main>
   </div>

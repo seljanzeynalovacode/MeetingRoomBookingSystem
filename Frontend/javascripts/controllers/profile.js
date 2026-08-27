@@ -4,6 +4,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
+  throw new Error("Not authenticated");
 }
 
 const alertBox = document.getElementById("alertBox");
@@ -43,6 +44,15 @@ function parseJwt(token) {
   } catch {
     return null;
   }
+}
+
+function getRoles() {
+  const token = getAccessToken();
+  if (!token) return [];
+  const claims = parseJwt(token) || {};
+  const roleClaim = claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (!roleClaim) return [];
+  return Array.isArray(roleClaim) ? roleClaim : [roleClaim];
 }
 
 function updateAvatarDisplay(firstName, lastName) {
@@ -132,3 +142,7 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 prefillFromToken();
+
+if (getRoles().includes("Admin")) {
+  document.getElementById("adminPanelLink").style.display = "";
+}

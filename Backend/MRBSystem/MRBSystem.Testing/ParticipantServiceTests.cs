@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using MRBSystem.Application.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.ParticipantDtos;
@@ -79,7 +80,7 @@ public class ParticipantServiceTests : IDisposable
             GuestName = "Qonaq"
         });
 
-        await act.Should().ThrowAsync<UnauthorizedAccessException>();
+        await act.Should().ThrowAsync<ForbiddenException>();
     }
 
     [Fact]
@@ -126,7 +127,7 @@ public class ParticipantServiceTests : IDisposable
             ResponseStatus = "Accepted"
         });
 
-        await act.Should().ThrowAsync<UnauthorizedAccessException>();
+        await act.Should().ThrowAsync<ForbiddenException>();
     }
 
     private async Task<Guid> SeedInvitedUserAsync(string username, string email)

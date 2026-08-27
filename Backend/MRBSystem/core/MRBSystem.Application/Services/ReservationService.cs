@@ -191,18 +191,22 @@ public class ReservationService : IReservationService
     }
     public async Task<ICollection<ResponseReservationDto>> GetByUserIdAsync(Guid userId)
     {
+        var now = DateTime.UtcNow;
         var entities = await GetWithDetailsAsync()
             .Where(r => r.ReservedByUserId == userId)
-            .OrderByDescending(r => r.StartDate)
+            .OrderBy(r => r.StartDate <= now && r.EndDate > now ? 0 : 1)
+            .ThenByDescending(r => r.StartDate)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
     }
     public async Task<ICollection<ResponseReservationDto>> GetMyReservationsAsync()
     {
+        var now = DateTime.UtcNow;
         var entities = await GetWithDetailsAsync()
             .Where(r => r.ReservedByUserId == _currentUser.UserId)
-            .OrderByDescending(r => r.StartDate)
+            .OrderBy(r => r.StartDate <= now && r.EndDate > now ? 0 : 1)
+            .ThenByDescending(r => r.StartDate)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
@@ -231,6 +235,22 @@ public class ReservationService : IReservationService
                 "Reservation duration too short for room {RoomId}: {StartDate} - {EndDate}",
                 roomId, startDate, endDate);
             throw new ArgumentException("Rezervasiya minimum 30 dəqiqə olmalıdır.");
+        }
+
+        if (endDate - startDate > TimeSpan.FromHours(4))
+        {
+            _logger.LogWarning(
+                "Reservation duration too long for room {RoomId}: {StartDate} - {EndDate}",
+                roomId, startDate, endDate);
+            throw new ArgumentException("Rezervasiya maksimum 4 saat ola bilər.");
+        }
+
+        if (!_currentUser.IsInRole("Admin") && startDate > DateTime.UtcNow.AddDays(30))
+        {
+            _logger.LogWarning(
+                "User {UserId} attempted to create/update reservation for room {RoomId} beyond the 30-day booking horizon: {StartDate}",
+                _currentUser.UserId, roomId, startDate);
+            throw new ArgumentException("Rezervasiya yalnız növbəti 30 gün ərzində yaradıla bilər.");
         }
 
         var hasConflict = await _repository.GetQueryable()
@@ -274,9 +294,9 @@ public class ReservationService : IReservationService
         if (!isOwner && !isAdmin)
         {
             _logger.LogWarning(
-                "User {UserId} attempted to modify/cancel reservation {ReservationId} without ownership.",
-                _currentUser.UserId, entity.Id);
-            throw new UnauthorizedAccessException("Bu rezervasiyanı dəyişmək hüququnuz yoxdur.");
+                     "User {UserId} attempted to modify/cancel reservation {ReservationId} without ownership.",
+             _currentUser.UserId, entity.Id);
+            throw new ForbiddenException("Bu rezervasiyanı dəyişmək hüququnuz yoxdur.");
         }
     }
 }

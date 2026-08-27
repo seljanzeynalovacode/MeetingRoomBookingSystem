@@ -4,9 +4,15 @@ const ICONS = {
   warning: "bi-exclamation-triangle",
 };
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
 export function showAlert(container, message, type = "danger") {
   const icon = ICONS[type] || ICONS.danger;
-  container.innerHTML = `<div class="alert alert-${type}" role="alert"><i class="bi ${icon}"></i><span>${message}</span></div>`;
+  container.innerHTML = `<div class="alert alert-${type}" role="alert"><i class="bi ${icon}"></i><span>${escapeHtml(message)}</span></div>`;
 }
 
 export function clearAlert(container) {

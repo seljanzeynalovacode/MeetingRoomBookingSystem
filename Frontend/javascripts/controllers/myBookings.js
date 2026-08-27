@@ -6,11 +6,17 @@ import { showAlert, clearAlert } from "../components/alert.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
+  throw new Error("Not authenticated");
 }
 
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
 const listEl = document.getElementById("reservationList");
+
+const filterStatus = document.getElementById("filterStatus");
+const filterFrom = document.getElementById("filterFrom");
+const filterTo = document.getElementById("filterTo");
+const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
 const avatarChip = document.getElementById("avatarChip");
 const avatarMenu = document.getElementById("avatarMenu");
@@ -54,6 +60,15 @@ function getDisplayIdentity() {
   const initials = givenName && surname ? (givenName[0] + surname[0]).toUpperCase() : name.slice(0, 2).toUpperCase();
 
   return { initials, name };
+}
+
+function getRoles() {
+  const token = getAccessToken();
+  if (!token) return [];
+  const claims = parseJwt(token) || {};
+  const roleClaim = claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (!roleClaim) return [];
+  return Array.isArray(roleClaim) ? roleClaim : [roleClaim];
 }
 
 let toastTimer = null;
@@ -127,14 +142,34 @@ function createReservationCardHtml(r) {
     </div>`;
 }
 
+function applyFilters(rows) {
+  return rows.filter((r) => {
+    if (filterStatus.value && getEffectiveStatus(r.status, r.endDate) !== filterStatus.value) return false;
+    if (filterFrom.value && new Date(r.startDate) < new Date(filterFrom.value)) return false;
+    if (filterTo.value) {
+      const toDate = new Date(filterTo.value);
+      toDate.setHours(23, 59, 59, 999);
+      if (new Date(r.startDate) > toDate) return false;
+    }
+    return true;
+  });
+}
+
 function renderReservations() {
   if (!reservations.length) {
     listEl.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>Hələ rezervasiyanız yoxdur.</div>`;
     return;
   }
 
-  const ongoing = reservations.filter(isCurrentlyOngoing);
-  const rest = reservations.filter((r) => !isCurrentlyOngoing(r));
+  const filtered = applyFilters(reservations);
+
+  if (!filtered.length) {
+    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-filter"></i>Filtrə uyğun rezervasiya tapılmadı.</div>`;
+    return;
+  }
+
+  const ongoing = filtered.filter(isCurrentlyOngoing);
+  const rest = filtered.filter((r) => !isCurrentlyOngoing(r));
 
   const ongoingHtml = ongoing.length
     ? `<div class="ongoing-section">
@@ -165,6 +200,7 @@ listEl.addEventListener("click", (e) => {
     if (!r) return;
     openBookingModal({
       mode: "edit",
+      isAdmin: getRoles().includes("Admin"),
       reservation: r,
       onSuccess: () => {
         showToast("Rezervasiya yeniləndi.");
@@ -217,5 +253,17 @@ logoutBtn.addEventListener("click", async () => {
 const { initials, name } = getDisplayIdentity();
 avatarInitials.textContent = initials;
 avatarName.textContent = name;
+
+if (getRoles().includes("Admin")) {
+  document.getElementById("adminPanelLink").style.display = "";
+}
+
+[filterStatus, filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderReservations));
+clearFiltersBtn.addEventListener("click", () => {
+  filterStatus.value = "";
+  filterFrom.value = "";
+  filterTo.value = "";
+  renderReservations();
+});
 
 loadReservations();

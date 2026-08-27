@@ -106,7 +106,7 @@ public class ParticipantService : IParticipantService
 
         if (!isOwnerOrAdmin && !isParticipant)
         {
-            throw new UnauthorizedAccessException("Bu rezervasiyanın iştirakçılarına baxmaq hüququnuz yoxdur.");
+            throw new ForbiddenException("Bu rezervasiyanın iştirakçılarına baxmaq hüququnuz yoxdur.");
         }
 
         var entities = await _repository.GetQueryable()
@@ -124,7 +124,7 @@ public class ParticipantService : IParticipantService
 
         if (!isOwner && !isAdmin)
         {
-            throw new UnauthorizedAccessException("Bu rezervasiyanın iştirakçılarını idarə etmək hüququnuz yoxdur.");
+            throw new ForbiddenException("Bu rezervasiyanın iştirakçılarını idarə etmək hüququnuz yoxdur.");
         }
     }
 
@@ -136,7 +136,7 @@ public class ParticipantService : IParticipantService
 
         if (!isInvitedUser && !isOwner && !isAdmin)
         {
-            throw new UnauthorizedAccessException("Bu iştirakçının statusunu dəyişmək hüququnuz yoxdur.");
+            throw new ForbiddenException("Bu iştirakçının statusunu dəyişmək hüququnuz yoxdur.");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MRBSystem.Domain.Entities;
 
@@ -18,6 +18,10 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .IsRequired()
             .HasMaxLength(1000);
 
+        builder.Property(n => n.Type)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.HasOne(n => n.User)
             .WithMany()
             .HasForeignKey(n => n.UserId)
@@ -29,19 +33,5 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(n => n.UserId);
-
-        builder.HasKey(n => n.Id);
-
-        builder.Property(n => n.Title)
-            .IsRequired()
-            .HasMaxLength(200);
-
-        builder.Property(n => n.Message)
-            .IsRequired()
-            .HasMaxLength(1000);
-
-        builder.Property(n => n.Type)
-            .HasConversion<string>()
-            .HasMaxLength(20);
     }
 }

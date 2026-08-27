@@ -32,5 +32,12 @@ public record CreateReservationDto : IValidatableObject
                 "Rezervasiya minimum 30 dəqiqə olmalıdır.",
                 new[] { nameof(EndDate) });
         }
+
+        if (StartDate < EndDate && (EndDate - StartDate) > TimeSpan.FromHours(4))
+        {
+            yield return new ValidationResult(
+                "Rezervasiya maksimum 4 saat ola bilər.",
+                new[] { nameof(EndDate) });
+        }
     }
 }

@@ -7,6 +7,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
+  throw new Error("Not authenticated");
 }
 
 const GRID_START_HOUR = 7;
@@ -94,6 +95,15 @@ function getDisplayIdentity() {
   const initials = givenName && surname ? (givenName[0] + surname[0]).toUpperCase() : name.slice(0, 2).toUpperCase();
 
   return { initials, name };
+}
+
+function getRoles() {
+  const token = getAccessToken();
+  if (!token) return [];
+  const claims = parseJwt(token) || {};
+  const roleClaim = claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (!roleClaim) return [];
+  return Array.isArray(roleClaim) ? roleClaim : [roleClaim];
 }
 
 function buildTimelineItems(dayEntry) {
@@ -200,6 +210,7 @@ function openSlotBooking(dateStr, hour) {
 
   openBookingModal({
     mode: "create",
+    isAdmin: getRoles().includes("Admin"),
     room: { id: selectedRoomId, name: selectedRoomName },
     prefillDate: dateStr,
     prefillStart: startStr,
@@ -322,11 +333,24 @@ function updateHeaderLabels(startDate, endDate) {
   calendarSubtitle.textContent = room ? `${room.name} · ${room.buildingName}, ${room.floorName}` : "";
 }
 
+let fetchToken = 0;
+
+function setNavDisabled(disabled) {
+  prevBtn.disabled = disabled;
+  nextBtn.disabled = disabled;
+  todayBtn.disabled = disabled;
+  dayViewBtn.disabled = disabled;
+  weekViewBtn.disabled = disabled;
+}
+
 async function fetchAndRender() {
   if (!selectedRoomId) return;
   clearAlert(alertBox);
   closeEventPopover();
   contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-hourglass-split"></i>Yüklənir...</div>`;
+
+  const myToken = ++fetchToken;
+  setNavDisabled(true);
 
   let startDate, endDate;
   if (viewMode === "day") {
@@ -343,11 +367,15 @@ async function fetchAndRender() {
 
   try {
     const days = await getRoomCalendar(selectedRoomId, startDate, endDate);
+    if (myToken !== fetchToken) return;
     if (viewMode === "day") renderDayView(days);
     else renderWeekView(days);
   } catch (err) {
+    if (myToken !== fetchToken) return;
     showAlert(alertBox, err.message);
     contentEl.innerHTML = "";
+  } finally {
+    if (myToken === fetchToken) setNavDisabled(false);
   }
 }
 
@@ -431,6 +459,10 @@ async function init() {
   const { initials, name } = getDisplayIdentity();
   avatarInitials.textContent = initials;
   avatarName.textContent = name;
+
+  if (getRoles().includes("Admin")) {
+    document.getElementById("adminPanelLink").style.display = "";
+  }
 
   try {
     const [roomList, buildingList, floorList] = await Promise.all([getAllRooms(), getAllBuildings(), getAllFloors()]);

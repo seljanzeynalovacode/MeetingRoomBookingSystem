@@ -42,7 +42,7 @@ public class NotificationService : INotificationService
             ?? throw new NotFoundException($"Notification with id {id} not found.");
 
         if (entity.UserId != _currentUser.UserId)
-            throw new UnauthorizedAccessException("This notification does not belong to you.");
+            throw new ForbiddenException("This notification does not belong to you.");
 
         entity.IsRead = true;
         entity.ReadAt = DateTime.UtcNow;

@@ -81,6 +81,13 @@ public class RoleService : IRoleService
             _logger.LogWarning("Attempt to delete a non-existent role with ID: {RoleId}", id);
             throw new NotFoundException($"Role with id {id} not found.");
         }
+
+        if (role.Name is "Admin" or "User")
+        {
+            _logger.LogWarning("Attempt to delete a protected system role: {RoleName} (ID: {RoleId})", role.Name, id);
+            throw new InvalidOperationException("Sistem rolları ('Admin', 'User') silinə bilməz.");
+        }
+
         _logger.LogInformation("Role deleted successfully: {RoleName} (ID: {RoleId})", role.Name, id);
 
         await _roleManager.DeleteAsync(role);
@@ -153,14 +160,30 @@ public class RoleService : IRoleService
     public async Task<ICollection<UserResponseDto>> GetAllUsersWithRolesAsync()
     {
         var users = await _userManager.Users.ToListAsync();
-        var result = new List<UserResponseDto>();
+        var roles = await _roleManager.Roles.ToListAsync();
 
-        foreach (var user in users)
+        var rolesByUserId = users.ToDictionary(u => u.Id, _ => new List<string>());
+
+        foreach (var role in roles)
+        {
+            if (role.Name is null) continue;
+
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+            foreach (var user in usersInRole)
+            {
+                if (rolesByUserId.TryGetValue(user.Id, out var roleList))
+                {
+                    roleList.Add(role.Name);
+                }
+            }
+        }
+
+        var result = users.Select(user =>
         {
             var dto = _mapper.Map<UserResponseDto>(user);
-            dto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
-            result.Add(dto);
-        }
+            dto.Roles = rolesByUserId[user.Id];
+            return dto;
+        }).ToList();
 
         _logger.LogInformation("Retrieved all users with their roles. Total count: {Count}", users.Count);
         return result;

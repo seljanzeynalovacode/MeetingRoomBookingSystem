@@ -17,6 +17,7 @@
     </a>
 
     <div class="nav-right">
+      <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
       <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
       <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
       <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
@@ -35,84 +36,84 @@
   <div class="dash-alert" id="alertBox"></div>
 
   <div class="reservations-layout">
-            <div class="content-head">
+    <div class="content-head">
       <div>
-        <h2 style="display:flex; align-items:center; gap:10px;"><i class="bi bi-person-fill" style="color: rgb(51, 26, 95);"></i>Profil</h2>
-               <p style="font-size:13px; color:var(--text-secondary); margin:0.25rem 0 0;">Hesab məlumatlarınızı idarə edin.</p>
+        <h2 class="profile-title"><i class="bi bi-person-fill profile-head-icon"></i>Profil</h2>
+        <p class="profile-subtitle">Hesab məlumatlarınızı idarə edin.</p>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:1.25rem; padding:1.5rem; display:flex; align-items:center; gap:1.1rem;">
-      <div id="profileHeroAvatar" style="width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg, var(--violet-500), var(--amber-500)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; box-shadow:var(--shadow-md); flex-shrink:0;">--</div>
+    <div class="card profile-hero-card">
+      <div id="profileHeroAvatar" class="profile-hero-avatar">--</div>
       <div>
-        <div id="profileHeroName" style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem;">İstifadəçi</div>
-        <div id="profileHeroEmail" style="font-size:13px; color:var(--text-secondary); margin-top:2px;"></div>
+        <div id="profileHeroName" class="profile-hero-name">İstifadəçi</div>
+        <div id="profileHeroEmail" class="profile-hero-email"></div>
       </div>
     </div>
 
-    <div style="display:flex; gap:1.25rem; flex-wrap:wrap; align-items:flex-start;">
-      <div class="card" style="flex:1 1 380px;">
-      <div style="padding:1.5rem;">
-        <h3 style="margin:0 0 1.1rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-person-vcard" style="color:var(--violet-500);"></i>Profil məlumatları</h3>
-        <form id="profileForm" novalidate>
-          <div class="field">
-            <label class="field-label" for="firstNameInput">Ad</label>
-            <div class="input-wrap">
-              <i class="bi bi-person leading-icon"></i>
-              <input type="text" class="input has-icon" id="firstNameInput" required minlength="2" maxlength="100" />
+    <div class="profile-columns">
+      <div class="card profile-column">
+        <div class="profile-card-body">
+          <h3 class="profile-card-title"><i class="bi bi-person-vcard"></i>Profil məlumatları</h3>
+          <form id="profileForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="firstNameInput">Ad</label>
+              <div class="input-wrap">
+                <i class="bi bi-person leading-icon"></i>
+                <input type="text" class="input has-icon" id="firstNameInput" required minlength="2" maxlength="100" />
+              </div>
             </div>
-          </div>
-                    <div class="field">
-            <label class="field-label" for="lastNameInput">Soyad</label>
-            <div class="input-wrap">
-              <i class="bi bi-person leading-icon"></i>
-              <input type="text" class="input has-icon" id="lastNameInput" required minlength="2" maxlength="100" />
+            <div class="field">
+              <label class="field-label" for="lastNameInput">Soyad</label>
+              <div class="input-wrap">
+                <i class="bi bi-person leading-icon"></i>
+                <input type="text" class="input has-icon" id="lastNameInput" required minlength="2" maxlength="100" />
+              </div>
             </div>
-          </div>
-          <div class="field" style="margin-bottom:0;">
-            <label class="field-label" for="userNameInput">İstifadəçi adı</label>
-            <div class="input-wrap">
-              <i class="bi bi-at leading-icon"></i>
-              <input type="text" class="input has-icon" id="userNameInput" required minlength="3" maxlength="256" />
+            <div class="field field-tight">
+              <label class="field-label" for="userNameInput">İstifadəçi adı</label>
+              <div class="input-wrap">
+                <i class="bi bi-at leading-icon"></i>
+                <input type="text" class="input has-icon" id="userNameInput" required minlength="3" maxlength="256" />
+              </div>
             </div>
-          </div>
-          <div style="margin-top:1.25rem;">
-            <button type="submit" class="btn btn-primary" id="profileSubmitBtn">Yadda saxla</button>
-          </div>
-        </form>
+            <div class="profile-form-actions">
+              <button type="submit" class="btn btn-primary" id="profileSubmitBtn">Yadda saxla</button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
 
-      <div class="card" style="flex:1 1 380px;">
-      <div style="padding:1.5rem;">
-        <h3 style="margin:0 0 1.1rem; display:flex; align-items:center; gap:8px;"><i class="bi bi-shield-lock" style="color:var(--violet-500);"></i>Şifrəni dəyiş</h3>
-        <form id="passwordForm" novalidate>
-          <div class="field">
-            <label class="field-label" for="currentPasswordInput">Mövcud şifrə</label>
-            <div class="input-wrap">
-              <i class="bi bi-lock leading-icon"></i>
-              <input type="password" class="input has-icon" id="currentPasswordInput" required />
+      <div class="card profile-column">
+        <div class="profile-card-body">
+          <h3 class="profile-card-title"><i class="bi bi-shield-lock"></i>Şifrəni dəyiş</h3>
+          <form id="passwordForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="currentPasswordInput">Mövcud şifrə</label>
+              <div class="input-wrap">
+                <i class="bi bi-lock leading-icon"></i>
+                <input type="password" class="input has-icon" id="currentPasswordInput" required />
+              </div>
             </div>
-          </div>
-          <div class="field">
-            <label class="field-label" for="newPasswordInput">Yeni şifrə</label>
-            <div class="input-wrap">
-              <i class="bi bi-lock leading-icon"></i>
-              <input type="password" class="input has-icon" id="newPasswordInput" required minlength="6" maxlength="100" />
+            <div class="field">
+              <label class="field-label" for="newPasswordInput">Yeni şifrə</label>
+              <div class="input-wrap">
+                <i class="bi bi-lock leading-icon"></i>
+                <input type="password" class="input has-icon" id="newPasswordInput" required minlength="6" maxlength="100" />
+              </div>
             </div>
-          </div>
-          <div class="field" style="margin-bottom:0;">
-            <label class="field-label" for="confirmNewPasswordInput">Yeni şifrəni təsdiqlə</label>
-            <div class="input-wrap">
-              <i class="bi bi-lock leading-icon"></i>
-              <input type="password" class="input has-icon" id="confirmNewPasswordInput" required minlength="6" maxlength="100" />
+            <div class="field field-tight">
+              <label class="field-label" for="confirmNewPasswordInput">Yeni şifrəni təsdiqlə</label>
+              <div class="input-wrap">
+                <i class="bi bi-lock leading-icon"></i>
+                <input type="password" class="input has-icon" id="confirmNewPasswordInput" required minlength="6" maxlength="100" />
+              </div>
             </div>
-          </div>
-          <div style="margin-top:1.25rem;">
-            <button type="submit" class="btn btn-primary" id="passwordSubmitBtn">Şifrəni dəyiş</button>
-          </div>
-        </form>
-      </div>
+            <div class="profile-form-actions">
+              <button type="submit" class="btn btn-primary" id="passwordSubmitBtn">Şifrəni dəyiş</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

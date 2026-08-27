@@ -1,5 +1,6 @@
 import { createReservation, updateReservation } from "../api/reservationsApi.js";
 import { createParticipant, getParticipantsByReservation, deleteParticipant } from "../api/participantsApi.js";
+import { showFieldErrors, clearFieldErrors } from "../components/alert.js";
 
 let modalEl = null;
 let pendingParticipants = [];
@@ -33,7 +34,7 @@ function ensureModal() {
           <label class="field-label" for="bookingTitle">Başlıq</label>
           <div class="input-wrap">
             <i class="bi bi-card-text leading-icon"></i>
-            <input type="text" class="input has-icon" id="bookingTitle" required minlength="2" maxlength="200" placeholder="Həftəlik komanda görüşü" />
+            <input type="text" class="input has-icon" id="bookingTitle" name="Title" required minlength="2" maxlength="200" placeholder="Həftəlik komanda görüşü" />
           </div>
         </div>
 
@@ -170,7 +171,9 @@ function closeModal() {
 
 async function handleSubmit(e) {
   e.preventDefault();
+  const form = modalEl.querySelector("#bookingModalForm");
   clearModalAlert();
+  clearFieldErrors(form);
 
   const titleInput = modalEl.querySelector("#bookingTitle");
   const dateInput = modalEl.querySelector("#bookingDate");
@@ -185,6 +188,12 @@ async function handleSubmit(e) {
 
   if (!title || !date || !start || !end) {
     showModalAlert("Bütün sahələri doldurun.", "warning");
+    return;
+  }
+
+  if (title.length < 2) {
+    showFieldErrors(form, { Title: ["Başlıq minimum 2 simvol olmalıdır."] });
+    showModalAlert("Başlıq minimum 2 simvol olmalıdır.", "warning");
     return;
   }
 
@@ -203,6 +212,16 @@ async function handleSubmit(e) {
 
   if (endDate - startDate < 30 * 60 * 1000) {
     showModalAlert("Rezervasiya minimum 30 dəqiqə olmalıdır.", "warning");
+    return;
+  }
+
+  if (endDate - startDate > 4 * 60 * 60 * 1000) {
+    showModalAlert("Rezervasiya maksimum 4 saat ola bilər.", "warning");
+    return;
+  }
+
+  if (currentOptions.isAdmin !== true && startDate > new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) {
+    showModalAlert("Rezervasiya yalnız növbəti 30 gün ərzində yaradıla bilər.", "warning");
     return;
   }
 
@@ -246,6 +265,9 @@ async function handleSubmit(e) {
     closeModal();
     if (currentOptions.onSuccess) currentOptions.onSuccess();
   } catch (err) {
+    if (err.fieldErrors) {
+      showFieldErrors(form, err.fieldErrors);
+    }
     showModalAlert(err.message);
   } finally {
     submitBtn.disabled = false;
@@ -259,9 +281,12 @@ export function openBookingModal(options) {
   existingParticipants = [];
   ensureModal();
 
+  const isAdmin = options.isAdmin === true;
+
   const form = modalEl.querySelector("#bookingModalForm");
   form.reset();
   clearModalAlert();
+  clearFieldErrors(form);
 
   const titleInput = modalEl.querySelector("#bookingTitle");
   const dateInput = modalEl.querySelector("#bookingDate");
@@ -272,6 +297,7 @@ export function openBookingModal(options) {
   const submitBtn = modalEl.querySelector("#bookingModalSubmitBtn");
 
   dateInput.min = new Date().toISOString().slice(0, 10);
+  dateInput.max = isAdmin ? "" : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   if (options.mode === "edit") {
     modalTitleEl.textContent = "Rezervasiyanı redaktə et";

@@ -7,6 +7,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
+  throw new Error("Not authenticated");
 }
 
 const alertBox = document.getElementById("alertBox");
@@ -398,6 +399,7 @@ roomGrid.addEventListener("click", (e) => {
 
   openBookingModal({
     mode: "create",
+    isAdmin: getRoles().includes("Admin"),
     room: { id: room.id, name: room.name },
     prefillDate: searchDateInput.value,
     prefillStart: searchStartInput.value,

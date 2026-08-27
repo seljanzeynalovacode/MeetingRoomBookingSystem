@@ -105,6 +105,57 @@ public class ReservationServiceTests : IDisposable
             .WithMessage("*already booked*");
     }
 
+    [Fact]
+    public async Task CreateAsync_PastStartDate_ThrowsArgumentException()
+    {
+        await SeedRoomAndUserAsync();
+
+        var dto = new CreateReservationDto
+        {
+            Title = "Kecmis bron",
+            RoomId = _roomId,
+            StartDate = DateTime.UtcNow.AddHours(-2),
+            EndDate = DateTime.UtcNow.AddHours(-1)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
+            .Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task CreateAsync_DurationLessThan30Minutes_ThrowsArgumentException()
+    {
+        await SeedRoomAndUserAsync();
+
+        var dto = new CreateReservationDto
+        {
+            Title = "Cox qisa bron",
+            RoomId = _roomId,
+            StartDate = DateTime.UtcNow.AddHours(1),
+            EndDate = DateTime.UtcNow.AddHours(1).AddMinutes(15)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
+            .Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task CreateAsync_DurationMoreThan4Hours_ThrowsArgumentException()
+    {
+        await SeedRoomAndUserAsync();
+
+        var dto = new CreateReservationDto
+        {
+            Title = "Cox uzun bron",
+            RoomId = _roomId,
+            StartDate = DateTime.UtcNow.AddHours(1),
+            EndDate = DateTime.UtcNow.AddHours(6)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
+            .Should().ThrowAsync<ArgumentException>();
+    }
+
     private async Task SeedRoomAndUserAsync()
     {
         var user = new AppUser

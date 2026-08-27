@@ -17,6 +17,7 @@
     </a>
 
        <div class="nav-right">
+      <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
       <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
       <a href="roomCalendar.html" class="btn btn-ghost btn-sm active"><i class="bi bi-calendar3"></i>Təqvim</a>
       <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
@@ -42,9 +43,9 @@
       </div>
 
       <div class="calendar-controls">
-        <button class="icon-btn" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+        <button class="icon-btn" id="prevBtn" aria-label="Əvvəlki gün"><i class="bi bi-chevron-left"></i></button>
         <span class="date-label" id="dateLabel"></span>
-        <button class="icon-btn" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+        <button class="icon-btn" id="nextBtn" aria-label="Növbəti gün"><i class="bi bi-chevron-right"></i></button>
         <button class="btn btn-secondary btn-sm" id="todayBtn">Bu gün</button>
         <div class="view-toggle">
           <button type="button" id="dayViewBtn" class="active"><i class="bi bi-calendar-day"></i> Gün</button>

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MRBSystem.Domain.Entities;
 
@@ -16,6 +16,10 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
         builder.Property(p => p.GuestName)
             .HasMaxLength(200);
 
+        builder.Property(p => p.ResponseStatus)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.HasOne(p => p.Reservation)
             .WithMany()
             .HasForeignKey(p => p.ReservationId)
@@ -27,14 +31,5 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(p => p.ReservationId);
-
-        builder.HasKey(p => p.Id);
-
-        builder.Property(p => p.ResponseStatus)
-            .HasConversion<string>()
-            .HasMaxLength(20);
-
-        builder.Property(p => p.GuestEmail)
-            .HasMaxLength(256);
     }
 }

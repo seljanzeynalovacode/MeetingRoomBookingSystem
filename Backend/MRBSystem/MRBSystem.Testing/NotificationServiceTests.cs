@@ -96,7 +96,7 @@ public class NotificationServiceTests :IDisposable
 
         var act = () => service.MarkAsReadAsync(notification.Id);
 
-        await act.Should().ThrowAsync<UnauthorizedAccessException>();
+        await act.Should().ThrowAsync<ForbiddenException>();
     }
 
     [Fact]

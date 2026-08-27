@@ -17,6 +17,7 @@
     </a>
 
                 <div class="nav-right">
+      <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
       <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
       <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
       <a href="myBookings.html" class="btn btn-ghost btn-sm active"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
@@ -37,6 +38,29 @@
   <div class="reservations-layout">
     <div class="content-head">
       <h2>Rezervasiyalarım</h2>
+    </div>
+
+    <div class="card filter-toolbar">
+      <div class="filter-toolbar-row">
+        <div class="filter-group-inline">
+          <label class="field-label">Status</label>
+          <select class="input" id="filterStatus">
+            <option value="">Hamısı</option>
+            <option value="Confirmed">Təsdiqlənib</option>
+            <option value="Completed">Tamamlanıb</option>
+            <option value="Cancelled">Ləğv edilib</option>
+          </select>
+        </div>
+        <div class="filter-group-inline">
+          <label class="field-label">Tarix (başlanğıc)</label>
+          <input type="date" class="input" id="filterFrom" />
+        </div>
+        <div class="filter-group-inline">
+          <label class="field-label">Tarix (son)</label>
+          <input type="date" class="input" id="filterTo" />
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
+      </div>
     </div>
 
     <div class="reservation-list" id="reservationList"></div>

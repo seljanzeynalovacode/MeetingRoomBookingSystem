@@ -161,8 +161,6 @@ public class AuthService : IAuthService
         }
 
         if (!await _userManager.IsInRoleAsync(user, "Admin"))
-
-            if (!await _userManager.IsInRoleAsync(user, "Admin"))
         {
             _logger.LogWarning("User {Email} attempted to access Admin login without Admin role.", dto.Email);
             throw new UnauthorizedAccessException(genericError);
@@ -270,8 +268,6 @@ public class AuthService : IAuthService
         }
 
         if (!await _userManager.IsInRoleAsync(user, "User"))
-
-            if (!await _userManager.IsInRoleAsync(user, "User"))
         {
             _logger.LogWarning("User {Email} attempted to access User login without User role.", dto.Email);
             throw new UnauthorizedAccessException(genericError);
@@ -283,6 +279,12 @@ public class AuthService : IAuthService
 
     public async Task LogoutAsync(Guid userId)
     {
+        await RevokeAllRefreshTokensAsync(userId);
+        _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
+    }
+
+    private async Task RevokeAllRefreshTokensAsync(Guid userId)
+    {
         var activeTokens = await _refreshTokenRepository.GetQueryable()
             .Where(rt => rt.UserId == userId && rt.RevokedAt == null)
             .ToListAsync();
@@ -292,7 +294,6 @@ public class AuthService : IAuthService
             token.RevokedAt = DateTime.UtcNow;
             await _refreshTokenRepository.UpdateAsync(token);
         }
-        _logger.LogInformation("User with ID: {UserId} logged out and all active refresh tokens revoked.", userId);
     }
     public async Task<UserResponseDto> UpdateProfileAsync(UpdateProfileDto dto)
     {
@@ -338,7 +339,8 @@ public class AuthService : IAuthService
             throw new InvalidOperationException("Mövcud şifrə yanlışdır və ya yeni şifrə tələblərə uyğun deyil.");
         }
 
-        _logger.LogInformation("User {UserId} changed their password.", user.Id);
+        await RevokeAllRefreshTokensAsync(user.Id);
+        _logger.LogInformation("User {UserId} changed their password and all active refresh tokens were revoked.", user.Id);
     }
     public async Task DeleteUserAsync(Guid userId)
     {
@@ -414,7 +416,8 @@ public class AuthService : IAuthService
             throw new InvalidOperationException(genericError);
         }
 
-        _logger.LogInformation("Password successfully reset for email: {Email}", dto.Email);
+        await RevokeAllRefreshTokensAsync(user.Id);
+        _logger.LogInformation("Password successfully reset for email: {Email}, all active refresh tokens were revoked.", dto.Email);
     }
     public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
     {
