@@ -2,7 +2,7 @@
 
 namespace MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos;
 
-public class UpdateWorkingHourDto : IValidatableObject
+public record UpdateWorkingHourDto : IValidatableObject
 {
     [Required, EnumDataType(typeof(DayOfWeek))]
     public string DayOfWeek { get; set; } = null!;

@@ -519,6 +519,44 @@ namespace MRBSystem.Persistence.Migrations
                     b.ToTable("RoomEquipment");
                 });
 
+            modelBuilder.Entity("MRBSystem.Domain.Entities.SystemSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BookingHorizonDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BufferMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActiveReservationLimitEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxActiveReservationsPerUser")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxCalendarRangeDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxReservationHours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinReservationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemSettings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")

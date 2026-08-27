@@ -38,7 +38,11 @@ public class RoomServiceTests : IDisposable
             new GenericRepository<Reservation>(_context),
             new GenericRepository<RoomBlackout>(_context),
             new GenericRepository<RoomEquipment>(_context),
-            mapperConfig.CreateMapper());
+            mapperConfig.CreateMapper(),
+            new SystemSettingsService(
+                new GenericRepository<SystemSettings>(_context),
+                mapperConfig.CreateMapper(),
+                NullLogger<SystemSettingsService>.Instance));
 
         SeedBuildingAndFloor();
     }

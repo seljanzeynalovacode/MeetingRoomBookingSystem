@@ -88,6 +88,7 @@ public class WorkingHourServiceTests : IDisposable
     {
         var buildingId = await SeedBuildingAsync();
         await _service.SeedDefaultsAsync(buildingId);
+        _context.ChangeTracker.Clear();
 
         var update = new List<UpdateWorkingHourDto>
         {

@@ -141,6 +141,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IRoomEquipmentService, RoomEquipmentService>();
             builder.Services.AddScoped<IRoomBlackoutService, RoomBlackoutService>();
             builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
+            builder.Services.AddScoped<ISystemSettingsService, SystemSettingsService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IRoleService, RoleService>();
 

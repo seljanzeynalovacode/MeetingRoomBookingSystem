@@ -1,6 +1,6 @@
 ﻿namespace MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos;
 
-public class ResponseWorkingHourDto
+public record ResponseWorkingHourDto
 {
     public Guid Id { get; set; }
     public Guid BuildingId { get; set; }

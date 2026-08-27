@@ -11,6 +11,7 @@ using MRBSystem.Contracts.DTOs.ReservationDtos;
 using MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
 using MRBSystem.Contracts.DTOs.RoomDtos;
 using MRBSystem.Contracts.DTOs.RoomEquipmentDtos;
+using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
 
@@ -101,5 +102,8 @@ public class CustomProfile : Profile
         //  Notification 
         CreateMap<Notification, ResponseNotificationDto>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+
+        //  SystemSettings 
+        CreateMap<SystemSettings, ResponseSystemSettingsDto>();
     }
 }

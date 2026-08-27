@@ -1756,6 +1756,47 @@
         }
       }
     },
+    "/api/system-settings": {
+      "get": {
+        "tags": [
+          "SystemSettings"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SystemSettings"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSystemSettingsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSystemSettingsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSystemSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/buildings/{buildingId}/working-hours": {
       "get": {
         "tags": [
@@ -2458,6 +2499,51 @@
           "quantity": {
             "maximum": 1000,
             "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateSystemSettingsDto": {
+        "type": "object",
+        "properties": {
+          "minReservationMinutes": {
+            "maximum": 240,
+            "minimum": 5,
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxReservationHours": {
+            "maximum": 24,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "bufferMinutes": {
+            "maximum": 120,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "bookingHorizonDays": {
+            "maximum": 365,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActiveReservationLimitEnabled": {
+            "type": "boolean"
+          },
+          "maxActiveReservationsPerUser": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxCalendarRangeDays": {
+            "maximum": 365,
+            "minimum": 7,
             "type": "integer",
             "format": "int32"
           }

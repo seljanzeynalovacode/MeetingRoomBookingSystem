@@ -57,7 +57,11 @@ public class ReservationServiceTests : IDisposable
                 new GenericRepository<Building>(_context),
                 new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
-                NullLogger<WorkingHourService>.Instance));
+                NullLogger<WorkingHourService>.Instance),
+            new SystemSettingsService(
+                new GenericRepository<SystemSettings>(_context),
+                mapperConfig.CreateMapper(),
+                NullLogger<SystemSettingsService>.Instance));
     }
 
     [Fact]

@@ -20,6 +20,7 @@ public class MRBAppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<BuildingWorkingHour> BuildingWorkingHours => Set<BuildingWorkingHour>();
+    public DbSet<SystemSettings> SystemSettings => Set<SystemSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ayarlar — Admin — MeetingSpace</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <i class="bi bi-calendar-check logo"></i>
+        <span class="wordmark">MeetingSpace</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+      <div class="admin-nav-groups">
+        <div class="nav-section-label">Ümumi</div>
+        <nav class="admin-nav">
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        </nav>
+
+        <div class="nav-section-label">Struktur</div>
+        <nav class="admin-nav">
+          <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+          <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        </nav>
+
+        <div class="nav-section-label">Fəaliyyət</div>
+        <nav class="admin-nav">
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i>İş saatları</a>
+        </nav>
+
+        <div class="nav-section-label">Sistem</div>
+        <nav class="admin-nav">
+          <a href="adminSettings.html" class="active"><i class="bi bi-sliders"></i>Ayarlar</a>
+        </nav>
+      </div>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main" style="max-width:900px;">
+      <div class="admin-topbar">
+        <div>
+          <h1>Ayarlar</h1>
+          <p>Sistemin qlobal rezervasiya qaydalarını buradan idarə edin.</p>
+        </div>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="settings-info-banner">
+        <i class="bi bi-info-circle"></i>
+        <span>Bu dəyişikliklər bütün binalar və istifadəçilər üçün ümumidir (bina-spesifik deyil — "İş saatları" ayrıca səhifədən idarə olunur).</span>
+      </div>
+
+      <div class="settings-grid">
+
+        <div class="card settings-card">
+          <div class="settings-card-head">
+            <h3><i class="bi bi-hourglass-split"></i>Rezervasiya müddəti</h3>
+            <p>Bir rezervasiyanın minimum/maksimum uzunluğu və ardıcıl bronlar arası fasilə</p>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Minimum müddət</div>
+              <div class="settings-row-desc">Bir rezervasiya ən azı bu qədər davam etməlidir</div>
+            </div>
+            <div class="settings-num-input"><input type="number" id="minMinutesInput" min="5" max="240" /><span>dəqiqə</span></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Maksimum müddət</div>
+              <div class="settings-row-desc">Bir rezervasiya bundan uzun ola bilməz</div>
+            </div>
+            <div class="settings-num-input"><input type="number" id="maxHoursInput" min="1" max="24" /><span>saat</span></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Hazırlıq fasiləsi (buffer)</div>
+              <div class="settings-row-desc">Bir rezervasiya bitəndən sonra otağın təmizlənməsi üçün minimum boş vaxt</div>
+            </div>
+            <div class="settings-num-input"><input type="number" id="bufferMinutesInput" min="0" max="120" /><span>dəqiqə</span></div>
+          </div>
+        </div>
+
+        <div class="card settings-card">
+          <div class="settings-card-head">
+            <h3><i class="bi bi-calendar-range"></i>Rezervasiya hüdudları</h3>
+            <p>İstifadəçilərin nə qədər irəliyə və nə qədər çox rezerv edə bilməsi</p>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Booking Horizon</div>
+              <div class="settings-row-desc">İstifadəçi bundan sonrakı tarixə rezervasiya edə bilməz (Admin istisnadır)</div>
+            </div>
+            <div class="settings-num-input"><input type="number" id="horizonDaysInput" min="1" max="365" /><span>gün</span></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Aktiv rezervasiya limiti</div>
+              <div class="settings-row-desc">İstifadəçi başına eyni anda icazə verilən maksimum aktiv/gələcək rezervasiya sayı</div>
+            </div>
+            <div class="settings-input-group">
+              <label class="settings-switch"><input type="checkbox" id="limitToggle" /><span class="track"></span></label>
+              <div class="settings-num-input" id="maxActiveGroup"><input type="number" id="maxActiveInput" min="1" max="100" /><span>ədəd</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card settings-card">
+          <div class="settings-card-head">
+            <h3><i class="bi bi-speedometer2"></i>Performans limitləri</h3>
+            <p>Sistemin daxili sorğu məhdudiyyətləri</p>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Təqvim sorğu aralığı</div>
+              <div class="settings-row-desc">Otaq təqvimi bir sorğuda bundan geniş tarix aralığı qaytarmır</div>
+            </div>
+            <div class="settings-num-input"><input type="number" id="calendarRangeInput" min="7" max="365" /><span>gün</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top: 0.5rem;">
+        <button type="button" class="btn btn-primary" id="saveBtn"><i class="bi bi-check-lg"></i>Bütün ayarları yadda saxla</button>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminSettings.js"></script>
+</body>
+</html>

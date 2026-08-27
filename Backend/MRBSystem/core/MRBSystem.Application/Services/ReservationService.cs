@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.ReservationDtos;
+using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
@@ -23,6 +24,7 @@ public class ReservationService : IReservationService
     private readonly IMapper _mapper;
     private readonly ILogger<ReservationService> _logger;
     private readonly IWorkingHourService _workingHourService;
+    private readonly ISystemSettingsService _systemSettingsService;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
@@ -33,7 +35,8 @@ public class ReservationService : IReservationService
         IMapper mapper,
         ILogger<ReservationService> logger,
         IGenericRepository<Room> roomRepository,
-        IWorkingHourService workingHourService)
+        IWorkingHourService workingHourService,
+        ISystemSettingsService systemSettingsService)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
@@ -44,6 +47,7 @@ public class ReservationService : IReservationService
         _logger = logger;
         _roomRepository = roomRepository;
         _workingHourService = workingHourService;
+        _systemSettingsService = systemSettingsService;
     }
 
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
@@ -57,7 +61,9 @@ public class ReservationService : IReservationService
 
         var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate);
+            var settings = await _systemSettingsService.GetAsync();
+            await EnsureUnderActiveReservationLimitAsync(settings);
+            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, settings);
 
             var reservation = _mapper.Map<Reservation>(dto);
             reservation.ReservedByUserId = _currentUser.UserId;
@@ -105,10 +111,12 @@ public class ReservationService : IReservationService
 
             EnsureCanModify(reservation);
 
+            var settings = await _systemSettingsService.GetAsync();
             await ValidateDatesAsync(
                 dto.RoomId,
                 dto.StartDate,
                 dto.EndDate,
+                settings,
                 excludeReservationId: id);
 
             _mapper.Map(dto, reservation);
@@ -217,7 +225,7 @@ public class ReservationService : IReservationService
         return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
     }
 
-    private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, Guid? excludeReservationId = null)
+    private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, ResponseSystemSettingsDto settings, Guid? excludeReservationId = null)
     {
         if (startDate >= endDate)
         {
@@ -234,28 +242,28 @@ public class ReservationService : IReservationService
             throw new ArgumentException("Keçmiş tarix və saata rezervasiya edilə bilməz.");
         }
 
-        if (endDate - startDate < TimeSpan.FromMinutes(30))
+        if (endDate - startDate < TimeSpan.FromMinutes(settings.MinReservationMinutes))
         {
             _logger.LogWarning(
                 "Reservation duration too short for room {RoomId}: {StartDate} - {EndDate}",
                 roomId, startDate, endDate);
-            throw new ArgumentException("Rezervasiya minimum 30 dəqiqə olmalıdır.");
+            throw new ArgumentException($"Rezervasiya minimum {settings.MinReservationMinutes} dəqiqə olmalıdır.");
         }
 
-        if (endDate - startDate > TimeSpan.FromHours(4))
+        if (endDate - startDate > TimeSpan.FromHours(settings.MaxReservationHours))
         {
             _logger.LogWarning(
                 "Reservation duration too long for room {RoomId}: {StartDate} - {EndDate}",
                 roomId, startDate, endDate);
-            throw new ArgumentException("Rezervasiya maksimum 4 saat ola bilər.");
+            throw new ArgumentException($"Rezervasiya maksimum {settings.MaxReservationHours} saat ola bilər.");
         }
 
-                if (!_currentUser.IsInRole("Admin") && startDate > DateTime.UtcNow.AddDays(30))
+        if (!_currentUser.IsInRole("Admin") && startDate > DateTime.UtcNow.AddDays(settings.BookingHorizonDays))
         {
             _logger.LogWarning(
-                "User {UserId} attempted to create/update reservation for room {RoomId} beyond the 30-day booking horizon: {StartDate}",
-                _currentUser.UserId, roomId, startDate);
-            throw new ArgumentException("Rezervasiya yalnız növbəti 30 gün ərzində yaradıla bilər.");
+                "User {UserId} attempted to create/update reservation for room {RoomId} beyond the {Horizon}-day booking horizon: {StartDate}",
+                _currentUser.UserId, roomId, settings.BookingHorizonDays, startDate);
+            throw new ArgumentException($"Rezervasiya yalnız növbəti {settings.BookingHorizonDays} gün ərzində yaradıla bilər.");
         }
 
         var buildingId = await _roomRepository.GetQueryable()
@@ -283,19 +291,23 @@ public class ReservationService : IReservationService
         }
 
 
+        var bufferMinutes = settings.BufferMinutes;
         var hasConflict = await _repository.GetQueryable()
             .AnyAsync(r => r.Id != excludeReservationId
                 && r.RoomId == roomId
                 && r.Status != ReservationStatus.Cancelled
-                && startDate < r.EndDate
-                && endDate > r.StartDate);
+                && r.EndDate.AddMinutes(bufferMinutes) > startDate
+                && endDate.AddMinutes(bufferMinutes) > r.StartDate);
 
         if (hasConflict)
         {
             _logger.LogWarning(
                 "Attempt to create/update reservation for room {RoomId} with conflicting time range {StartDate} - {EndDate}",
                 roomId, startDate, endDate);
-            throw new InvalidOperationException("Room is already booked for the selected time range.");
+            throw new InvalidOperationException(
+                settings.BufferMinutes > 0
+                    ? $"Otaq bu vaxt aralığında (yaxud {settings.BufferMinutes} dəqiqəlik hazırlıq fasiləsi daxilində) artıq bron edilib."
+                    : "Room is already booked for the selected time range.");
         }
         var conflictingBlackout = await _blackoutRepository.GetQueryable()
             .Where(b => b.RoomId == roomId
@@ -314,6 +326,28 @@ public class ReservationService : IReservationService
                 $"Otaq {conflictingBlackout.EndDate:dd.MM.yyyy HH:mm} tarixindən sonra yenidən istifadəyə veriləcək.");
         }
 
+    }
+
+    private async Task EnsureUnderActiveReservationLimitAsync(ResponseSystemSettingsDto settings)
+    {
+        if (!settings.IsActiveReservationLimitEnabled || _currentUser.IsInRole("Admin"))
+        {
+            return;
+        }
+
+        var activeCount = await _repository.GetQueryable()
+            .CountAsync(r => r.ReservedByUserId == _currentUser.UserId
+                && r.Status != ReservationStatus.Cancelled
+                && r.EndDate > DateTime.UtcNow);
+
+        if (activeCount >= settings.MaxActiveReservationsPerUser)
+        {
+            _logger.LogWarning(
+                "User {UserId} attempted to create a reservation beyond the active limit of {Limit}",
+                _currentUser.UserId, settings.MaxActiveReservationsPerUser);
+            throw new InvalidOperationException(
+                $"Maksimum {settings.MaxActiveReservationsPerUser} aktiv rezervasiyanız ola bilər. Yeni rezervasiya yaratmaq üçün əvvəlcə mövcud birini ləğv edin.");
+        }
     }
 
     private void EnsureCanModify(Reservation entity)

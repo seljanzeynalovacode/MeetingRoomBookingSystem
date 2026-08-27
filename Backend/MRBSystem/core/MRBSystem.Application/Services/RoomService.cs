@@ -18,6 +18,7 @@ public class RoomService : IRoomService
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
     private readonly IGenericRepository<RoomEquipment> _roomEquipmentRepository;
     private readonly IMapper _mapper;
+    private readonly ISystemSettingsService _systemSettingsService;
 
     public RoomService(
         IGenericRepository<Room> repository,
@@ -25,7 +26,8 @@ public class RoomService : IRoomService
         IGenericRepository<Reservation> reservationRepository,
         IGenericRepository<RoomBlackout> blackoutRepository,
         IGenericRepository<RoomEquipment> roomEquipmentRepository,
-        IMapper mapper)
+        IMapper mapper,
+        ISystemSettingsService systemSettingsService)
     {
         _repository = repository;
         _floorRepository = floorRepository;
@@ -33,6 +35,7 @@ public class RoomService : IRoomService
         _blackoutRepository = blackoutRepository;
         _roomEquipmentRepository = roomEquipmentRepository;
         _mapper = mapper;
+        _systemSettingsService = systemSettingsService;
     }
 
     public async Task<ResponseRoomDto> CreateAsync(CreateRoomDto dto)
@@ -199,9 +202,10 @@ public class RoomService : IRoomService
             throw new ArgumentException("StartDate must be earlier than or equal to EndDate.");
         }
 
-        if ((endDate.Date - startDate.Date).TotalDays > 90)
+        var settings = await _systemSettingsService.GetAsync();
+        if ((endDate.Date - startDate.Date).TotalDays > settings.MaxCalendarRangeDays)
         {
-            throw new ArgumentException("Date range cannot exceed 90 days.");
+            throw new ArgumentException($"Date range cannot exceed {settings.MaxCalendarRangeDays} days.");
         }
 
         var room = await _repository.GetByIdAsync(roomId)

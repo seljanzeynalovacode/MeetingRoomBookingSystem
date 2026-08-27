@@ -1116,5 +1116,31 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.SystemSettingsController",
+    "Method": "Get",
+    "RelativePath": "api/system-settings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.SystemSettingsController",
+    "Method": "Update",
+    "RelativePath": "api/system-settings",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.SystemSettingsDtos.UpdateSystemSettingsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
