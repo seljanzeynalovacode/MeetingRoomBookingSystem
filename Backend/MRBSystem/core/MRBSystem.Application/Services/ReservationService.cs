@@ -12,6 +12,8 @@ namespace MRBSystem.Application.Services;
 
 public class ReservationService : IReservationService
 {
+    private const int AzerbaijanUtcOffsetHours = 4;
+
     private readonly IGenericRepository<Reservation> _repository;
     private readonly IGenericRepository<Room> _roomRepository;
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
@@ -20,6 +22,7 @@ public class ReservationService : IReservationService
     private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
     private readonly ILogger<ReservationService> _logger;
+    private readonly IWorkingHourService _workingHourService;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
@@ -29,7 +32,8 @@ public class ReservationService : IReservationService
         INotificationService notificationService,
         IMapper mapper,
         ILogger<ReservationService> logger,
-        IGenericRepository<Room> roomRepository)
+        IGenericRepository<Room> roomRepository,
+        IWorkingHourService workingHourService)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
@@ -39,6 +43,7 @@ public class ReservationService : IReservationService
         _mapper = mapper;
         _logger = logger;
         _roomRepository = roomRepository;
+        _workingHourService = workingHourService;
     }
 
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
@@ -245,13 +250,38 @@ public class ReservationService : IReservationService
             throw new ArgumentException("Rezervasiya maksimum 4 saat ola bilər.");
         }
 
-        if (!_currentUser.IsInRole("Admin") && startDate > DateTime.UtcNow.AddDays(30))
+                if (!_currentUser.IsInRole("Admin") && startDate > DateTime.UtcNow.AddDays(30))
         {
             _logger.LogWarning(
                 "User {UserId} attempted to create/update reservation for room {RoomId} beyond the 30-day booking horizon: {StartDate}",
                 _currentUser.UserId, roomId, startDate);
             throw new ArgumentException("Rezervasiya yalnız növbəti 30 gün ərzində yaradıla bilər.");
         }
+
+        var buildingId = await _roomRepository.GetQueryable()
+          .Where(r => r.Id == roomId)
+          .Select(r => r.Floor.BuildingId)
+          .FirstAsync();
+
+        var localStart = startDate.AddHours(AzerbaijanUtcOffsetHours);
+        var localEnd = endDate.AddHours(AzerbaijanUtcOffsetHours);
+
+        var workingHours = await _workingHourService.GetByBuildingIdAsync(buildingId);
+        var todayHours = workingHours.FirstOrDefault(h => h.DayOfWeek == localStart.DayOfWeek.ToString());
+
+        var startOffset = localStart.TimeOfDay;
+        var endOffset = localEnd - localStart.Date;
+
+        if (todayHours == null || !todayHours.IsWorkingDay
+            || startOffset < todayHours.StartTime
+            || endOffset > todayHours.EndTime)
+        {
+            _logger.LogWarning(
+                "Reservation for room {RoomId} falls outside building working hours: {StartDate} - {EndDate}",
+                roomId, startDate, endDate);
+            throw new ArgumentException("Rezervasiya binanın iş saatları xaricindədir.");
+        }
+
 
         var hasConflict = await _repository.GetQueryable()
             .AnyAsync(r => r.Id != excludeReservationId

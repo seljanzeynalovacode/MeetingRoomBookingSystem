@@ -375,6 +375,43 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.WorkingHoursController",
+    "Method": "GetByBuilding",
+    "RelativePath": "api/buildings/{buildingId}/working-hours",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "buildingId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.WorkingHoursController",
+    "Method": "UpdateForBuilding",
+    "RelativePath": "api/buildings/{buildingId}/working-hours",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "buildingId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "System.Collections.Generic.List\u00601[[MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos.UpdateWorkingHourDto, MRBSystem.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MRBSystem.WebAPI.Controllers.BuildingsController",
     "Method": "GetById",
     "RelativePath": "api/Buildings/{id}",

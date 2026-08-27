@@ -12,10 +12,7 @@ using MRBSystem.Domain.Repository;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 using MRBSystem.Testing;
-using System;
 using System.Data;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace MRBSystem.Tests;
 
@@ -54,7 +51,13 @@ public class ReservationServiceTests : IDisposable
             notificationService.Object,
             mapperConfig.CreateMapper(),
             NullLogger<ReservationService>.Instance,
-            new GenericRepository<Room>(_context));
+            new GenericRepository<Room>(_context),
+            new WorkingHourService(
+                new GenericRepository<BuildingWorkingHour>(_context),
+                new GenericRepository<Building>(_context),
+                new FakeUnitOfWork(),
+                mapperConfig.CreateMapper(),
+                NullLogger<WorkingHourService>.Instance));
     }
 
     [Fact]
@@ -62,12 +65,13 @@ public class ReservationServiceTests : IDisposable
     {
         await SeedRoomAndUserAsync();
 
+        var start = NextLocalTime(10);
         var dto = new CreateReservationDto
         {
             Title = "Sprint Planning",
             RoomId = _roomId,
-            StartDate = DateTime.UtcNow.AddHours(1),
-            EndDate = DateTime.UtcNow.AddHours(2)
+            StartDate = start,
+            EndDate = start.AddHours(1)
         };
 
         var result = await _reservationService.CreateAsync(dto);
@@ -81,8 +85,8 @@ public class ReservationServiceTests : IDisposable
     {
         await SeedRoomAndUserAsync();
 
-        var start = DateTime.UtcNow.AddHours(1);
-        var end = DateTime.UtcNow.AddHours(2);
+        var start = NextLocalTime(10);
+        var end = start.AddHours(1);
 
         await _reservationService.CreateAsync(new CreateReservationDto
         {
@@ -127,12 +131,13 @@ public class ReservationServiceTests : IDisposable
     {
         await SeedRoomAndUserAsync();
 
+        var start = NextLocalTime(10);
         var dto = new CreateReservationDto
         {
             Title = "Cox qisa bron",
             RoomId = _roomId,
-            StartDate = DateTime.UtcNow.AddHours(1),
-            EndDate = DateTime.UtcNow.AddHours(1).AddMinutes(15)
+            StartDate = start,
+            EndDate = start.AddMinutes(15)
         };
 
         await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
@@ -144,17 +149,45 @@ public class ReservationServiceTests : IDisposable
     {
         await SeedRoomAndUserAsync();
 
+        var start = NextLocalTime(10);
         var dto = new CreateReservationDto
         {
             Title = "Cox uzun bron",
             RoomId = _roomId,
-            StartDate = DateTime.UtcNow.AddHours(1),
-            EndDate = DateTime.UtcNow.AddHours(6)
+            StartDate = start,
+            EndDate = start.AddHours(5)
         };
 
         await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
             .Should().ThrowAsync<ArgumentException>();
     }
+
+    [Fact]
+    public async Task CreateAsync_OutsideWorkingHours_ThrowsArgumentException()
+    {
+        await SeedRoomAndUserAsync();
+
+        var start = NextLocalTime(10);
+        var localDay = start.AddHours(4).DayOfWeek;
+
+        var room = await _context.Rooms.Include(r => r.Floor).FirstAsync(r => r.Id == _roomId);
+        var closedRow = await _context.BuildingWorkingHours
+            .FirstAsync(w => w.BuildingId == room.Floor.BuildingId && w.DayOfWeek == localDay);
+        closedRow.IsWorkingDay = false;
+        await _context.SaveChangesAsync();
+
+        var dto = new CreateReservationDto
+        {
+            Title = "Is saatindan kenar",
+            RoomId = _roomId,
+            StartDate = start,
+            EndDate = start.AddHours(1)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
+            .Should().ThrowAsync<ArgumentException>();
+    }
+
 
     private async Task SeedRoomAndUserAsync()
     {
@@ -173,7 +206,28 @@ public class ReservationServiceTests : IDisposable
 
         _context.Users.Add(user);
         _context.Rooms.Add(room);
+
+        foreach (var day in Enum.GetValues<DayOfWeek>())
+        {
+            _context.BuildingWorkingHours.Add(new BuildingWorkingHour
+            {
+                BuildingId = building.Id,
+                DayOfWeek = day,
+                IsWorkingDay = true,
+                StartTime = TimeSpan.Zero,
+                EndTime = new TimeSpan(23, 59, 59)
+            });
+        }
+
         await _context.SaveChangesAsync();
+    }
+
+    private static DateTime NextLocalTime(int hour)
+    {
+        var nowLocal = DateTime.UtcNow.AddHours(4);
+        var candidate = new DateTime(nowLocal.Year, nowLocal.Month, nowLocal.Day, hour, 0, 0);
+        if (candidate <= nowLocal) candidate = candidate.AddDays(1);
+        return candidate.AddHours(-4);
     }
 
     public void Dispose()

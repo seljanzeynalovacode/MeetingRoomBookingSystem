@@ -10,11 +10,13 @@ namespace MRBSystem.Application.Services;
 public class BuildingService : IBuildingService
 {
     private readonly IGenericRepository<Building> _repository;
+    private readonly IWorkingHourService _workingHourService;
     private readonly IMapper _mapper;
 
-    public BuildingService(IGenericRepository<Building> repository, IMapper mapper)
+    public BuildingService(IGenericRepository<Building> repository, IWorkingHourService workingHourService, IMapper mapper)
     {
         _repository = repository;
+        _workingHourService = workingHourService;
         _mapper = mapper;
     }
 
@@ -22,6 +24,7 @@ public class BuildingService : IBuildingService
     {
         var entity = _mapper.Map<Building>(dto);
         await _repository.AddAsync(entity);
+        await _workingHourService.SeedDefaultsAsync(entity.Id);
         return _mapper.Map<ResponseBuildingDto>(entity);
     }
 

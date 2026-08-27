@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İş saatları — Admin — MeetingSpace</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <i class="bi bi-calendar-check logo"></i>
+        <span class="wordmark">MeetingSpace</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+
+      <div class="admin-nav-groups">
+        <div class="nav-section-label">Ümumi</div>
+        <nav class="admin-nav">
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        </nav>
+
+        <div class="nav-section-label">Struktur</div>
+        <nav class="admin-nav">
+          <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+          <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        </nav>
+
+        <div class="nav-section-label">Fəaliyyət</div>
+        <nav class="admin-nav">
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+          <a href="adminWorkingHours.html" class="active"><i class="bi bi-clock-history"></i>İş saatları</a>
+        </nav>
+      </div>
+
+      <div class="admin-sidebar-footer">
+        <a href="dashboard.html"><i class="bi bi-arrow-left"></i>Tətbiqə qayıt</a>
+        <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+      </div>
+    </aside>
+
+    <main class="admin-main" style="max-width:1300px;">
+      <div class="admin-topbar">
+        <div>
+          <h1>İş saatları</h1>
+          <p>Hər bina üçün həftəlik iş qrafikini təyin edin.</p>
+        </div>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="wh-building-tabs" id="buildingTabs"></div>
+
+      <div id="weekCard"></div>
+    </main>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminWorkingHours.js"></script>
+</body>
+</html>

@@ -9,6 +9,7 @@ using MRBSystem.Contracts.DTOs.BuildingDtos;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.Tests;
 
 namespace MRBSystem.Testing;
 
@@ -32,8 +33,14 @@ public class BuildingServiceTests : IDisposable
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
         _service = new BuildingService(
-            new GenericRepository<Building>(_context),
-            mapperConfig.CreateMapper());
+      new GenericRepository<Building>(_context),
+      new WorkingHourService(
+          new GenericRepository<BuildingWorkingHour>(_context),
+          new GenericRepository<Building>(_context),
+          new FakeUnitOfWork(),
+          mapperConfig.CreateMapper(),
+          NullLogger<WorkingHourService>.Instance),
+      mapperConfig.CreateMapper());
     }
 
     [Fact]

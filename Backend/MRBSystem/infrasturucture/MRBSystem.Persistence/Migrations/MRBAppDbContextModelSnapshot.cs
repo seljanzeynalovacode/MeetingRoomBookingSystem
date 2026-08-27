@@ -156,6 +156,43 @@ namespace MRBSystem.Persistence.Migrations
                     b.ToTable("Buildings");
                 });
 
+            modelBuilder.Entity("MRBSystem.Domain.Entities.BuildingWorkingHour", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BuildingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsWorkingDay")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId", "DayOfWeek")
+                        .IsUnique();
+
+                    b.ToTable("BuildingWorkingHours");
+                });
+
             modelBuilder.Entity("MRBSystem.Domain.Entities.Equipment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -583,6 +620,17 @@ namespace MRBSystem.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("MRBSystem.Domain.Entities.BuildingWorkingHour", b =>
+                {
+                    b.HasOne("MRBSystem.Domain.Entities.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Building");
                 });
 
             modelBuilder.Entity("MRBSystem.Domain.Entities.Floor", b =>

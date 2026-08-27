@@ -140,6 +140,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IEquipmentService, EquipmentService>();
             builder.Services.AddScoped<IRoomEquipmentService, RoomEquipmentService>();
             builder.Services.AddScoped<IRoomBlackoutService, RoomBlackoutService>();
+            builder.Services.AddScoped<IWorkingHourService, WorkingHourService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IRoleService, RoleService>();
 
@@ -147,6 +148,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 
             builder.Services.AddAutoMapper(x => x.AddProfile(typeof(CustomProfile)));

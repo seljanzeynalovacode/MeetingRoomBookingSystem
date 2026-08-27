@@ -2,6 +2,7 @@
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.DTOs.AppUserDtos;
 using MRBSystem.Contracts.DTOs.BuildingDtos;
+using MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos;
 using MRBSystem.Contracts.DTOs.EquipmentDtos;
 using MRBSystem.Contracts.DTOs.FloorDtos;
 using MRBSystem.Contracts.DTOs.NotificationDtos;
@@ -32,6 +33,10 @@ public class CustomProfile : Profile
         CreateMap<Building, ResponseBuildingDto>();
         CreateMap<CreateBuildingDto, Building>(MemberList.Source);
         CreateMap<UpdateBuildingDto, Building>(MemberList.Source);
+
+        //  BuildingWorkingHour 
+        CreateMap<BuildingWorkingHour, ResponseWorkingHourDto>()
+            .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek.ToString()));
 
         //  Floor 
         CreateMap<Floor, ResponseFloorDto>()
@@ -77,7 +82,7 @@ public class CustomProfile : Profile
         CreateMap<CreateReservationDto, Reservation>(MemberList.Source);
         CreateMap<UpdateReservationDto, Reservation>(MemberList.Source);
 
-        
+
         //  Participant 
         CreateMap<Participant, ResponseParticipantDto>()
             .ForMember(dest => dest.ResponseStatus, opt => opt.MapFrom(src => src.ResponseStatus.ToString()))
