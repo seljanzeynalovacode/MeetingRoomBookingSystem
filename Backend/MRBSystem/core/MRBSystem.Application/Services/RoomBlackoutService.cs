@@ -109,6 +109,7 @@ public class RoomBlackoutService : IRoomBlackoutService
     {
         var entities = await _repository.GetQueryable()
             .Include(rb => rb.Room)
+            .OrderByDescending(rb => rb.CreatedAt)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseRoomBlackoutDto>>(entities);

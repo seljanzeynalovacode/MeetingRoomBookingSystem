@@ -78,37 +78,45 @@ function getEffectiveStatus(status, endDate) {
   return new Date(endDate) < new Date() ? "Completed" : "Confirmed";
 }
 
-function statusBadgeHtml(status, endDate) {
-  const effective = getEffectiveStatus(status, endDate);
+function isOngoing(r) {
+  const now = new Date();
+  return now >= new Date(r.startDate) && now < new Date(r.endDate);
+}
+
+function isCurrentlyOngoing(r) {
+  return getEffectiveStatus(r.status, r.endDate) === "Confirmed" && isOngoing(r);
+}
+
+function statusBadgeHtml(r) {
+  const effective = getEffectiveStatus(r.status, r.endDate);
   if (effective === "Cancelled") {
     return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
   }
   if (effective === "Completed") {
     return `<span class="badge badge-completed"><span class="badge-dot"></span>Tamamlanıb</span>`;
   }
+  if (isCurrentlyOngoing(r)) {
+    return `<span class="badge badge-live"><span class="badge-dot"></span>Davam edir</span>`;
+  }
   return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
-}
-
-function isOngoing(r) {
-  const now = new Date();
-  return now >= new Date(r.startDate) && now < new Date(r.endDate);
 }
 
 function createReservationCardHtml(r) {
   const effectiveStatus = getEffectiveStatus(r.status, r.endDate);
+  const ongoing = isCurrentlyOngoing(r);
   const actions =
     effectiveStatus === "Confirmed"
       ? `<button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}">Redaktə et</button>
-         ${isOngoing(r) ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}">İndi bitir</button>` : ""}
+         ${ongoing ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}">İndi bitir</button>` : ""}
          <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}">Ləğv et</button>`
       : "";
 
   return `
-    <div class="card reservation-card">
+    <div class="card reservation-card${ongoing ? " reservation-card-ongoing" : ""}">
       <div class="reservation-card-body">
         <div class="reservation-card-head">
           <h4>${escapeHtml(r.title)}</h4>
-          ${statusBadgeHtml(r.status, r.endDate)}
+          ${statusBadgeHtml(r)}
         </div>
         <div class="reservation-card-meta">
           <span><i class="bi bi-door-open"></i>${escapeHtml(r.roomName)}</span>
@@ -124,7 +132,18 @@ function renderReservations() {
     listEl.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>Hələ rezervasiyanız yoxdur.</div>`;
     return;
   }
-  listEl.innerHTML = reservations.map(createReservationCardHtml).join("");
+
+  const ongoing = reservations.filter(isCurrentlyOngoing);
+  const rest = reservations.filter((r) => !isCurrentlyOngoing(r));
+
+  const ongoingHtml = ongoing.length
+    ? `<div class="ongoing-section">
+         <h3 class="ongoing-section-title"><i class="bi bi-broadcast"></i>Hazırda davam edir</h3>
+         <div class="ongoing-section-grid">${ongoing.map(createReservationCardHtml).join("")}</div>
+       </div>`
+    : "";
+
+  listEl.innerHTML = ongoingHtml + rest.map(createReservationCardHtml).join("");
 }
 
 async function loadReservations() {

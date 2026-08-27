@@ -50,7 +50,9 @@ public class EquipmentService : IEquipmentService
     }
     public async Task<ICollection<ResponseEquipmentDto>> GetAllAsync()
     {
-        var entities = await _repository.GetAllAsync();
+        var entities = await _repository.GetQueryable()
+            .OrderByDescending(e => e.CreatedAt)
+            .ToListAsync();
         return _mapper.Map<ICollection<ResponseEquipmentDto>>(entities);
     }
     public async Task<ResponseEquipmentDto> UpdateAsync(Guid id, UpdateEquipmentDto dto)

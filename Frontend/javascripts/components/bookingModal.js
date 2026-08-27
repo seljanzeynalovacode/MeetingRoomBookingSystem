@@ -191,8 +191,18 @@ async function handleSubmit(e) {
   const startDate = new Date(`${date}T${start}`);
   const endDate = new Date(`${date}T${end}`);
 
-  if (startDate >= endDate) {
+    if (startDate >= endDate) {
     showModalAlert("Bitmə saatı başlama saatından sonra olmalıdır.", "warning");
+    return;
+  }
+
+  if (startDate < new Date()) {
+    showModalAlert("Keçmiş tarixə və ya saata rezervasiya edilə bilməz.", "warning");
+    return;
+  }
+
+  if (endDate - startDate < 30 * 60 * 1000) {
+    showModalAlert("Rezervasiya minimum 30 dəqiqə olmalıdır.", "warning");
     return;
   }
 
@@ -260,6 +270,8 @@ export function openBookingModal(options) {
   const roomNameEl = modalEl.querySelector("#bookingModalRoomName");
   const modalTitleEl = modalEl.querySelector("#bookingModalTitle");
   const submitBtn = modalEl.querySelector("#bookingModalSubmitBtn");
+
+  dateInput.min = new Date().toISOString().slice(0, 10);
 
   if (options.mode === "edit") {
     modalTitleEl.textContent = "Rezervasiyanı redaktə et";

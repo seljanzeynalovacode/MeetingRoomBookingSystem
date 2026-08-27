@@ -177,7 +177,9 @@ public class ReservationService : IReservationService
 
     public async Task<ICollection<ResponseReservationDto>> GetAllAsync()
     {
-        var entities = await GetWithDetailsAsync().ToListAsync();
+        var entities = await GetWithDetailsAsync()
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
         return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
     }
 
@@ -214,6 +216,21 @@ public class ReservationService : IReservationService
                 "Invalid date range for room {RoomId}: StartDate {StartDate} is not earlier than EndDate {EndDate}",
                 roomId, startDate, endDate);
             throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
+        if (startDate < DateTime.UtcNow)
+        {
+            _logger.LogWarning(
+                "Attempt to create/update reservation for room {RoomId} with a past StartDate {StartDate}",
+                roomId, startDate);
+            throw new ArgumentException("Keçmiş tarix və saata rezervasiya edilə bilməz.");
+        }
+
+        if (endDate - startDate < TimeSpan.FromMinutes(30))
+        {
+            _logger.LogWarning(
+                "Reservation duration too short for room {RoomId}: {StartDate} - {EndDate}",
+                roomId, startDate, endDate);
+            throw new ArgumentException("Rezervasiya minimum 30 dəqiqə olmalıdır.");
         }
 
         var hasConflict = await _repository.GetQueryable()

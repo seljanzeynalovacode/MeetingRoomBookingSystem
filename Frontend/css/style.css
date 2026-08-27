@@ -1109,3 +1109,32 @@ input[type="password"]::-ms-clear { display: none; }
   display: inline-flex; align-items: center; gap: 5px;
 }
 .room-mini-equipment-link:hover { color: var(--violet-600); }
+.ongoing-section { margin-bottom: 1.75rem; }
+.ongoing-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+.ongoing-section-grid { display: grid; gap: 1rem; }
+
+.reservation-card-ongoing {
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 1px var(--green-500);
+}
+
+.badge-live { background: var(--green-100); color: var(--green-700); }
+.badge-live .badge-dot {
+  background: var(--green-500);
+  animation: pulseLive 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseLive {
+  0%, 100% { box-shadow: 0 0 0 0 var(--green-500); }
+  50% { box-shadow: 0 0 0 4px transparent; }
+}

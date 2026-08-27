@@ -91,6 +91,8 @@ public class RoomService : IRoomService
         var entities = await _repository.GetQueryable()
             .Include(r => r.Floor)
                 .ThenInclude(f => f.Building)
+            .OrderByDescending(r => r.Floor.Building.CreatedAt)
+            .ThenByDescending(r => r.CreatedAt)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ResponseRoomDto>>(entities);
