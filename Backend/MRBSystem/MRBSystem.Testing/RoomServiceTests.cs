@@ -8,6 +8,7 @@ using MRBSystem.Contracts.DTOs.RoomDtos;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.Tests;
 
 namespace MRBSystem.Testing;
 
@@ -39,8 +40,9 @@ public class RoomServiceTests : IDisposable
             new GenericRepository<RoomBlackout>(_context),
             new GenericRepository<RoomEquipment>(_context),
             mapperConfig.CreateMapper(),
-            new SystemSettingsService(
+        new SystemSettingsService(
                 new GenericRepository<SystemSettings>(_context),
+                new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
                 NullLogger<SystemSettingsService>.Instance));
 

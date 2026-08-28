@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
@@ -49,10 +49,18 @@ public class WorkingHourService : IWorkingHourService
 
         if (rows.Count == 0)
         {
-            await SeedDefaultsAsync(buildingId);
-            rows = await _repository.GetQueryable()
-                .Where(w => w.BuildingId == buildingId)
-                .ToListAsync();
+            rows = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                var existing = await _repository.GetQueryable()
+                    .Where(w => w.BuildingId == buildingId)
+                    .ToListAsync();
+                if (existing.Count > 0) return existing;
+
+                await SeedDefaultsAsync(buildingId);
+                return await _repository.GetQueryable()
+                    .Where(w => w.BuildingId == buildingId)
+                    .ToListAsync();
+            });
         }
 
         return _mapper.Map<ICollection<ResponseWorkingHourDto>>(OrderByWeekday(rows));
@@ -62,6 +70,18 @@ public class WorkingHourService : IWorkingHourService
     {
         var building = await _buildingRepository.GetByIdAsync(buildingId)
     ?? throw new NotFoundException($"Building with id {buildingId} not found.");
+
+        var duplicateDays = dto
+            .GroupBy(item => Enum.Parse<DayOfWeek>(item.DayOfWeek, ignoreCase: true))
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        if (duplicateDays.Count > 0)
+        {
+            throw new ArgumentException(
+                $"Eyni gün üçün birdən çox qeyd göndərilib: {string.Join(", ", duplicateDays)}");
+        }
 
         return await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {

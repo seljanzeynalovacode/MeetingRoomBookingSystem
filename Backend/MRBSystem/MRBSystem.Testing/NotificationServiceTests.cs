@@ -3,14 +3,14 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Application.Mapper;
-using MRBSystem.Application.Services;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.Application.Services;
 
 namespace MRBSystem.Testing;
 

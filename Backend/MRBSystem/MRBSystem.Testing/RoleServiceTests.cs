@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MRBSystem.Application.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Testing;
 

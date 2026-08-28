@@ -64,11 +64,17 @@
         <div class="filter-toolbar-row">
           <div class="filter-group-inline">
             <label class="field-label">Bina</label>
-            <select class="input" id="filterBuilding"><option value="">Hamısı</option></select>
+            <div class="dd-wrap">
+              <button type="button" class="dd-btn" id="filterBuildingBtn"><span>Hamısı</span><i class="bi bi-chevron-down"></i></button>
+              <div class="dd-panel" id="filterBuildingPanel"></div>
+            </div>
           </div>
           <div class="filter-group-inline">
             <label class="field-label">Otaq</label>
-            <select class="input" id="filterRoom"><option value="">Hamısı</option></select>
+            <div class="dd-wrap">
+              <button type="button" class="dd-btn" id="filterRoomBtn"><span>Hamısı</span><i class="bi bi-chevron-down"></i></button>
+              <div class="dd-panel" id="filterRoomPanel"></div>
+            </div>
           </div>
           <div class="filter-group-inline">
             <label class="field-label">Tarix (başlanğıc)</label>
@@ -97,8 +103,11 @@
 
       <form id="blackoutForm" novalidate>
         <div class="field">
-          <label class="field-label" for="blackoutRoom">Otaq</label>
-          <select class="input" id="blackoutRoom" required></select>
+          <label class="field-label" for="blackoutRoomBtn">Otaq</label>
+          <div class="dd-wrap">
+            <button type="button" class="dd-btn" id="blackoutRoomBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+            <div class="dd-panel" id="blackoutRoomPanel"></div>
+          </div>
         </div>
 
         <div class="field">

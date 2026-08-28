@@ -11,6 +11,7 @@ import {
   deleteFloor,
 } from "../api/roomsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
@@ -43,10 +44,17 @@ const floorModalAlert = document.getElementById("floorModalAlert");
 const floorModalClose = document.getElementById("floorModalClose");
 const floorModalCancelBtn = document.getElementById("floorModalCancelBtn");
 const floorForm = document.getElementById("floorForm");
-const floorBuildingSelect = document.getElementById("floorBuilding");
 const floorNameInput = document.getElementById("floorName");
 const floorLevelInput = document.getElementById("floorLevel");
 const floorSubmitBtn = document.getElementById("floorModalSubmitBtn");
+
+const floorBuildingDropdown = initDropdown({
+  btn: document.getElementById("floorBuildingBtn"),
+  panel: document.getElementById("floorBuildingPanel"),
+  options: [],
+  placeholder: "Seçin",
+  onChange: () => applySuggestedFloorDefaults(),
+});
 
 let buildings = [];
 let floors = [];
@@ -71,14 +79,12 @@ function getNextLevelForBuilding(buildingId) {
 
 function applySuggestedFloorDefaults() {
   if (editingFloorId) return;
-  const buildingId = floorBuildingSelect.value;
+  const buildingId = floorBuildingDropdown.getValue();
   if (!buildingId) return;
   const nextLevel = getNextLevelForBuilding(buildingId);
   floorNameInput.value = suggestFloorName(nextLevel);
   floorLevelInput.value = nextLevel;
 }
-
-floorBuildingSelect.addEventListener("change", applySuggestedFloorDefaults);
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -143,11 +149,11 @@ function openFloorModal(floor) {
   floorSubmitBtn.textContent = floor ? "Yadda saxla" : "Yarat";
 
   if (floor) {
-    floorBuildingSelect.value = floor.buildingId;
+    floorBuildingDropdown.setValue(floor.buildingId);
     floorNameInput.value = floor.name;
     floorLevelInput.value = floor.levelNumber;
   } else {
-    floorBuildingSelect.value = buildings[0]?.id || "";
+    floorBuildingDropdown.setValue(buildings[0]?.id || "");
     applySuggestedFloorDefaults();
   }
 
@@ -175,7 +181,7 @@ floorForm.addEventListener("submit", async (e) => {
   const dto = {
     Name: floorNameInput.value.trim(),
     LevelNumber: Number(floorLevelInput.value),
-    BuildingId: floorBuildingSelect.value,
+    BuildingId: floorBuildingDropdown.getValue(),
   };
 
   floorSubmitBtn.disabled = true;
@@ -314,7 +320,7 @@ async function loadData() {
     buildings = buildingList;
     floors = floorList;
 
-    floorBuildingSelect.innerHTML = buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+    floorBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })));
 
     renderBuildings();
   } catch (err) {

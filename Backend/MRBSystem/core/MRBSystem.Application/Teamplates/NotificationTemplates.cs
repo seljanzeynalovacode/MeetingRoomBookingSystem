@@ -1,4 +1,4 @@
-﻿using MRBSystem.Domain.Enums;
+using MRBSystem.Domain.Enums;
 
 namespace MRBSystem.Application.Teamplates;
 
@@ -64,7 +64,7 @@ public static class NotificationTemplates
             MRBSystem
             """
             ),
-           
+
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
     }

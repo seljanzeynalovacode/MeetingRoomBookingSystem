@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Contracts.DTOs.CalendarDtos;
 using MRBSystem.Contracts.DTOs.RoomDtos;
 using MRBSystem.Contracts.Services;

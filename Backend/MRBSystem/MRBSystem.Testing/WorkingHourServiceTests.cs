@@ -3,13 +3,13 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using MRBSystem.Application.Mapper;
-using MRBSystem.Application.Services;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Contracts.DTOs.BuildingWorkingHourDtos;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 using MRBSystem.Tests;
+using MRBSystem.Application.Services;
 
 namespace MRBSystem.Testing;
 

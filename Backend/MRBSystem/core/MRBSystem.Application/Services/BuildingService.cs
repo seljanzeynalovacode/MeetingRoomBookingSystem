@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Contracts.DTOs.BuildingDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
@@ -11,20 +11,32 @@ public class BuildingService : IBuildingService
 {
     private readonly IGenericRepository<Building> _repository;
     private readonly IWorkingHourService _workingHourService;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public BuildingService(IGenericRepository<Building> repository, IWorkingHourService workingHourService, IMapper mapper)
+    public BuildingService(
+        IGenericRepository<Building> repository,
+        IWorkingHourService workingHourService,
+        IUnitOfWork unitOfWork,
+        IMapper mapper)
     {
         _repository = repository;
         _workingHourService = workingHourService;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     public async Task<ResponseBuildingDto> CreateAsync(CreateBuildingDto dto)
     {
         var entity = _mapper.Map<Building>(dto);
-        await _repository.AddAsync(entity);
-        await _workingHourService.SeedDefaultsAsync(entity.Id);
+
+        entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            await _repository.AddAsync(entity);
+            await _workingHourService.SeedDefaultsAsync(entity.Id);
+            return entity;
+        });
+
         return _mapper.Map<ResponseBuildingDto>(entity);
     }
 

@@ -3,6 +3,7 @@ import { getAllRooms, getAllFloors, getAllBuildings, getAllEquipment, createRoom
 import { getAllRoomEquipment, createRoomEquipment, updateRoomEquipment, deleteRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
@@ -10,10 +11,6 @@ const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
 const roomsContainer = document.getElementById("roomsContainer");
 const addRoomBtn = document.getElementById("addRoomBtn");
-
-const filterBuilding = document.getElementById("filterBuilding");
-const filterFloor = document.getElementById("filterFloor");
-const filterStatus = document.getElementById("filterStatus");
 
 const modal = document.getElementById("roomModal");
 const modalTitle = document.getElementById("roomModalTitle");
@@ -23,8 +20,6 @@ const modalCancelBtn = document.getElementById("roomModalCancelBtn");
 const form = document.getElementById("roomForm");
 const nameInput = document.getElementById("roomName");
 const capacityInput = document.getElementById("roomCapacity");
-const modalBuildingSelect = document.getElementById("roomModalBuilding");
-const modalFloorSelect = document.getElementById("roomModalFloor");
 const isActiveInput = document.getElementById("roomIsActive");
 const submitBtn = document.getElementById("roomModalSubmitBtn");
 const roomEquipmentField = document.getElementById("roomEquipmentField");
@@ -46,25 +41,60 @@ function escapeHtml(str) {
 
 function populateFilterFloorOptions(buildingId) {
   const filtered = buildingId ? floors.filter((f) => f.buildingId === buildingId) : floors;
-  filterFloor.innerHTML =
-    '<option value="">Hamısı</option>' + filtered.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  filterFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: f.name })), "");
 }
 
 function populateModalFloorOptions(buildingId) {
   const filtered = buildingId ? floors.filter((f) => f.buildingId === buildingId) : floors;
-  modalFloorSelect.innerHTML = filtered.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  modalFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: f.name })));
 }
 
-filterBuilding.addEventListener("change", () => {
-  populateFilterFloorOptions(filterBuilding.value);
-  filterFloor.value = "";
-  renderRooms();
+const filterBuildingDropdown = initDropdown({
+  btn: document.getElementById("filterBuildingBtn"),
+  panel: document.getElementById("filterBuildingPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: (value) => {
+    populateFilterFloorOptions(value);
+    renderRooms();
+  },
 });
-filterFloor.addEventListener("change", renderRooms);
-filterStatus.addEventListener("change", renderRooms);
 
-modalBuildingSelect.addEventListener("change", () => {
-  populateModalFloorOptions(modalBuildingSelect.value);
+const filterFloorDropdown = initDropdown({
+  btn: document.getElementById("filterFloorBtn"),
+  panel: document.getElementById("filterFloorPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: () => renderRooms(),
+});
+
+const filterStatusDropdown = initDropdown({
+  btn: document.getElementById("filterStatusBtn"),
+  panel: document.getElementById("filterStatusPanel"),
+  options: [
+    { value: "", label: "Hamısı" },
+    { value: "active", label: "Aktiv" },
+    { value: "inactive", label: "Deaktiv" },
+  ],
+  value: "",
+  placeholder: "Hamısı",
+  onChange: () => renderRooms(),
+});
+
+const modalBuildingDropdown = initDropdown({
+  btn: document.getElementById("roomModalBuildingBtn"),
+  panel: document.getElementById("roomModalBuildingPanel"),
+  options: [],
+  placeholder: "Seçin",
+  onChange: (value) => populateModalFloorOptions(value),
+});
+
+const modalFloorDropdown = initDropdown({
+  btn: document.getElementById("roomModalFloorBtn"),
+  panel: document.getElementById("roomModalFloorPanel"),
+  options: [],
+  placeholder: "Seçin",
+  onChange: () => {},
 });
 
 function renderRoomEquipmentChips() {
@@ -129,11 +159,11 @@ function openModal(room) {
     const floor = floors.find((f) => f.id === room.floorId);
     buildingId = floor ? floor.buildingId : buildings[0]?.id || "";
   } else {
-    buildingId = filterBuilding.value || buildings[0]?.id || "";
+    buildingId = filterBuildingDropdown.getValue() || buildings[0]?.id || "";
   }
-  modalBuildingSelect.value = buildingId;
+  modalBuildingDropdown.setValue(buildingId);
   populateModalFloorOptions(buildingId);
-  modalFloorSelect.value = room ? room.floorId : filterFloor.value || "";
+  modalFloorDropdown.setValue(room ? room.floorId : filterFloorDropdown.getValue() || "");
 
   if (room) {
     roomEquipmentField.style.display = "";
@@ -167,7 +197,7 @@ form.addEventListener("submit", async (e) => {
   const dto = {
     Name: nameInput.value.trim(),
     Capacity: Number(capacityInput.value),
-    FloorId: modalFloorSelect.value,
+    FloorId: modalFloorDropdown.getValue(),
     IsActive: isActiveInput.checked,
   };
 
@@ -191,14 +221,18 @@ form.addEventListener("submit", async (e) => {
 });
 
 function getFilteredRooms() {
+  const floorFilter = filterFloorDropdown.getValue();
+  const buildingFilter = filterBuildingDropdown.getValue();
+  const statusFilter = filterStatusDropdown.getValue();
+
   return rooms.filter((r) => {
-    if (filterFloor.value && r.floorId !== filterFloor.value) return false;
-    if (filterBuilding.value) {
+    if (floorFilter && r.floorId !== floorFilter) return false;
+    if (buildingFilter) {
       const floor = floors.find((f) => f.id === r.floorId);
-      if (!floor || floor.buildingId !== filterBuilding.value) return false;
+      if (!floor || floor.buildingId !== buildingFilter) return false;
     }
-    if (filterStatus.value === "active" && !r.isActive) return false;
-    if (filterStatus.value === "inactive" && r.isActive) return false;
+    if (statusFilter === "active" && !r.isActive) return false;
+    if (statusFilter === "inactive" && r.isActive) return false;
     return true;
   });
 }
@@ -350,10 +384,9 @@ async function loadRooms() {
     equipmentList = equipmentListRes;
     roomEquipmentList = roomEquipmentListRes;
 
-    filterBuilding.innerHTML =
-      '<option value="">Hamısı</option>' + buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+    filterBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), "");
     populateFilterFloorOptions("");
-    modalBuildingSelect.innerHTML = buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+    modalBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })));
 
     renderRooms();
   } catch (err) {

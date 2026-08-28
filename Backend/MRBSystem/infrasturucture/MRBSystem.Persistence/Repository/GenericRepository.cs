@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
 using MRBSystem.Persistence.Data;

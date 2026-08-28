@@ -11,15 +11,18 @@ namespace MRBSystem.Application.Services;
 public class SystemSettingsService : ISystemSettingsService
 {
     private readonly IGenericRepository<SystemSettings> _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<SystemSettingsService> _logger;
 
     public SystemSettingsService(
         IGenericRepository<SystemSettings> repository,
+        IUnitOfWork unitOfWork,
         IMapper mapper,
         ILogger<SystemSettingsService> logger)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
     }
@@ -50,21 +53,24 @@ public class SystemSettingsService : ISystemSettingsService
 
     private async Task<SystemSettings> GetOrCreateEntityAsync()
     {
-        var entity = await _repository.GetQueryable().FirstOrDefaultAsync();
-        if (entity != null) return entity;
-
-        entity = new SystemSettings
+        return await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            MinReservationMinutes = 30,
-            MaxReservationHours = 4,
-            BufferMinutes = 0,
-            BookingHorizonDays = 30,
-            IsActiveReservationLimitEnabled = false,
-            MaxActiveReservationsPerUser = 5,
-            MaxCalendarRangeDays = 90
-        };
-        await _repository.AddAsync(entity);
-        _logger.LogInformation("Default system settings created.");
-        return entity;
+            var entity = await _repository.GetQueryable().FirstOrDefaultAsync();
+            if (entity != null) return entity;
+
+            entity = new SystemSettings
+            {
+                MinReservationMinutes = 30,
+                MaxReservationHours = 4,
+                BufferMinutes = 0,
+                BookingHorizonDays = 30,
+                IsActiveReservationLimitEnabled = false,
+                MaxActiveReservationsPerUser = 5,
+                MaxCalendarRangeDays = 90
+            };
+            await _repository.AddAsync(entity);
+            _logger.LogInformation("Default system settings created.");
+            return entity;
+        });
     }
 }

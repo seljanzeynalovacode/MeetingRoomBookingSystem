@@ -4,11 +4,15 @@ import { getAllRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initNotificationBell } from "../components/notificationBell.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
   throw new Error("Not authenticated");
 }
+
+initNotificationBell();
 
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
@@ -20,6 +24,20 @@ const searchEndInput = document.getElementById("searchEnd");
 const searchBtn = document.getElementById("searchBtn");
 const resetSearchBtn = document.getElementById("resetSearchBtn");
 
+let currentToday = new Date().toISOString().slice(0, 10);
+
+function refreshTodayIfDateRolledOver() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== currentToday) {
+    if (searchDateInput.value === currentToday) {
+      searchDateInput.value = today;
+    }
+    currentToday = today;
+  }
+}
+
+setInterval(refreshTodayIfDateRolledOver, 60000);
+
 const avatarChip = document.getElementById("avatarChip");
 const avatarMenu = document.getElementById("avatarMenu");
 const avatarInitials = document.getElementById("avatarInitials");
@@ -27,13 +45,38 @@ const avatarName = document.getElementById("avatarName");
 const logoutBtn = document.getElementById("logoutBtn");
 
 
-const buildingSelect = document.getElementById("buildingSelect");
-const floorSelect = document.getElementById("floorSelect");
 const capacityInput = document.getElementById("capacityInput");
 const equipmentChipsEl = document.getElementById("equipmentChips");
-const equipmentSelect = document.getElementById("equipmentSelect");
 const applyFiltersBtn = document.getElementById("applyFiltersBtn");
 const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+
+const buildingDropdown = initDropdown({
+  btn: document.getElementById("buildingSelectBtn"),
+  panel: document.getElementById("buildingSelectPanel"),
+  options: [],
+  placeholder: "Bina seçin",
+  onChange: (value) => populateFloorOptions(value),
+});
+
+const floorDropdown = initDropdown({
+  btn: document.getElementById("floorSelectBtn"),
+  panel: document.getElementById("floorSelectPanel"),
+  options: [],
+  placeholder: "Bütün mərtəbələr",
+  onChange: () => {},
+});
+
+const equipmentDropdown = initDropdown({
+  btn: document.getElementById("equipmentSelectBtn"),
+  panel: document.getElementById("equipmentSelectPanel"),
+  options: [],
+  placeholder: "Avadanlıq seçin",
+  onChange: (value) => {
+    selectedEquipmentIds.add(value);
+    renderSelectedEquipmentChips();
+    populateEquipmentSelect();
+  },
+});
 
 const resultsTitle = document.getElementById("resultsTitle");
 const roomGrid = document.getElementById("roomGrid");
@@ -117,8 +160,8 @@ function normalizeCatalogRoom(r) {
 }
 
 function getFilteredCatalogRooms() {
-  const buildingId = buildingSelect.value;
-  const floorId = floorSelect.value;
+  const buildingId = buildingDropdown.getValue();
+  const floorId = floorDropdown.getValue();
   const minCapacity = Number(capacityInput.value) || 1;
 
   return allCatalogRooms.filter((r) => {
@@ -160,16 +203,18 @@ function normalizeSearchRoom(r) {
 
 function populateFloorOptions(buildingId) {
   const filtered = buildingId ? allFloors.filter((f) => f.buildingId === buildingId) : allFloors;
-  floorSelect.innerHTML =
-    '<option value="">Bütün mərtəbələr</option>' +
-    filtered.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  floorDropdown.setOptions(
+    filtered.map((f) => ({ value: f.id, label: f.name })),
+    ""
+  );
 }
 
 function populateEquipmentSelect() {
   const available = allEquipmentTypes.filter((eq) => !selectedEquipmentIds.has(eq.id));
-  equipmentSelect.innerHTML =
-    '<option value="">Avadanlıq seçin</option>' +
-    available.map((eq) => `<option value="${eq.id}">${escapeHtml(eq.name)}</option>`).join("");
+  equipmentDropdown.setOptions(
+    available.map((eq) => ({ value: eq.id, label: eq.name })),
+    ""
+  );
 }
 
 function renderSelectedEquipmentChips() {
@@ -190,13 +235,6 @@ function renderSelectedEquipmentChips() {
     });
   });
 }
-
-equipmentSelect.addEventListener("change", () => {
-  if (!equipmentSelect.value) return;
-  selectedEquipmentIds.add(equipmentSelect.value);
-  renderSelectedEquipmentChips();
-  populateEquipmentSelect();
-});
 
 function setHeader(mode, count) {
   const label = mode === "search" ? "Axtarış nəticələri" : "Otaqlar";
@@ -265,7 +303,7 @@ searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   clearAlert(alertBox);
 
-  const buildingId = buildingSelect.value;
+  const buildingId = buildingDropdown.getValue();
   const date = searchDateInput.value;
   const start = searchStartInput.value;
   const end = searchEndInput.value;
@@ -291,7 +329,7 @@ searchForm.addEventListener("submit", async (e) => {
     StartDate: startDate.toISOString(),
     EndDate: endDate.toISOString(),
     BuildingId: buildingId,
-    FloorId: floorSelect.value || null,
+    FloorId: floorDropdown.getValue() || null,
     EquipmentIds: Array.from(selectedEquipmentIds),
     Capacity: Number(capacityInput.value) || 1,
   };
@@ -318,7 +356,7 @@ resetSearchBtn.addEventListener("click", () => {
 applyFiltersBtn.addEventListener("click", applyCatalogFilters);
 
 resetFiltersBtn.addEventListener("click", () => {
-  buildingSelect.value = "";
+  buildingDropdown.setValue("");
   populateFloorOptions("");
   capacityInput.value = 1;
   selectedEquipmentIds.clear();
@@ -326,10 +364,6 @@ resetFiltersBtn.addEventListener("click", () => {
   populateEquipmentSelect();
   clearAlert(alertBox);
   loadCatalog();
-});
-
-buildingSelect.addEventListener("change", () => {
-  populateFloorOptions(buildingSelect.value);
 });
 
 let roomEquipmentPopoverOutsideHandler = null;
@@ -433,8 +467,7 @@ async function init() {
     document.getElementById("adminPanelLink").style.display = "";
   }
 
-  const today = new Date().toISOString().slice(0, 10);
-  searchDateInput.value = today;
+  searchDateInput.value = currentToday;
 
   try {
     const [buildings, floors, equipmentTypes, roomEquipmentListRes] = await Promise.all([
@@ -446,9 +479,7 @@ async function init() {
     allFloors = floors;
     allEquipmentTypes = equipmentTypes;
     allRoomEquipment = roomEquipmentListRes;
-    buildingSelect.innerHTML =
-      '<option value="">Bina seçin</option>' +
-      buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+    buildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), "");
     populateFloorOptions("");
     populateEquipmentSelect();
   } catch (err) {

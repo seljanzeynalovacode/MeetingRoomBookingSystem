@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Application.Services;
 

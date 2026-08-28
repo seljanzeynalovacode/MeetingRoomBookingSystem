@@ -3,20 +3,37 @@ import { getMyReservations, cancelReservation, updateReservation } from "../api/
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initNotificationBell } from "../components/notificationBell.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
   throw new Error("Not authenticated");
 }
 
+initNotificationBell();
+
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
 const listEl = document.getElementById("reservationList");
 
-const filterStatus = document.getElementById("filterStatus");
 const filterFrom = document.getElementById("filterFrom");
 const filterTo = document.getElementById("filterTo");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+
+const filterStatusDropdown = initDropdown({
+  btn: document.getElementById("filterStatusBtn"),
+  panel: document.getElementById("filterStatusPanel"),
+  options: [
+    { value: "", label: "Hamısı" },
+    { value: "Confirmed", label: "Təsdiqlənib" },
+    { value: "Completed", label: "Tamamlanıb" },
+    { value: "Cancelled", label: "Ləğv edilib" },
+  ],
+  value: "",
+  placeholder: "Hamısı",
+  onChange: () => renderReservations(),
+});
 
 const avatarChip = document.getElementById("avatarChip");
 const avatarMenu = document.getElementById("avatarMenu");
@@ -144,7 +161,8 @@ function createReservationCardHtml(r) {
 
 function applyFilters(rows) {
   return rows.filter((r) => {
-    if (filterStatus.value && getEffectiveStatus(r.status, r.endDate) !== filterStatus.value) return false;
+    const statusFilter = filterStatusDropdown.getValue();
+    if (statusFilter && getEffectiveStatus(r.status, r.endDate) !== statusFilter) return false;
     if (filterFrom.value && new Date(r.startDate) < new Date(filterFrom.value)) return false;
     if (filterTo.value) {
       const toDate = new Date(filterTo.value);
@@ -258,9 +276,9 @@ if (getRoles().includes("Admin")) {
   document.getElementById("adminPanelLink").style.display = "";
 }
 
-[filterStatus, filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderReservations));
+[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderReservations));
 clearFiltersBtn.addEventListener("click", () => {
-  filterStatus.value = "";
+  filterStatusDropdown.setValue("");
   filterFrom.value = "";
   filterTo.value = "";
   renderReservations();

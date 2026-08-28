@@ -8,6 +8,7 @@ using MRBSystem.Contracts.DTOs.RoomEquipmentDtos;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Testing;
 
@@ -65,7 +66,7 @@ public class RoomEquipmentServiceTests
             Quantity = 1
         });
 
-        await act.Should().ThrowAsync<MRBSystem.Application.Exceptions.NotFoundException>();
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -78,7 +79,7 @@ public class RoomEquipmentServiceTests
             Quantity = 1
         });
 
-        await act.Should().ThrowAsync<MRBSystem.Application.Exceptions.NotFoundException>();
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]

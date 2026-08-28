@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.AppRoleDtos;
 using MRBSystem.Contracts.DTOs.AppUserDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Application.Services;
 

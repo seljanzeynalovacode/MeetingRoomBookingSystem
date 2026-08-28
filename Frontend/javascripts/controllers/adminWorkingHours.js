@@ -3,13 +3,23 @@ import { getAllBuildings } from "../api/roomsApi.js";
 import { getWorkingHours, updateWorkingHours } from "../api/workingHoursApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
-const buildingTabs = document.getElementById("buildingTabs");
+const buildingSelectBtn = document.getElementById("buildingSelectBtn");
+const buildingSelectPanel = document.getElementById("buildingSelectPanel");
 const weekCard = document.getElementById("weekCard");
+
+const buildingDropdown = initDropdown({
+  btn: buildingSelectBtn,
+  panel: buildingSelectPanel,
+  options: [],
+  placeholder: "Seçin",
+  onChange: (id) => selectBuilding(id),
+});
 
 const DAYS = [
   { key: "Monday", label: "Bazar ertəsi" },
@@ -31,24 +41,19 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function renderBuildingTabs() {
-  buildingTabs.innerHTML = buildings
-    .map(
-      (b) =>
-        `<button type="button" class="wh-building-tab${b.id === selectedBuildingId ? " active" : ""}" data-id="${b.id}">
-          <i class="bi bi-building"></i>${escapeHtml(b.name)}
-        </button>`
-    )
-    .join("");
+function toMinutes(time) {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
 
-  buildingTabs.querySelectorAll(".wh-building-tab").forEach((btn) => {
-    btn.addEventListener("click", () => selectBuilding(btn.dataset.id));
-  });
+function minutesToTime(minutes) {
+  const h = String(Math.floor(minutes / 60)).padStart(2, "0");
+  const m = String(minutes % 60).padStart(2, "0");
+  return `${h}:${m}`;
 }
 
 async function selectBuilding(buildingId) {
   selectedBuildingId = buildingId;
-  renderBuildingTabs();
   clearAlert(alertBox);
 
   try {
@@ -64,6 +69,8 @@ async function selectBuilding(buildingId) {
     });
     renderWeek();
   } catch (err) {
+    hours = [];
+    weekCard.innerHTML = `<div class="empty-state"><i class="bi bi-exclamation-triangle"></i>İş saatları yüklənə bilmədi.</div>`;
     showAlert(alertBox, err.message);
   }
 }
@@ -79,7 +86,7 @@ function renderWeek() {
         <span class="wh-day-name"><span class="wh-day-dot"></span>${d.label}</span>
         <span class="wh-switch-group">
           <label class="wh-switch">
-            <input type="checkbox" class="day-toggle" data-day="${d.key}" ${row.isWorkingDay ? "checked" : ""} />
+            <input type="checkbox" class="day-toggle" data-day="${d.key}" aria-label="${d.label} iş günüdür" ${row.isWorkingDay ? "checked" : ""} />
             <span class="track"></span>
           </label>
           <span class="wh-status-label ${row.isWorkingDay ? "on" : "off"}">${row.isWorkingDay ? "İş günü" : "Qeyri-iş günü"}</span>
@@ -96,16 +103,64 @@ function renderWeek() {
       </div>`;
   }).join("");
 
+  const workingHoursOnly = hours.filter((h) => h.isWorkingDay);
+  const workingDaysCount = workingHoursOnly.length;
+  const totalMinutes = workingHoursOnly.reduce((sum, h) => sum + (toMinutes(h.endTime) - toMinutes(h.startTime)), 0);
+  const totalHoursLabel = (totalMinutes / 60).toFixed(1).replace(/\.0$/, "");
+  const earliestStart = workingDaysCount
+    ? minutesToTime(Math.min(...workingHoursOnly.map((h) => toMinutes(h.startTime))))
+    : "—";
+  const latestEnd = workingDaysCount
+    ? minutesToTime(Math.max(...workingHoursOnly.map((h) => toMinutes(h.endTime))))
+    : "—";
+
   weekCard.innerHTML = `
-    <div class="card wh-card">
-      <div class="wh-card-head">
-        <h3><i class="bi bi-clock-history"></i>${escapeHtml(building ? building.name : "")} — həftəlik qrafik</h3>
-        <button type="button" class="wh-copy-link" id="copyMondayBtn"><i class="bi bi-copy"></i>Bazar ertəsi saatlarını bütün iş günlərinə köçür</button>
+    <div class="wh-week-layout">
+      <div class="card wh-card">
+        <div class="wh-card-head">
+          <h3><i class="bi bi-clock-history"></i>${escapeHtml(building ? building.name : "")} — həftəlik qrafik</h3>
+          <button type="button" class="wh-copy-link" id="copyMondayBtn"><i class="bi bi-copy"></i>Bazar ertəsi saatlarını bütün iş günlərinə köçür</button>
+        </div>
+        ${rowsHtml}
       </div>
-      ${rowsHtml}
-      <div class="wh-card-foot">
+      <div class="wh-summary-col">
+      <div class="wh-summary">
+        <p class="wh-summary-label">Bu həftə</p>
+        <div class="wh-summary-divider"></div>
+        <div class="wh-summary-item">
+          <span class="stat-icon violet"><i class="bi bi-calendar-check"></i></span>
+          <div>
+            <p class="wh-summary-value">${workingDaysCount}</p>
+            <p class="wh-summary-item-label">iş günü</p>
+          </div>
+        </div>
+        <div class="wh-summary-item">
+          <span class="stat-icon amber"><i class="bi bi-hourglass-split"></i></span>
+          <div>
+            <p class="wh-summary-value">${totalHoursLabel}</p>
+            <p class="wh-summary-item-label">saat/həftə</p>
+          </div>
+        </div>
+        <div class="wh-summary-divider"></div>
+        <div class="wh-summary-item">
+          <span class="stat-icon green"><i class="bi bi-sunrise"></i></span>
+          <div>
+            <p class="wh-summary-value">${earliestStart}</p>
+            <p class="wh-summary-item-label">ən erkən başlama</p>
+          </div>
+        </div>
+        <div class="wh-summary-item">
+          <span class="stat-icon green"><i class="bi bi-sunset"></i></span>
+          <div>
+            <p class="wh-summary-value">${latestEnd}</p>
+            <p class="wh-summary-item-label">ən gec bitmə</p>
+          </div>
+        </div>
+      </div>
+      <div class="card wh-actions-bar">
         <span class="wh-hint"><i class="bi bi-lightbulb"></i>Dəyişikliklər yalnız bu binadakı otaqlara aiddir</span>
         <button type="button" class="btn btn-primary" id="saveWeekBtn"><i class="bi bi-check-lg"></i>Yadda saxla</button>
+      </div>
       </div>
     </div>`;
 
@@ -145,6 +200,14 @@ function renderWeek() {
 
 async function handleSave() {
   clearAlert(alertBox);
+
+  const invalidDay = hours.find((h) => h.isWorkingDay && h.startTime >= h.endTime);
+  if (invalidDay) {
+    const label = DAYS.find((d) => d.key === invalidDay.dayOfWeek)?.label ?? invalidDay.dayOfWeek;
+    showAlert(alertBox, `${label}: başlama saatı bitmə saatından əvvəl olmalıdır.`);
+    return;
+  }
+
   const saveBtn = document.getElementById("saveWeekBtn");
   saveBtn.disabled = true;
   saveBtn.textContent = "Yadda saxlanılır...";
@@ -173,14 +236,19 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 async function init() {
+  weekCard.innerHTML = `<div class="empty-state"><i class="bi bi-hourglass-split"></i>Yüklənir...</div>`;
+
   try {
     buildings = await getAllBuildings();
     if (!buildings.length) {
-      buildingTabs.innerHTML = "";
+      buildingDropdown.setOptions([], "");
       weekCard.innerHTML = `<div class="empty-state"><i class="bi bi-building"></i>Əvvəlcə bina əlavə edin.</div>`;
       return;
     }
-    renderBuildingTabs();
+    buildingDropdown.setOptions(
+      buildings.map((b) => ({ value: b.id, label: b.name })),
+      buildings[0].id
+    );
     await selectBuilding(buildings[0].id);
   } catch (err) {
     showAlert(alertBox, err.message);

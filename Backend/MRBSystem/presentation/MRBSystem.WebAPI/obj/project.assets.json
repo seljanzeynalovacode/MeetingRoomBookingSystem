@@ -2305,6 +2305,7 @@
           "AutoMapper": "16.2.0",
           "MRBSystem.Contracts": "1.0.0",
           "MRBSystem.Domain": "1.0.0",
+          "MRBSystem.Shared": "1.0.0",
           "Microsoft.AspNetCore.Http.Abstractions": "2.3.11",
           "Microsoft.AspNetCore.Identity": "2.3.12",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.1",
@@ -2361,8 +2362,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
-          "MRBSystem.Application": "1.0.0",
           "MRBSystem.Domain": "1.0.0",
+          "MRBSystem.Shared": "1.0.0",
           "Microsoft.EntityFrameworkCore": "8.0.29",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.29"
         },
@@ -2371,6 +2372,16 @@
         },
         "runtime": {
           "bin/placeholder/MRBSystem.Persistence.dll": {}
+        }
+      },
+      "MRBSystem.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MRBSystem.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MRBSystem.Shared.dll": {}
         }
       }
     }
@@ -5932,6 +5943,11 @@
       "type": "project",
       "path": "../../infrasturucture/MRBSystem.Persistence/MRBSystem.Persistence.csproj",
       "msbuildProject": "../../infrasturucture/MRBSystem.Persistence/MRBSystem.Persistence.csproj"
+    },
+    "MRBSystem.Shared/1.0.0": {
+      "type": "project",
+      "path": "../../core/MRBSystem.Shared/MRBSystem.Shared.csproj",
+      "msbuildProject": "../../core/MRBSystem.Shared/MRBSystem.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {

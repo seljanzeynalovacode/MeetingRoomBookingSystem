@@ -11,6 +11,7 @@
           "AutoMapper": "16.2.0",
           "MRBSystem.Contracts": "1.0.0",
           "MRBSystem.Domain": "1.0.0",
+          "MRBSystem.Shared": "1.0.0",
           "Microsoft.AspNetCore.Http.Abstractions": "2.3.11",
           "Microsoft.AspNetCore.Identity": "2.3.12",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.1",
@@ -627,6 +628,14 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "MRBSystem.Shared/1.0.0": {
+        "runtime": {
+          "MRBSystem.Shared.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -1027,6 +1036,11 @@
       "sha512": ""
     },
     "MRBSystem.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MRBSystem.Shared/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

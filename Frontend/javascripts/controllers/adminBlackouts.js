@@ -3,6 +3,7 @@ import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { logout } from "../api/authApi.js";
 import { getAllRoomBlackouts, createRoomBlackout, updateRoomBlackout, deleteRoomBlackout } from "../api/roomBlackoutsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
@@ -17,18 +18,42 @@ const modalAlert = document.getElementById("blackoutModalAlert");
 const modalClose = document.getElementById("blackoutModalClose");
 const modalCancelBtn = document.getElementById("blackoutModalCancelBtn");
 const form = document.getElementById("blackoutForm");
-const roomSelect = document.getElementById("blackoutRoom");
 const dateInput = document.getElementById("blackoutDate");
 const startInput = document.getElementById("blackoutStart");
 const endInput = document.getElementById("blackoutEnd");
 const reasonInput = document.getElementById("blackoutReason");
 const submitBtn = document.getElementById("blackoutModalSubmitBtn");
 
-const filterBuilding = document.getElementById("filterBuilding");
-const filterRoom = document.getElementById("filterRoom");
 const filterFrom = document.getElementById("filterFrom");
 const filterTo = document.getElementById("filterTo");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+
+const roomDropdown = initDropdown({
+  btn: document.getElementById("blackoutRoomBtn"),
+  panel: document.getElementById("blackoutRoomPanel"),
+  options: [],
+  placeholder: "Seçin",
+  onChange: () => {},
+});
+
+const filterBuildingDropdown = initDropdown({
+  btn: document.getElementById("filterBuildingBtn"),
+  panel: document.getElementById("filterBuildingPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: (value) => {
+    populateRoomFilterOptions(value);
+    renderBlackouts();
+  },
+});
+
+const filterRoomDropdown = initDropdown({
+  btn: document.getElementById("filterRoomBtn"),
+  panel: document.getElementById("filterRoomPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: () => renderBlackouts(),
+});
 
 let blackouts = [];
 let rooms = [];
@@ -55,8 +80,8 @@ function openModal(blackout) {
   submitBtn.textContent = blackout ? "Yadda saxla" : "Yarat";
 
   if (blackout) {
-    roomSelect.value = blackout.roomId;
-    roomSelect.disabled = true;
+    roomDropdown.setValue(blackout.roomId);
+    roomDropdown.setDisabled(true);
     const start = new Date(blackout.startDate);
     const end = new Date(blackout.endDate);
     dateInput.value = start.toISOString().slice(0, 10);
@@ -64,8 +89,8 @@ function openModal(blackout) {
     endInput.value = end.toTimeString().slice(0, 5);
     reasonInput.value = blackout.reason;
   } else {
-    roomSelect.disabled = false;
-    roomSelect.value = rooms[0]?.id || "";
+    roomDropdown.setDisabled(false);
+    roomDropdown.setValue(rooms[0]?.id || "");
     dateInput.value = new Date().toISOString().slice(0, 10);
     startInput.value = "09:00";
     endInput.value = "10:00";
@@ -122,7 +147,7 @@ form.addEventListener("submit", async (e) => {
       });
     } else {
       await createRoomBlackout({
-        RoomId: roomSelect.value,
+        RoomId: roomDropdown.getValue(),
         StartDate: startDate.toISOString(),
         EndDate: endDate.toISOString(),
         Reason: reason,
@@ -160,8 +185,7 @@ function createBlackoutCardHtml(b) {
 
 function populateRoomFilterOptions(buildingName) {
   const filtered = buildingName ? rooms.filter((r) => r.buildingName === buildingName) : rooms;
-  filterRoom.innerHTML =
-    '<option value="">Hamısı</option>' + filtered.map((r) => `<option value="${r.id}">${escapeHtml(r.name)}</option>`).join("");
+  filterRoomDropdown.setOptions(filtered.map((r) => ({ value: r.id, label: r.name })), "");
 }
 
 function buildRows() {
@@ -173,8 +197,10 @@ function buildRows() {
 
 function applyFilters(rows) {
   return rows.filter((row) => {
-    if (filterBuilding.value && row.buildingName !== filterBuilding.value) return false;
-    if (filterRoom.value && row.roomId !== filterRoom.value) return false;
+    const buildingFilter = filterBuildingDropdown.getValue();
+    const roomFilter = filterRoomDropdown.getValue();
+    if (buildingFilter && row.buildingName !== buildingFilter) return false;
+    if (roomFilter && row.roomId !== roomFilter) return false;
     if (filterFrom.value && new Date(row.startDate) < new Date(filterFrom.value)) return false;
     if (filterTo.value) {
       const toDate = new Date(filterTo.value);
@@ -225,10 +251,9 @@ async function loadData() {
     buildings = buildingList;
     allRows = buildRows();
 
-    roomSelect.innerHTML = rooms.map((r) => `<option value="${r.id}">${escapeHtml(r.name)} — ${escapeHtml(r.buildingName)}</option>`).join("");
+    roomDropdown.setOptions(rooms.map((r) => ({ value: r.id, label: `${r.name} — ${r.buildingName}` })));
 
-    filterBuilding.innerHTML =
-      '<option value="">Hamısı</option>' + buildings.map((b) => `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)}</option>`).join("");
+    filterBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.name, label: b.name })), "");
     populateRoomFilterOptions("");
 
     renderBlackouts();
@@ -237,16 +262,12 @@ async function loadData() {
   }
 }
 
-filterBuilding.addEventListener("change", () => {
-  populateRoomFilterOptions(filterBuilding.value);
-  renderBlackouts();
-});
-[filterRoom, filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderBlackouts));
+[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderBlackouts));
 
 clearFiltersBtn.addEventListener("click", () => {
-  filterBuilding.value = "";
+  filterBuildingDropdown.setValue("");
   populateRoomFilterOptions("");
-  filterRoom.value = "";
+  filterRoomDropdown.setValue("");
   filterFrom.value = "";
   filterTo.value = "";
   renderBlackouts();

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Contracts.DTOs.FloorDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;

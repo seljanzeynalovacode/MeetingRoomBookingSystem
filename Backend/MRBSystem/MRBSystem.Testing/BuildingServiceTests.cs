@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.BuildingDtos;
@@ -33,14 +33,15 @@ public class BuildingServiceTests : IDisposable
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
         _service = new BuildingService(
-      new GenericRepository<Building>(_context),
-      new WorkingHourService(
-          new GenericRepository<BuildingWorkingHour>(_context),
-          new GenericRepository<Building>(_context),
-          new FakeUnitOfWork(),
-          mapperConfig.CreateMapper(),
-          NullLogger<WorkingHourService>.Instance),
-      mapperConfig.CreateMapper());
+                new GenericRepository<Building>(_context),
+                new WorkingHourService(
+                new GenericRepository<BuildingWorkingHour>(_context),
+                new GenericRepository<Building>(_context),
+                new FakeUnitOfWork(),
+         mapperConfig.CreateMapper(),
+         NullLogger<WorkingHourService>.Instance),
+                new FakeUnitOfWork(),
+         mapperConfig.CreateMapper());
     }
 
     [Fact]

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.RoomBlackoutDtos;

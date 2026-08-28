@@ -25,6 +25,9 @@ function updateMaxActiveState() {
 limitToggle.addEventListener("change", updateMaxActiveState);
 
 async function loadSettings() {
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Yüklənir...";
+
   try {
     const s = await getSystemSettings();
     minMinutesInput.value = s.minReservationMinutes;
@@ -37,11 +40,29 @@ async function loadSettings() {
     updateMaxActiveState();
   } catch (err) {
     showAlert(alertBox, err.message);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '<i class="bi bi-check-lg"></i>Bütün ayarları yadda saxla';
   }
 }
 
+const numberInputs = [
+  minMinutesInput,
+  maxHoursInput,
+  bufferMinutesInput,
+  horizonDaysInput,
+  maxActiveInput,
+  calendarRangeInput,
+];
+
 saveBtn.addEventListener("click", async () => {
   clearAlert(alertBox);
+
+  const isValid = numberInputs.every((input) => input.reportValidity());
+  if (!isValid) {
+    return;
+  }
+
   saveBtn.disabled = true;
   saveBtn.textContent = "Yadda saxlanılır...";
 

@@ -6,6 +6,7 @@ using Moq;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.ReservationDtos;
+using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Repository;
@@ -20,6 +21,7 @@ public class ReservationServiceTests : IDisposable
 {
     private readonly TestMRBAppDbContext _context;
     private readonly ReservationService _reservationService;
+    private readonly SystemSettingsService _systemSettingsService;
     private readonly Guid _userId = Guid.NewGuid();
     private readonly Guid _roomId = Guid.NewGuid();
 
@@ -43,6 +45,12 @@ public class ReservationServiceTests : IDisposable
 
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
+        _systemSettingsService = new SystemSettingsService(
+            new GenericRepository<SystemSettings>(_context),
+            new FakeUnitOfWork(),
+            mapperConfig.CreateMapper(),
+            NullLogger<SystemSettingsService>.Instance);
+
         _reservationService = new ReservationService(
             new GenericRepository<Reservation>(_context),
             new GenericRepository<RoomBlackout>(_context),
@@ -58,10 +66,7 @@ public class ReservationServiceTests : IDisposable
                 new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
                 NullLogger<WorkingHourService>.Instance),
-            new SystemSettingsService(
-                new GenericRepository<SystemSettings>(_context),
-                mapperConfig.CreateMapper(),
-                NullLogger<SystemSettingsService>.Instance));
+            _systemSettingsService);
     }
 
     [Fact]
@@ -192,6 +197,104 @@ public class ReservationServiceTests : IDisposable
             .Should().ThrowAsync<ArgumentException>();
     }
 
+    [Fact]
+    public async Task CreateAsync_WithinBufferWindow_ThrowsConflict()
+    {
+        await SeedRoomAndUserAsync();
+        await _systemSettingsService.UpdateAsync(BuildSettingsDto(bufferMinutes: 15));
+
+        var start = NextLocalTime(10);
+        var end = start.AddHours(1);
+
+        await _reservationService.CreateAsync(new CreateReservationDto
+        {
+            Title = "Ilk bron",
+            RoomId = _roomId,
+            StartDate = start,
+            EndDate = end
+        });
+
+        var secondBooking = new CreateReservationDto
+        {
+            Title = "Bufer daxilinde bron",
+            RoomId = _roomId,
+            StartDate = end.AddMinutes(5),
+            EndDate = end.AddMinutes(35)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(secondBooking))
+            .Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("*hazırlıq fasiləsi*");
+    }
+
+    [Fact]
+    public async Task CreateAsync_ActiveReservationLimitReached_ThrowsInvalidOperationException()
+    {
+        await SeedRoomAndUserAsync();
+        await _systemSettingsService.UpdateAsync(BuildSettingsDto(
+            isActiveReservationLimitEnabled: true,
+            maxActiveReservationsPerUser: 1));
+
+        var start = NextLocalTime(10);
+        await _reservationService.CreateAsync(new CreateReservationDto
+        {
+            Title = "Birinci aktiv bron",
+            RoomId = _roomId,
+            StartDate = start,
+            EndDate = start.AddHours(1)
+        });
+
+        var secondStart = start.AddHours(3);
+        var secondBooking = new CreateReservationDto
+        {
+            Title = "Limitden sonraki bron",
+            RoomId = _roomId,
+            StartDate = secondStart,
+            EndDate = secondStart.AddHours(1)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(secondBooking))
+            .Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("*aktiv rezervasiyanız*");
+    }
+
+    [Fact]
+    public async Task CreateAsync_BeyondBookingHorizon_ThrowsArgumentException()
+    {
+        await SeedRoomAndUserAsync();
+        await _systemSettingsService.UpdateAsync(BuildSettingsDto(bookingHorizonDays: 1));
+
+        var start = DateTime.UtcNow.AddDays(5);
+        var dto = new CreateReservationDto
+        {
+            Title = "Horizon xarici bron",
+            RoomId = _roomId,
+            StartDate = start,
+            EndDate = start.AddHours(1)
+        };
+
+        await FluentActions.Invoking(() => _reservationService.CreateAsync(dto))
+            .Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*gün ərzində*");
+    }
+
+    private static UpdateSystemSettingsDto BuildSettingsDto(
+        int bufferMinutes = 0,
+        int bookingHorizonDays = 30,
+        bool isActiveReservationLimitEnabled = false,
+        int maxActiveReservationsPerUser = 5)
+    {
+        return new UpdateSystemSettingsDto
+        {
+            MinReservationMinutes = 30,
+            MaxReservationHours = 4,
+            BufferMinutes = bufferMinutes,
+            BookingHorizonDays = bookingHorizonDays,
+            IsActiveReservationLimitEnabled = isActiveReservationLimitEnabled,
+            MaxActiveReservationsPerUser = maxActiveReservationsPerUser,
+            MaxCalendarRangeDays = 90
+        };
+    }
 
     private async Task SeedRoomAndUserAsync()
     {
@@ -238,17 +341,5 @@ public class ReservationServiceTests : IDisposable
     {
         _context.Database.EnsureDeleted();
         _context.Dispose();
-    }
-}
-
-// SQLite Serializable-i tam deteklemir, ona gore testde real tranzaksiya acmadan
-// birbasa operation-u icra edirik
-public class FakeUnitOfWork : IUnitOfWork
-{
-    public async Task<TResult> ExecuteInTransactionAsync<TResult>(
-        Func<Task<TResult>> operation,
-        IsolationLevel isolationLevel = IsolationLevel.Serializable)
-    {
-        return await operation();
     }
 }

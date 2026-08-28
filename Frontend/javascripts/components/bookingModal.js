@@ -1,11 +1,13 @@
 import { createReservation, updateReservation } from "../api/reservationsApi.js";
 import { createParticipant, getParticipantsByReservation, deleteParticipant } from "../api/participantsApi.js";
 import { showFieldErrors, clearFieldErrors } from "../components/alert.js";
+import { getSystemSettings } from "../api/systemSettingsApi.js";
 
 let modalEl = null;
 let pendingParticipants = [];
 let existingParticipants = [];
 let currentOptions = null;
+let currentSettings = { minReservationMinutes: 30, maxReservationHours: 4, bookingHorizonDays: 30 };
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -186,8 +188,13 @@ async function handleSubmit(e) {
   const start = startInput.value;
   const end = endInput.value;
 
-  if (!title || !date || !start || !end) {
+  if (!title || !date) {
     showModalAlert("Bütün sahələri doldurun.", "warning");
+    return;
+  }
+
+  if (!start || !end) {
+    showModalAlert("Zəhmət olmasa saat təyin edin.", "warning");
     return;
   }
 
@@ -210,18 +217,18 @@ async function handleSubmit(e) {
     return;
   }
 
-  if (endDate - startDate < 30 * 60 * 1000) {
-    showModalAlert("Rezervasiya minimum 30 dəqiqə olmalıdır.", "warning");
+  if (endDate - startDate < currentSettings.minReservationMinutes * 60 * 1000) {
+    showModalAlert(`Rezervasiya minimum ${currentSettings.minReservationMinutes} dəqiqə olmalıdır.`, "warning");
     return;
   }
 
-  if (endDate - startDate > 4 * 60 * 60 * 1000) {
-    showModalAlert("Rezervasiya maksimum 4 saat ola bilər.", "warning");
+  if (endDate - startDate > currentSettings.maxReservationHours * 60 * 60 * 1000) {
+    showModalAlert(`Rezervasiya maksimum ${currentSettings.maxReservationHours} saat ola bilər.`, "warning");
     return;
   }
 
-  if (currentOptions.isAdmin !== true && startDate > new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) {
-    showModalAlert("Rezervasiya yalnız növbəti 30 gün ərzində yaradıla bilər.", "warning");
+  if (currentOptions.isAdmin !== true && startDate > new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000)) {
+    showModalAlert(`Rezervasiya yalnız növbəti ${currentSettings.bookingHorizonDays} gün ərzində yaradıla bilər.`, "warning");
     return;
   }
 
@@ -275,13 +282,19 @@ async function handleSubmit(e) {
   }
 }
 
-export function openBookingModal(options) {
+export async function openBookingModal(options) {
   currentOptions = options;
   pendingParticipants = [];
   existingParticipants = [];
   ensureModal();
 
   const isAdmin = options.isAdmin === true;
+
+  try {
+    currentSettings = await getSystemSettings();
+  } catch {
+    // Ayarlar yüklənə bilmədi — defolt dəyərlərlə davam et
+  }
 
   const form = modalEl.querySelector("#bookingModalForm");
   form.reset();
@@ -297,7 +310,7 @@ export function openBookingModal(options) {
   const submitBtn = modalEl.querySelector("#bookingModalSubmitBtn");
 
   dateInput.min = new Date().toISOString().slice(0, 10);
-  dateInput.max = isAdmin ? "" : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  dateInput.max = isAdmin ? "" : new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   if (options.mode === "edit") {
     modalTitleEl.textContent = "Rezervasiyanı redaktə et";
@@ -324,8 +337,8 @@ export function openBookingModal(options) {
     roomNameEl.textContent = options.room.name;
     titleInput.value = "";
     dateInput.value = options.prefillDate || new Date().toISOString().slice(0, 10);
-    startInput.value = options.prefillStart || "09:00";
-    endInput.value = options.prefillEnd || "10:00";
+    startInput.value = options.prefillStart || "";
+    endInput.value = options.prefillEnd || "";
     renderParticipants();
   }
 

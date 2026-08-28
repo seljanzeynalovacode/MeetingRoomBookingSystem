@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MRBSystem.Contracts\MRBSystem.Contracts.csproj" />
     <ProjectReference Include="..\MRBSystem.Domain\MRBSystem.Domain.csproj" />
+    <ProjectReference Include="..\MRBSystem.Shared\MRBSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace MRBSystem.Application.Exceptions;
+﻿namespace MRBSystem.Shared.Exceptions;
 
 public class ForbiddenException : Exception
 {

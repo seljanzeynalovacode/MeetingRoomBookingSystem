@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.ParticipantDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
+using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Application.Services;
 
@@ -34,10 +35,21 @@ public class ParticipantService : IParticipantService
             throw new ArgumentException("Either UserId or GuestEmail must be provided.");
         }
 
-        var reservation = await _reservationRepository.GetByIdAsync(dto.ReservationId)
+        var reservation = await _reservationRepository.GetQueryable()
+            .Include(r => r.Room)
+            .FirstOrDefaultAsync(r => r.Id == dto.ReservationId)
             ?? throw new NotFoundException($"Reservation with id {dto.ReservationId} not found.");
 
         EnsureCanManage(reservation);
+
+        var currentHeadcount = await _repository.GetQueryable()
+            .CountAsync(p => p.ReservationId == dto.ReservationId && p.ResponseStatus != ResponseStatus.Declined);
+
+        if (currentHeadcount + 1 >= reservation.Room.Capacity)
+        {
+            throw new InvalidOperationException(
+                $"Otağın tutumu ({reservation.Room.Capacity} nəfər) dolub, yeni iştirakçı əlavə edilə bilməz.");
+        }
 
         var entity = _mapper.Map<Participant>(dto);
         await _repository.AddAsync(entity);

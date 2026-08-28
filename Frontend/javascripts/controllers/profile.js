@@ -1,11 +1,14 @@
 import { isLoggedIn, getAccessToken, refreshAccessToken } from "../api/apiClient.js";
 import { updateProfile, changePassword, logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initNotificationBell } from "../components/notificationBell.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
   throw new Error("Not authenticated");
 }
+
+initNotificationBell();
 
 const alertBox = document.getElementById("alertBox");
 

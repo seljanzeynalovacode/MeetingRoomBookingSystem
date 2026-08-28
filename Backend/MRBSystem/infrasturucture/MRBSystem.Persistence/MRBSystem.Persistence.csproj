@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\MRBSystem.Application\MRBSystem.Application.csproj" />
     <ProjectReference Include="..\..\core\MRBSystem.Domain\MRBSystem.Domain.csproj" />
+    <ProjectReference Include="..\..\core\MRBSystem.Shared\MRBSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

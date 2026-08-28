@@ -5,6 +5,7 @@ import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin, cancelReservation } from "../api/reservationsApi.js";
 import { getParticipantsByReservation } from "../api/participantsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
@@ -13,12 +14,42 @@ const logoutBtn = document.getElementById("logoutBtn");
 const tableBody = document.getElementById("reservationsTableBody");
 
 const filterUser = document.getElementById("filterUser");
-const filterBuilding = document.getElementById("filterBuilding");
-const filterRoom = document.getElementById("filterRoom");
-const filterStatus = document.getElementById("filterStatus");
 const filterFrom = document.getElementById("filterFrom");
 const filterTo = document.getElementById("filterTo");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+
+const filterBuildingDropdown = initDropdown({
+  btn: document.getElementById("filterBuildingBtn"),
+  panel: document.getElementById("filterBuildingPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: (value) => {
+    populateRoomFilterOptions(value);
+    renderTable();
+  },
+});
+
+const filterRoomDropdown = initDropdown({
+  btn: document.getElementById("filterRoomBtn"),
+  panel: document.getElementById("filterRoomPanel"),
+  options: [],
+  placeholder: "Hamısı",
+  onChange: () => renderTable(),
+});
+
+const filterStatusDropdown = initDropdown({
+  btn: document.getElementById("filterStatusBtn"),
+  panel: document.getElementById("filterStatusPanel"),
+  options: [
+    { value: "", label: "Hamısı" },
+    { value: "Confirmed", label: "Aktiv" },
+    { value: "Completed", label: "Tamamlanıb" },
+    { value: "Cancelled", label: "Ləğv edilib" },
+  ],
+  value: "",
+  placeholder: "Hamısı",
+  onChange: () => renderTable(),
+});
 
 const detailsModal = document.getElementById("detailsModal");
 const detailsModalBody = document.getElementById("detailsModalBody");
@@ -77,20 +108,22 @@ function buildRows() {
 
 function populateRoomFilterOptions(buildingName) {
   const filtered = buildingName ? rooms.filter((r) => r.buildingName === buildingName) : rooms;
-  filterRoom.innerHTML =
-    '<option value="">Hamısı</option>' + filtered.map((r) => `<option value="${r.id}">${escapeHtml(r.name)}</option>`).join("");
+  filterRoomDropdown.setOptions(filtered.map((r) => ({ value: r.id, label: r.name })), "");
 }
 
 function applyFilters(rows) {
   const userTerm = filterUser.value.trim().toLocaleLowerCase("az");
+  const buildingFilter = filterBuildingDropdown.getValue();
+  const roomFilter = filterRoomDropdown.getValue();
+  const statusFilter = filterStatusDropdown.getValue();
   return rows.filter((row) => {
     if (userTerm) {
       const haystack = `${row.fullName} ${row.email} ${row.userName}`.toLocaleLowerCase("az");
       if (!haystack.includes(userTerm)) return false;
     }
-    if (filterBuilding.value && row.buildingName !== filterBuilding.value) return false;
-    if (filterRoom.value && row.roomId !== filterRoom.value) return false;
-    if (filterStatus.value && getEffectiveStatus(row.status, row.endDate) !== filterStatus.value) return false;
+    if (buildingFilter && row.buildingName !== buildingFilter) return false;
+    if (roomFilter && row.roomId !== roomFilter) return false;
+    if (statusFilter && getEffectiveStatus(row.status, row.endDate) !== statusFilter) return false;
     if (filterFrom.value && new Date(row.startDate) < new Date(filterFrom.value)) return false;
     if (filterTo.value) {
       const toDate = new Date(filterTo.value);
@@ -187,19 +220,15 @@ async function handleCancel(id) {
   }
 }
 
-filterBuilding.addEventListener("change", () => {
-  populateRoomFilterOptions(filterBuilding.value);
-  renderTable();
-});
-[filterRoom, filterStatus, filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderTable));
+[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderTable));
 filterUser.addEventListener("input", renderTable);
 
 clearFiltersBtn.addEventListener("click", () => {
   filterUser.value = "";
-  filterBuilding.value = "";
+  filterBuildingDropdown.setValue("");
   populateRoomFilterOptions("");
-  filterRoom.value = "";
-  filterStatus.value = "";
+  filterRoomDropdown.setValue("");
+  filterStatusDropdown.setValue("");
   filterFrom.value = "";
   filterTo.value = "";
   renderTable();
@@ -225,8 +254,7 @@ async function loadData() {
     buildings = buildingList;
     allRows = buildRows();
 
-    filterBuilding.innerHTML =
-      '<option value="">Hamısı</option>' + buildings.map((b) => `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)}</option>`).join("");
+    filterBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.name, label: b.name })), "");
     populateRoomFilterOptions("");
 
     renderTable();

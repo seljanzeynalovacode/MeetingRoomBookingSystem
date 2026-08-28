@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MRBSystem.Application.Exceptions;
+using MRBSystem.Shared.Exceptions;
 using MRBSystem.Application.Teamplates;
 using MRBSystem.Contracts.DTOs.NotificationDtos;
 using MRBSystem.Contracts.Services;

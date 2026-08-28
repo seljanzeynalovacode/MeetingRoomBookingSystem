@@ -4,11 +4,15 @@ import { getRoomCalendar } from "../api/calendarApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initNotificationBell } from "../components/notificationBell.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
   throw new Error("Not authenticated");
 }
+
+initNotificationBell();
 
 const GRID_START_HOUR = 7;
 const GRID_END_HOUR = 22;
@@ -16,8 +20,6 @@ const ROW_HEIGHT = 56;
 const HOURS = Array.from({ length: GRID_END_HOUR - GRID_START_HOUR }, (_, i) => GRID_START_HOUR + i);
 
 const alertBox = document.getElementById("alertBox");
-const buildingSelect = document.getElementById("buildingSelect");
-const roomSelect = document.getElementById("roomSelect");
 const calendarSubtitle = document.getElementById("calendarSubtitle");
 const dayViewBtn = document.getElementById("dayViewBtn");
 const weekViewBtn = document.getElementById("weekViewBtn");
@@ -414,34 +416,47 @@ function getRoomsForBuilding(buildingId) {
 
 function populateRoomOptions(buildingId) {
   const filtered = getRoomsForBuilding(buildingId);
-  roomSelect.innerHTML = filtered
-    .map((r) => {
-      const label = buildingId ? r.name : `${r.name} — ${r.buildingName}`;
-      return `<option value="${r.id}">${escapeHtml(label)}</option>`;
-    })
-    .join("");
+  roomDropdown.setOptions(
+    filtered.map((r) => ({
+      value: r.id,
+      label: buildingId ? r.name : `${r.name} — ${r.buildingName}`,
+    })),
+    filtered.length ? filtered[0].id : ""
+  );
   return filtered;
 }
 
-buildingSelect.addEventListener("change", () => {
-  const filtered = populateRoomOptions(buildingSelect.value);
-  if (!filtered.length) {
-    selectedRoomId = "";
-    selectedRoomName = "";
-    calendarSubtitle.textContent = "";
-    contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>Bu binada otaq yoxdur.</div>`;
-    return;
-  }
-  selectedRoomId = filtered[0].id;
-  selectedRoomName = filtered[0].name;
-  fetchAndRender();
+const buildingDropdown = initDropdown({
+  btn: document.getElementById("buildingSelectBtn"),
+  panel: document.getElementById("buildingSelectPanel"),
+  options: [],
+  placeholder: "Bütün binalar",
+  onChange: (value) => {
+    const filtered = populateRoomOptions(value);
+    if (!filtered.length) {
+      selectedRoomId = "";
+      selectedRoomName = "";
+      calendarSubtitle.textContent = "";
+      contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>Bu binada otaq yoxdur.</div>`;
+      return;
+    }
+    selectedRoomId = filtered[0].id;
+    selectedRoomName = filtered[0].name;
+    fetchAndRender();
+  },
 });
 
-roomSelect.addEventListener("change", () => {
-  selectedRoomId = roomSelect.value;
-  const room = rooms.find((r) => r.id === selectedRoomId);
-  selectedRoomName = room ? room.name : "";
-  fetchAndRender();
+const roomDropdown = initDropdown({
+  btn: document.getElementById("roomSelectBtn"),
+  panel: document.getElementById("roomSelectPanel"),
+  options: [],
+  placeholder: "Seçin",
+  onChange: (value) => {
+    selectedRoomId = value;
+    const room = rooms.find((r) => r.id === selectedRoomId);
+    selectedRoomName = room ? room.name : "";
+    fetchAndRender();
+  },
 });
 
 avatarChip.addEventListener("click", (e) => {
@@ -475,9 +490,7 @@ async function init() {
       return;
     }
 
-    buildingSelect.innerHTML =
-      '<option value="">Bütün binalar</option>' +
-      buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+    buildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), "");
 
     populateRoomOptions("");
     selectedRoomId = rooms[0].id;

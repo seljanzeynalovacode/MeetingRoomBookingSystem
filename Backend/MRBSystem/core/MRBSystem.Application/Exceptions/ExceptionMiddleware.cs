@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MRBSystem.Shared.Exceptions;
 using System.Net;
 using System.Text.Json;
 

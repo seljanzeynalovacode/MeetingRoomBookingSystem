@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MRBSystem.Application.Exceptions;
 using MRBSystem.Contracts.DTOs.ReservationDtos;
 using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Domain.Enums;
 using MRBSystem.Domain.Repository;
+using MRBSystem.Shared.Exceptions;
 
 namespace MRBSystem.Application.Services;
 

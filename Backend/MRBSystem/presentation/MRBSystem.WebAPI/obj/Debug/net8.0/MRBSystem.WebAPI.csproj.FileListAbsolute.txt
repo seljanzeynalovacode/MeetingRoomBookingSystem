@@ -190,3 +190,5 @@ C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
 C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\MRBSystem.Shared.dll
+C:\Users\ACER\Documents\Code Academy\MeetingRoomBookingSystem\Backend\MRBSystem\presentation\MRBSystem.WebAPI\bin\Debug\net8.0\MRBSystem.Shared.pdb
