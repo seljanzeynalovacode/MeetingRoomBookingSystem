@@ -4,11 +4,23 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-export function initDropdown({ btn, panel, options, value, placeholder = "Seçin", onChange }) {
+export function initDropdown({ btn, panel, options, value, placeholder = "Seçin", onChange, portal = false }) {
   let selected = value ?? "";
   const labelEl = btn.querySelector("span");
+  const homeParent = panel.parentNode;
+  const homeNextSibling = panel.nextSibling;
 
   function open() {
+    if (portal) {
+      const rect = btn.getBoundingClientRect();
+      panel.style.position = "fixed";
+      panel.style.top = `${rect.bottom + 6}px`;
+      panel.style.left = `${rect.left}px`;
+      panel.style.right = "auto";
+      panel.style.width = `${rect.width}px`;
+      panel.style.zIndex = "350";
+      document.body.appendChild(panel);
+    }
     panel.classList.add("open");
     btn.classList.add("open");
   }
@@ -16,6 +28,10 @@ export function initDropdown({ btn, panel, options, value, placeholder = "Seçin
   function close() {
     panel.classList.remove("open");
     btn.classList.remove("open");
+    if (portal && panel.parentNode === document.body) {
+      if (homeNextSibling) homeParent.insertBefore(panel, homeNextSibling);
+      else homeParent.appendChild(panel);
+    }
   }
 
   function markActive() {
@@ -82,6 +98,10 @@ export function initDropdown({ btn, panel, options, value, placeholder = "Seçin
     setDisabled(disabled) {
       btn.disabled = disabled;
       if (disabled) close();
+    },
+    setPlaceholder(newPlaceholder) {
+      placeholder = newPlaceholder;
+      updateLabel();
     },
   };
 }

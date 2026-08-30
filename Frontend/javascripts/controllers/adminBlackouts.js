@@ -24,8 +24,7 @@ const endInput = document.getElementById("blackoutEnd");
 const reasonInput = document.getElementById("blackoutReason");
 const submitBtn = document.getElementById("blackoutModalSubmitBtn");
 
-const filterFrom = document.getElementById("filterFrom");
-const filterTo = document.getElementById("filterTo");
+const filterDate = document.getElementById("filterDate");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
 const roomDropdown = initDropdown({
@@ -218,11 +217,13 @@ function applyFilters(rows) {
     const roomFilter = filterRoomDropdown.getValue();
     if (buildingFilter && row.buildingName !== buildingFilter) return false;
     if (roomFilter && row.roomId !== roomFilter) return false;
-    if (filterFrom.value && new Date(row.startDate) < new Date(filterFrom.value)) return false;
-    if (filterTo.value) {
-      const toDate = new Date(filterTo.value);
-      toDate.setHours(23, 59, 59, 999);
-      if (new Date(row.startDate) > toDate) return false;
+    if (filterDate.value) {
+      const dayStart = new Date(filterDate.value);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(filterDate.value);
+      dayEnd.setHours(23, 59, 59, 999);
+      const rowStart = new Date(row.startDate);
+      if (rowStart < dayStart || rowStart > dayEnd) return false;
     }
     return true;
   });
@@ -279,14 +280,13 @@ async function loadData() {
   }
 }
 
-[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderBlackouts));
+filterDate.addEventListener("change", renderBlackouts);
 
 clearFiltersBtn.addEventListener("click", () => {
   filterBuildingDropdown.setValue("");
   populateRoomFilterOptions("");
   filterRoomDropdown.setValue("");
-  filterFrom.value = "";
-  filterTo.value = "";
+  filterDate.value = "";
   renderBlackouts();
 });
 

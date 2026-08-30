@@ -10,6 +10,7 @@ import {
   deleteUser,
 } from "../api/adminApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initDropdown } from "../components/customDropdown.js";
 
 requireAdmin();
 
@@ -22,9 +23,18 @@ const logoutBtn = document.getElementById("logoutBtn");
 const userSearchInput = document.getElementById("userSearchInput");
 const resetUserSearchBtn = document.getElementById("resetUserSearchBtn");
 
+const filterRoleDropdown = initDropdown({
+  btn: document.getElementById("filterRoleBtn"),
+  panel: document.getElementById("filterRolePanel"),
+  options: [],
+  placeholder: "Bütün rollar",
+  onChange: () => renderUsers(),
+});
+
 userSearchInput.addEventListener("input", renderUsers);
 resetUserSearchBtn.addEventListener("click", () => {
   userSearchInput.value = "";
+  filterRoleDropdown.setValue("");
   renderUsers();
 });
 
@@ -49,7 +59,10 @@ function renderRoles() {
   roleListEl.innerHTML = roles
     .map((r) => {
       const cls = r.name === "Admin" ? "rm-chip rm-chip-admin" : "rm-chip";
-      return `<span class="${cls}"><span class="rm-chip-dot"></span>${escapeHtml(r.name)}<button type="button" data-id="${r.id}" data-name="${escapeHtml(r.name)}" class="rm-delete-btn" aria-label="Sil"><i class="bi bi-x"></i></button></span>`;
+      const inUseCount = users.filter((u) => u.roles.includes(r.name)).length;
+      const disabled = inUseCount > 0;
+      const title = disabled ? `Bu rol ${inUseCount} istifadəçiyə təyin edilib, əvvəlcə onlardan silin` : "Sil";
+      return `<span class="${cls}"><span class="rm-chip-dot"></span>${escapeHtml(r.name)}<button type="button" data-id="${r.id}" data-name="${escapeHtml(r.name)}" class="rm-delete-btn" aria-label="Sil" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
     })
     .join("");
 
@@ -69,6 +82,7 @@ function renderRoles() {
 
 async function loadRoles() {
   roles = await getAllRoles();
+  filterRoleDropdown.setOptions(roles.map((r) => ({ value: r.name, label: r.name })), filterRoleDropdown.getValue());
   renderRoles();
   renderUsers();
 }
@@ -103,10 +117,20 @@ function getInitials(firstName, lastName) {
 }
 
 function createUserRowHtml(user) {
+  const adminCount = users.filter((u) => u.roles.includes("Admin")).length;
+
   const roleChips = user.roles
     .map((roleName) => {
       const cls = roleName === "Admin" ? "role-chip role-admin" : "role-chip";
-      return `<span class="${cls}">${escapeHtml(roleName)}<button type="button" class="remove-role-btn" data-user-id="${user.id}" data-role="${escapeHtml(roleName)}" aria-label="Rolu sil"><i class="bi bi-x"></i></button></span>`;
+      const isLastRole = user.roles.length <= 1;
+      const isLastAdmin = roleName === "Admin" && adminCount <= 1;
+      const disabled = isLastRole || isLastAdmin;
+      const title = isLastRole
+        ? "İstifadəçinin son rolu silinə bilməz"
+        : isLastAdmin
+          ? "Sistemdə son Admin, rolu silinə bilməz"
+          : "Rolu sil";
+      return `<span class="${cls}">${escapeHtml(roleName)}<button type="button" class="remove-role-btn" data-user-id="${user.id}" data-role="${escapeHtml(roleName)}" aria-label="Rolu sil" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
     })
     .join("");
 
@@ -146,14 +170,14 @@ function renderUsers() {
   }
 
   const searchTerm = userSearchInput.value.trim().toLocaleLowerCase("az");
-  const matched = searchTerm
-    ? users.filter(
-        (u) =>
-          `${u.firstName} ${u.lastName}`.toLocaleLowerCase("az").includes(searchTerm) ||
-          (u.email || "").toLocaleLowerCase("az").includes(searchTerm) ||
-          (u.userName || "").toLocaleLowerCase("az").includes(searchTerm)
-      )
-    : users;
+  const roleFilter = filterRoleDropdown.getValue();
+
+  const matched = users.filter((u) => {
+    if (roleFilter && !u.roles.includes(roleFilter)) return false;
+    if (!searchTerm) return true;
+    const haystack = `${u.firstName} ${u.lastName} ${u.email || ""} ${u.userName || ""}`.toLocaleLowerCase("az");
+    return haystack.includes(searchTerm);
+  });
 
   if (!matched.length) {
     usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>Axtarışa uyğun istifadəçi tapılmadı.</div>`;
@@ -223,6 +247,7 @@ async function init() {
     const [roleList, userList] = await Promise.all([getAllRoles(), getAllUsersWithRoles()]);
     roles = roleList;
     users = userList;
+    filterRoleDropdown.setOptions(roles.map((r) => ({ value: r.name, label: r.name })), "");
     renderRoles();
     renderUsers();
   } catch (err) {

@@ -77,6 +77,7 @@ public class CustomProfile : Profile
         CreateMap<Reservation, ResponseReservationDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name))
+            .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Room.Floor.Building.Name))
             .ForMember(dest => dest.ReservedByUserName,
                 opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName));
 

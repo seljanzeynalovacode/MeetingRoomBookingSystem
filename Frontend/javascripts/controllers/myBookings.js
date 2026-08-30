@@ -17,8 +17,7 @@ const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
 const listEl = document.getElementById("reservationList");
 
-const filterFrom = document.getElementById("filterFrom");
-const filterTo = document.getElementById("filterTo");
+const filterDate = document.getElementById("filterDate");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
 const filterStatusDropdown = initDropdown({
@@ -133,29 +132,47 @@ function statusBadgeHtml(r) {
   return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
 }
 
+function dateBlockHtml(startIso) {
+  const start = new Date(startIso);
+  const month = start.toLocaleDateString("az-AZ", { month: "short" });
+  const day = start.toLocaleDateString("az-AZ", { day: "2-digit" });
+  return `<div class="mb2-date"><span class="mb2-date-month">${escapeHtml(month)}</span><span class="mb2-date-day">${day}</span></div>`;
+}
+
 function createReservationCardHtml(r) {
   const effectiveStatus = getEffectiveStatus(r.status, r.endDate);
   const ongoing = isCurrentlyOngoing(r);
-  const actions =
+  const cardClass = ongoing
+    ? "is-live"
+    : effectiveStatus === "Completed"
+      ? "is-completed"
+      : effectiveStatus === "Cancelled"
+        ? "is-cancelled"
+        : "";
+
+  const actionsHtml =
     effectiveStatus === "Confirmed"
-      ? `<button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}">Redaktə et</button>
-         ${ongoing ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}">İndi bitir</button>` : ""}
-         <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}">Ləğv et</button>`
-      : "";
+      ? `<div class="mb2-actions">
+           <button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}"><i class="bi bi-pencil"></i>Redaktə et</button>
+           ${ongoing ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}"><i class="bi bi-stop-circle"></i>İndi bitir</button>` : ""}
+           <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}"><i class="bi bi-x-circle"></i>Ləğv et</button>
+         </div>`
+      : `<div class="mb2-quiet-actions"></div>`;
 
   return `
-    <div class="card reservation-card${ongoing ? " reservation-card-ongoing" : ""}">
-      <div class="reservation-card-body">
-        <div class="reservation-card-head">
-          <h4>${escapeHtml(r.title)}</h4>
+    <div class="mb2-card ${cardClass}">
+      ${dateBlockHtml(r.startDate)}
+      <div class="mb2-main">
+        <div class="mb2-main-top">
+          <h4 class="mb2-title">${escapeHtml(r.title)}</h4>
           ${statusBadgeHtml(r)}
         </div>
-        <div class="reservation-card-meta">
-          <span><i class="bi bi-door-open"></i>${escapeHtml(r.roomName)}</span>
+        <div class="mb2-meta">
+          <span><i class="bi bi-door-open"></i>${r.buildingName ? `${escapeHtml(r.buildingName)} · ` : ""}<span class="mb2-room-label">${escapeHtml(r.roomName)}</span></span>
           <span><i class="bi bi-clock"></i>${formatRange(r.startDate, r.endDate)}</span>
         </div>
-        <div class="reservation-card-actions">${actions}</div>
       </div>
+      ${actionsHtml}
     </div>`;
 }
 
@@ -163,14 +180,25 @@ function applyFilters(rows) {
   return rows.filter((r) => {
     const statusFilter = filterStatusDropdown.getValue();
     if (statusFilter && getEffectiveStatus(r.status, r.endDate) !== statusFilter) return false;
-    if (filterFrom.value && new Date(r.startDate) < new Date(filterFrom.value)) return false;
-    if (filterTo.value) {
-      const toDate = new Date(filterTo.value);
-      toDate.setHours(23, 59, 59, 999);
-      if (new Date(r.startDate) > toDate) return false;
+    if (filterDate.value) {
+      const dayStart = new Date(filterDate.value);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(filterDate.value);
+      dayEnd.setHours(23, 59, 59, 999);
+      const rowStart = new Date(r.startDate);
+      if (rowStart < dayStart || rowStart > dayEnd) return false;
     }
     return true;
   });
+}
+
+function sectionHtml(titleHtml, rows, extraClass = "") {
+  if (!rows.length) return "";
+  return `
+    <div class="mb2-section">
+      <div class="mb2-section-title${extraClass ? ` ${extraClass}` : ""}">${titleHtml}</div>
+      <div class="mb2-list">${rows.map(createReservationCardHtml).join("")}</div>
+    </div>`;
 }
 
 function renderReservations() {
@@ -187,16 +215,17 @@ function renderReservations() {
   }
 
   const ongoing = filtered.filter(isCurrentlyOngoing);
-  const rest = filtered.filter((r) => !isCurrentlyOngoing(r));
+  const upcoming = filtered
+    .filter((r) => !isCurrentlyOngoing(r) && getEffectiveStatus(r.status, r.endDate) === "Confirmed")
+    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const past = filtered
+    .filter((r) => !isCurrentlyOngoing(r) && getEffectiveStatus(r.status, r.endDate) !== "Confirmed")
+    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
-  const ongoingHtml = ongoing.length
-    ? `<div class="ongoing-section">
-         <h3 class="ongoing-section-title"><i class="bi bi-broadcast"></i>Hazırda davam edir</h3>
-         <div class="ongoing-section-grid">${ongoing.map(createReservationCardHtml).join("")}</div>
-       </div>`
-    : "";
-
-  listEl.innerHTML = ongoingHtml + rest.map(createReservationCardHtml).join("");
+  listEl.innerHTML =
+    sectionHtml(`<i class="bi bi-broadcast"></i>Hazırda davam edir`, ongoing, "is-live") +
+    sectionHtml(`<i class="bi bi-calendar-event"></i>Gələcək rezervasiyalar`, upcoming) +
+    sectionHtml(`<i class="bi bi-clock-history"></i>Keçmiş`, past);
 }
 
 async function loadReservations() {
@@ -276,11 +305,10 @@ if (getRoles().includes("Admin")) {
   document.getElementById("adminPanelLink").style.display = "";
 }
 
-[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderReservations));
+filterDate.addEventListener("change", renderReservations);
 clearFiltersBtn.addEventListener("click", () => {
   filterStatusDropdown.setValue("");
-  filterFrom.value = "";
-  filterTo.value = "";
+  filterDate.value = "";
   renderReservations();
 });
 

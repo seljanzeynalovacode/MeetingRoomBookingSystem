@@ -88,6 +88,16 @@ public class RoleService : IRoleService
             throw new InvalidOperationException("Sistem rolları ('Admin', 'User') silinə bilməz.");
         }
 
+        var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name!);
+        if (usersInRole.Count > 0)
+        {
+            _logger.LogWarning(
+                "Attempt to delete role '{RoleName}' (ID: {RoleId}) while assigned to {UserCount} user(s).",
+                role.Name, id, usersInRole.Count);
+            throw new InvalidOperationException(
+                $"Bu rol {usersInRole.Count} istifadəçiyə təyin edilib, əvvəlcə onlardan silin.");
+        }
+
         _logger.LogInformation("Role deleted successfully: {RoleName} (ID: {RoleId})", role.Name, id);
 
         await _roleManager.DeleteAsync(role);
@@ -203,6 +213,27 @@ public class RoleService : IRoleService
         {
             _logger.LogWarning("Attempt to remove role '{RoleName}' from a non-existent user with ID: {UserId}", roleName, userId);
             throw new NotFoundException($"User with id {userId} not found.");
+        }
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (currentRoles.Count <= 1)
+        {
+            _logger.LogWarning(
+                "Attempt to remove the last remaining role '{RoleName}' from user {UserId}.", roleName, userId);
+            throw new InvalidOperationException(
+                "İstifadəçinin ən azı bir rolu olmalıdır, son rolu silinə bilməz.");
+        }
+
+        if (roleName == "Admin")
+        {
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+            if (admins.Count <= 1)
+            {
+                _logger.LogWarning(
+                    "Attempt to remove the Admin role from the last remaining Admin (User {UserId}).", userId);
+                throw new InvalidOperationException(
+                    "Sistemdə yalnız bir Admin qalıb, onun Admin rolu silinə bilməz.");
+            }
         }
 
         var result = await _userManager.RemoveFromRoleAsync(user, roleName);

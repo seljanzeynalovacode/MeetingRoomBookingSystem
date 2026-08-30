@@ -17,12 +17,9 @@ initNotificationBell();
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
 
-const searchForm = document.getElementById("searchForm");
 const searchDateInput = document.getElementById("searchDate");
 const searchStartInput = document.getElementById("searchStart");
 const searchEndInput = document.getElementById("searchEnd");
-const searchBtn = document.getElementById("searchBtn");
-const resetSearchBtn = document.getElementById("resetSearchBtn");
 
 let currentToday = new Date().toISOString().slice(0, 10);
 
@@ -62,9 +59,10 @@ const floorDropdown = initDropdown({
   btn: document.getElementById("floorSelectBtn"),
   panel: document.getElementById("floorSelectPanel"),
   options: [],
-  placeholder: "Bütün mərtəbələr",
+  placeholder: "Əvvəlcə bina seçin",
   onChange: () => {},
 });
+floorDropdown.setDisabled(true);
 
 const equipmentDropdown = initDropdown({
   btn: document.getElementById("equipmentSelectBtn"),
@@ -202,7 +200,16 @@ function normalizeSearchRoom(r) {
 }
 
 function populateFloorOptions(buildingId) {
-  const filtered = buildingId ? allFloors.filter((f) => f.buildingId === buildingId) : allFloors;
+  if (!buildingId) {
+    floorDropdown.setOptions([], "");
+    floorDropdown.setPlaceholder("Əvvəlcə bina seçin");
+    floorDropdown.setDisabled(true);
+    return;
+  }
+
+  floorDropdown.setDisabled(false);
+  floorDropdown.setPlaceholder("Bütün mərtəbələr");
+  const filtered = allFloors.filter((f) => f.buildingId === buildingId);
   floorDropdown.setOptions(
     filtered.map((f) => ({ value: f.id, label: f.name })),
     ""
@@ -299,21 +306,37 @@ async function loadCatalog() {
   }
 }
 
-searchForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+function updateApplyButtonLabel() {
+  const hasSearchCriteria = searchDateInput.value && searchStartInput.value && searchEndInput.value;
+  applyFiltersBtn.innerHTML = hasSearchCriteria
+    ? '<i class="bi bi-search"></i>Axtar'
+    : '<i class="bi bi-funnel"></i>Filtrlə';
+}
+
+[searchDateInput, searchStartInput, searchEndInput].forEach((el) =>
+  el.addEventListener("input", updateApplyButtonLabel)
+);
+
+async function handleApplyFilters() {
   clearAlert(alertBox);
 
-  const buildingId = buildingDropdown.getValue();
   const date = searchDateInput.value;
   const start = searchStartInput.value;
   const end = searchEndInput.value;
 
-  if (!buildingId) {
-    showAlert(alertBox, "Axtarış üçün bina seçin.", "warning");
+  if (!date && !start && !end) {
+    applyCatalogFilters();
     return;
   }
+
   if (!date || !start || !end) {
-    showAlert(alertBox, "Tarix və saat aralığını daxil edin.", "warning");
+    showAlert(alertBox, "Mövcudluq axtarışı üçün tarix və saat aralığının hamısını doldurun.", "warning");
+    return;
+  }
+
+  const buildingId = buildingDropdown.getValue();
+  if (!buildingId) {
+    showAlert(alertBox, "Axtarış üçün bina seçin.", "warning");
     return;
   }
 
@@ -334,8 +357,8 @@ searchForm.addEventListener("submit", async (e) => {
     Capacity: Number(capacityInput.value) || 1,
   };
 
-  searchBtn.disabled = true;
-  searchBtn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+  applyFiltersBtn.disabled = true;
+  applyFiltersBtn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
 
   try {
     const results = await searchAvailableRooms(dto);
@@ -343,17 +366,12 @@ searchForm.addEventListener("submit", async (e) => {
   } catch (err) {
     showAlert(alertBox, err.message);
   } finally {
-    searchBtn.disabled = false;
-    searchBtn.innerHTML = '<i class="bi bi-search"></i>Axtar';
+    applyFiltersBtn.disabled = false;
+    updateApplyButtonLabel();
   }
-});
+}
 
-resetSearchBtn.addEventListener("click", () => {
-  clearAlert(alertBox);
-  loadCatalog();
-});
-
-applyFiltersBtn.addEventListener("click", applyCatalogFilters);
+applyFiltersBtn.addEventListener("click", handleApplyFilters);
 
 resetFiltersBtn.addEventListener("click", () => {
   buildingDropdown.setValue("");
@@ -362,6 +380,10 @@ resetFiltersBtn.addEventListener("click", () => {
   selectedEquipmentIds.clear();
   renderSelectedEquipmentChips();
   populateEquipmentSelect();
+  searchDateInput.value = currentToday;
+  searchStartInput.value = "";
+  searchEndInput.value = "";
+  updateApplyButtonLabel();
   clearAlert(alertBox);
   loadCatalog();
 });
@@ -468,6 +490,7 @@ async function init() {
   }
 
   searchDateInput.value = currentToday;
+  updateApplyButtonLabel();
 
   try {
     const [buildings, floors, equipmentTypes, roomEquipmentListRes] = await Promise.all([

@@ -108,6 +108,21 @@ public class RoleServiceTests
     }
 
     [Fact]
+    public async Task DeleteRoleAsync_RoleInUse_Throws()
+    {
+        var user = await SeedUserAsync("hasrole");
+        var role = await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Reviewer" });
+        await _service.AssignRoleToUserAsync(user.Id, "Reviewer");
+
+        var act = () => _service.DeleteRoleAsync(role.Id);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+
+        var stillExists = await _service.GetRoleByIdAsync(role.Id);
+        stillExists.Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task DeleteRoleAsync_NonExistentId_ThrowsNotFound()
     {
         var act = () => _service.DeleteRoleAsync(Guid.NewGuid());
@@ -171,12 +186,48 @@ public class RoleServiceTests
     {
         var user = await SeedUserAsync("removee");
         await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Reviewer" });
+        await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Editor" });
         await _service.AssignRoleToUserAsync(user.Id, "Reviewer");
+        await _service.AssignRoleToUserAsync(user.Id, "Editor");
 
         await _service.RemoveRoleFromUserAsync(user.Id, "Reviewer");
 
         var roles = await _userManager.GetRolesAsync(user);
         roles.Should().NotContain("Reviewer");
+        roles.Should().Contain("Editor");
+    }
+
+    [Fact]
+    public async Task RemoveRoleFromUserAsync_LastRemainingRole_Throws()
+    {
+        var user = await SeedUserAsync("onlyrole");
+        await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Reviewer" });
+        await _service.AssignRoleToUserAsync(user.Id, "Reviewer");
+
+        var act = () => _service.RemoveRoleFromUserAsync(user.Id, "Reviewer");
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+
+        var roles = await _userManager.GetRolesAsync(user);
+        roles.Should().Contain("Reviewer");
+    }
+
+    [Fact]
+    public async Task RemoveRoleFromUserAsync_LastAdmin_Throws()
+    {
+        await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Admin" });
+        await _service.CreateRoleAsync(new CreateAppRoleDto { Name = "Reviewer" });
+
+        var user = await SeedUserAsync("soleadmin");
+        await _service.AssignRoleToUserAsync(user.Id, "Admin");
+        await _service.AssignRoleToUserAsync(user.Id, "Reviewer");
+
+        var act = () => _service.RemoveRoleFromUserAsync(user.Id, "Admin");
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+
+        var roles = await _userManager.GetRolesAsync(user);
+        roles.Should().Contain("Admin");
     }
 
     [Fact]

@@ -10,6 +10,7 @@ public record ResponseReservationDto : BaseDto
     public string Status { get; set; } = null!;
     public Guid RoomId { get; set; }
     public string RoomName { get; set; } = null!;
+    public string BuildingName { get; set; } = null!;
     public Guid ReservedByUserId { get; set; }
     public string ReservedByUserName { get; set; } = null!;
 }

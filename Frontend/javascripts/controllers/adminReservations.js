@@ -22,6 +22,7 @@ const filterBuildingDropdown = initDropdown({
   panel: document.getElementById("filterBuildingPanel"),
   options: [],
   placeholder: "Hamısı",
+  portal: true,
   onChange: (value) => {
     populateRoomFilterOptions(value);
     renderTable();
@@ -33,6 +34,7 @@ const filterRoomDropdown = initDropdown({
   panel: document.getElementById("filterRoomPanel"),
   options: [],
   placeholder: "Hamısı",
+  portal: true,
   onChange: () => renderTable(),
 });
 
@@ -47,6 +49,7 @@ const filterStatusDropdown = initDropdown({
   ],
   value: "",
   placeholder: "Hamısı",
+  portal: true,
   onChange: () => renderTable(),
 });
 

@@ -14,27 +14,14 @@
       <span class="wordmark">MeetingSpace</span>
     </div>
 
-        <form class="search-cluster" id="searchForm">
-      <div class="search-field">
-        <i class="bi bi-calendar3"></i>
-        <input type="date" id="searchDate" name="searchDate" />
-      </div>
-      <div class="search-div"></div>
-      <div class="search-field search-field-time">
-        <i class="bi bi-clock"></i>
-        <input type="time" id="searchStart" name="searchStart" />
-        <span class="time-sep">–</span>
-        <input type="time" id="searchEnd" name="searchEnd" />
-      </div>
-      <button type="submit" class="btn btn-primary btn-sm" id="searchBtn"><i class="bi bi-search"></i>Axtar</button>
-    </form>
+        <div class="nav-links">
+      <a href="dashboard.html" class="btn btn-ghost btn-sm active"><i class="bi bi-door-open"></i>Otaqlar</a>
+      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
+      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
+    </div>
 
               <div class="nav-right">
                 <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
-      <button class="icon-btn" id="resetSearchBtn" title="Bütün otaqlara qayıt" aria-label="Bütün otaqlara qayıt"><i class="bi bi-arrow-counterclockwise"></i></button>
-        <a href="dashboard.html" class="btn btn-ghost btn-sm active"><i class="bi bi-door-open"></i>Otaqlar</a>
-        <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
-        <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
       <div class="notification-wrap">
         <button class="icon-btn" id="notificationBtn" aria-label="Bildirişlər">
           <i class="bi bi-bell"></i>
@@ -64,7 +51,29 @@
   <div class="dash-layout">
     <aside class="sidebar">
       <div class="card filter-card">
-        <h3><i class="bi bi-sliders"></i>Filtrlər</h3>
+        <div class="filter-card-head">
+          <h3><i class="bi bi-sliders"></i>Filtrlər</h3>
+          <button type="button" class="icon-btn" id="resetFiltersBtn" title="Filtrləri sıfırla" aria-label="Filtrləri sıfırla"><i class="bi bi-arrow-counterclockwise"></i></button>
+        </div>
+
+        <div class="filter-group">
+          <label class="field-label" for="searchDate">Tarix</label>
+          <div class="input-wrap">
+            <i class="bi bi-calendar3 leading-icon"></i>
+            <input type="date" class="input has-icon" id="searchDate" name="searchDate" />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="field-label">Saat aralığı</label>
+          <div class="time-range-row">
+            <input type="time" class="input" id="searchStart" name="searchStart" />
+            <span class="time-sep">–</span>
+            <input type="time" class="input" id="searchEnd" name="searchEnd" />
+          </div>
+        </div>
+
+        <div class="filter-card-divider"></div>
 
         <div class="filter-group">
           <label class="field-label" for="buildingSelectBtn">Bina</label>
@@ -100,7 +109,6 @@
         </div>
 
         <button type="button" class="btn btn-primary btn-block btn-sm" id="applyFiltersBtn"><i class="bi bi-funnel"></i>Filtrlə</button>
-        <button type="button" class="btn btn-ghost btn-block btn-sm" id="resetFiltersBtn" style="margin-top:8px;"><i class="bi bi-arrow-counterclockwise"></i>Filtrləri sıfırla</button>
       </div>
     </aside>
 
@@ -109,7 +117,7 @@
         <h2 id="resultsTitle">Otaqlar <span class="count" id="resultsCount"></span></h2>
       </div>
 
-      <p class="catalog-hint" id="catalogHint">Bu, bütün otaqların ümumi siyahısıdır. Konkret tarix/saat üçün dəqiq mövcudluğu yoxlamaq üçün yuxarıdan axtarış edin.</p>
+      <p class="catalog-hint" id="catalogHint">Bu, bütün otaqların ümumi siyahısıdır. Konkret tarix/saat üçün dəqiq mövcudluğu yoxlamaq üçün soldakı paneldən axtarış edin.</p>
 
       <div class="room-grid" id="roomGrid"></div>
     </main>
