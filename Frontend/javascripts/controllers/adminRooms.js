@@ -31,6 +31,7 @@ let buildings = [];
 let equipmentList = [];
 let roomEquipmentList = [];
 let currentRoomEquipment = [];
+let pendingEquipment = [];
 let editingId = null;
 
 function escapeHtml(str) {
@@ -99,8 +100,9 @@ const modalFloorDropdown = initDropdown({
 
 function renderRoomEquipmentChips() {
   roomEquipmentChips.innerHTML = "";
+  const source = editingId ? currentRoomEquipment : pendingEquipment;
   equipmentList.forEach((eq) => {
-    const assignment = currentRoomEquipment.find((re) => re.equipmentId === eq.id);
+    const assignment = source.find((re) => re.equipmentId === eq.id);
     const chip = document.createElement("span");
     chip.className = assignment ? "chip-toggle active" : "chip-toggle";
     chip.innerHTML = `
@@ -116,6 +118,14 @@ function renderRoomEquipmentChips() {
 }
 
 async function toggleRoomEquipment(equipmentId) {
+  if (!editingId) {
+    const idx = pendingEquipment.findIndex((re) => re.equipmentId === equipmentId);
+    if (idx >= 0) pendingEquipment.splice(idx, 1);
+    else pendingEquipment.push({ equipmentId, quantity: 1 });
+    renderRoomEquipmentChips();
+    return;
+  }
+
   const existing = currentRoomEquipment.find((re) => re.equipmentId === equipmentId);
   try {
     if (existing) {
@@ -134,6 +144,12 @@ async function toggleRoomEquipment(equipmentId) {
 }
 
 async function updateRoomEquipmentQuantity(equipmentId, quantity) {
+  if (!editingId) {
+    const existing = pendingEquipment.find((re) => re.equipmentId === equipmentId);
+    if (existing) existing.quantity = quantity;
+    return;
+  }
+
   const existing = currentRoomEquipment.find((re) => re.equipmentId === equipmentId);
   if (!existing) return;
   try {
@@ -165,13 +181,13 @@ function openModal(room) {
   populateModalFloorOptions(buildingId);
   modalFloorDropdown.setValue(room ? room.floorId : filterFloorDropdown.getValue() || "");
 
+  roomEquipmentField.style.display = "";
   if (room) {
-    roomEquipmentField.style.display = "";
     currentRoomEquipment = roomEquipmentList.filter((re) => re.roomId === room.id);
-    renderRoomEquipmentChips();
   } else {
-    roomEquipmentField.style.display = "none";
+    pendingEquipment = [];
   }
+  renderRoomEquipmentChips();
 
   modalAlert.innerHTML = "";
   modal.classList.add("open");
@@ -208,7 +224,14 @@ form.addEventListener("submit", async (e) => {
     if (editingId) {
       await updateRoom(editingId, dto);
     } else {
-      await createRoom(dto);
+      const created = await createRoom(dto);
+      if (pendingEquipment.length) {
+        await Promise.all(
+          pendingEquipment.map((pe) =>
+            createRoomEquipment({ RoomId: created.id, EquipmentId: pe.equipmentId, Quantity: pe.quantity })
+          )
+        );
+      }
     }
     closeModal();
     await loadRooms();

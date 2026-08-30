@@ -96,6 +96,12 @@ newRoleInput.addEventListener("keydown", (e) => {
   }
 });
 
+function getInitials(firstName, lastName) {
+  const a = (firstName || "").trim()[0] || "";
+  const b = (lastName || "").trim()[0] || "";
+  return (a + b).toUpperCase() || "?";
+}
+
 function createUserRowHtml(user) {
   const roleChips = user.roles
     .map((roleName) => {
@@ -105,7 +111,7 @@ function createUserRowHtml(user) {
     .join("");
 
   const availableRoles = roles.filter((r) => !user.roles.includes(r.name));
-    const assignSelectHtml = availableRoles.length
+  const assignSelectHtml = availableRoles.length
     ? `<div class="assign-role-row">
          <div class="select-wrap">
            <select class="input assign-role-select" data-user-id="${user.id}">
@@ -116,20 +122,26 @@ function createUserRowHtml(user) {
          <button type="button" class="btn btn-secondary btn-sm assign-role-btn" data-user-id="${user.id}"><i class="bi bi-plus"></i></button>
        </div>`
     : `<span class="text-muted" style="font-size:12px;">Hamısı təyin edilib</span>`;
+
   return `
-    <tr>
-      <td>${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</td>
-      <td>${escapeHtml(user.email)}</td>
-      <td>${escapeHtml(user.userName)}</td>
-      <td><div class="role-chip-row">${roleChips || '<span class="text-muted" style="font-size:12px;">Rol yoxdur</span>'}</div></td>
-      <td>${assignSelectHtml}</td>
-      <td><button type="button" class="icon-action-btn delete-user-btn" data-user-id="${user.id}" title="İstifadəçini sil"><i class="bi bi-trash"></i></button></td>
-    </tr>`;
+    <div class="user-row">
+      <span class="row-avatar">${getInitials(user.firstName, user.lastName)}</span>
+      <div class="user-identity">
+        <p class="user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</p>
+        <p class="user-meta">${escapeHtml(user.email)}</p>
+        <p class="user-meta user-username">İstifadəçi adı: <span>@${escapeHtml(user.userName)}</span></p>
+      </div>
+      <div class="user-roles">
+        ${roleChips || '<span class="text-muted" style="font-size:12px;">Rol yoxdur</span>'}
+        ${assignSelectHtml}
+      </div>
+      <button type="button" class="icon-action-btn delete-user-btn" data-user-id="${user.id}" title="İstifadəçini sil"><i class="bi bi-trash"></i></button>
+    </div>`;
 }
 
 function renderUsers() {
   if (!users.length) {
-    usersTableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding:2rem;">İstifadəçi tapılmadı.</td></tr>`;
+    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-people"></i>İstifadəçi tapılmadı.</div>`;
     return;
   }
 
@@ -144,7 +156,7 @@ function renderUsers() {
     : users;
 
   if (!matched.length) {
-    usersTableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center; padding:2rem;">Axtarışa uyğun istifadəçi tapılmadı.</td></tr>`;
+    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>Axtarışa uyğun istifadəçi tapılmadı.</div>`;
     return;
   }
 

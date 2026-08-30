@@ -15,21 +15,31 @@ const buildingCountEl = document.getElementById("statBuildingCount");
 const userCountEl = document.getElementById("statUserCount");
 const reservationCountEl = document.getElementById("statReservationCount");
 const peakHourBadge = document.getElementById("peakHourBadge");
+const peakDayBadge = document.getElementById("peakDayBadge");
+
+const WEEKDAY_LABELS = ["Bazar ertəsi", "Çərşənbə axşamı", "Çərşənbə", "Cümə axşamı", "Cümə", "Şənbə", "Bazar"];
+
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
 
 const CHART_COLORS = {
-  violet: "#6E56CF",
-  violetLight: "#C4B5F5",
-  violetPeak: "#4C3A9E",
-  amber: "#E8A23D",
-  green: "oklch(60% 0.15 148)",
-  red: "oklch(58% 0.19 25)",
-  redLight: "#F5C2C0",
-  teal: "oklch(52% 0.11 200)",
-  yellow: "oklch(78% 0.15 95)",
-  mauve: "#c186bc",
-  grid: "#E4E7EC",
-  text: "#6B7684",
+  violetLight: cssVar("--violet-300"),
+  violet: cssVar("--violet-500"),
+  violetPeak: cssVar("--violet-600"),
+  amber: cssVar("--amber-500"),
+  green: cssVar("--green-500"),
+  red: cssVar("--red-500"),
+  grid: cssVar("--border"),
+  text: cssVar("--text-secondary"),
 };
+
+const PASTEL_PALETTE = [
+  "oklch(72% 0.19 350)",
+  "oklch(65% 0.16 300)",
+  "oklch(78% 0.17 55)",
+  "oklch(85% 0.16 95)",
+];
 
 Chart.defaults.font.family = "'Manrope', sans-serif";
 Chart.defaults.color = CHART_COLORS.text;
@@ -50,14 +60,18 @@ function buildPeakHoursChart(reservations) {
   const peakHour = hourCounts.indexOf(maxCount);
   peakHourBadge.textContent = maxCount > 0 ? `Pik: ${String(peakHour).padStart(2, "0")}:00` : "";
 
-  const labels = hourCounts.map((_, h) => `${String(h).padStart(2, "0")}:00`);
-  const colors = hourCounts.map((c, h) => (h === peakHour && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
+  const firstHour = hourCounts.findIndex((c) => c > 0);
+  const lastHour = hourCounts.length - 1 - [...hourCounts].reverse().findIndex((c) => c > 0);
+  const visibleCounts = hourCounts.slice(firstHour, lastHour + 1);
+
+  const labels = visibleCounts.map((_, i) => `${String(firstHour + i).padStart(2, "0")}:00`);
+  const colors = visibleCounts.map((c, i) => (firstHour + i === peakHour && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
 
   new Chart(document.getElementById("peakHoursChart"), {
     type: "bar",
     data: {
       labels,
-      datasets: [{ data: hourCounts, backgroundColor: colors, borderRadius: 6, maxBarThickness: 22 }],
+      datasets: [{ data: visibleCounts, backgroundColor: colors, borderRadius: 6, maxBarThickness: 22 }],
     },
     options: {
       responsive: true,
@@ -94,36 +108,61 @@ function buildStatusDonutChart(reservations) {
   });
 }
 
-function buildRoomUsageChart(reservations, rooms) {
-  const roomMap = new Map(rooms.map((r) => [r.id, r]));
-  const counts = {};
-
+function buildWeekdayChart(reservations) {
+  const counts = new Array(7).fill(0);
   reservations.forEach((r) => {
-    counts[r.roomId] = (counts[r.roomId] || 0) + 1;
+    const jsDay = new Date(r.startDate).getDay();
+    const mondayFirstIndex = (jsDay + 6) % 7;
+    counts[mondayFirstIndex] += 1;
   });
 
-  const sorted = Object.entries(counts)
-    .map(([roomId, count]) => {
-      const room = roomMap.get(roomId);
-      const label = room ? `${room.name} · ${room.buildingName}` : "Naməlum otaq";
-      return { label, count };
-    })
-    .sort((a, b) => b.count - a.count);
+  const maxCount = Math.max(...counts);
+  const peakDayIndex = counts.indexOf(maxCount);
+  peakDayBadge.textContent = maxCount > 0 ? `Pik: ${WEEKDAY_LABELS[peakDayIndex]}` : "";
 
-  new Chart(document.getElementById("roomUsageChart"), {
+  const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
+
+  new Chart(document.getElementById("weekdayChart"), {
     type: "bar",
     data: {
-      labels: sorted.map((s) => s.label),
-      datasets: [{ data: sorted.map((s) => s.count), backgroundColor: CHART_COLORS.mauve, borderRadius: 6, maxBarThickness: 30 }],
+      labels: WEEKDAY_LABELS,
+      datasets: [{ data: counts, backgroundColor: colors, borderRadius: 6, maxBarThickness: 40 }],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      indexAxis: "y",
       plugins: { legend: { display: false } },
       scales: {
-        x: { beginAtZero: true, ticks: { precision: 0, font: { size: 10.5 } }, grid: { color: CHART_COLORS.grid } },
-        y: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 10.5 } } },
+        y: { beginAtZero: true, ticks: { precision: 0, font: { size: 10.5 } }, grid: { color: CHART_COLORS.grid } },
+      },
+    },
+  });
+}
+
+function buildBuildingChart(reservations, rooms) {
+  const roomMap = new Map(rooms.map((r) => [r.id, r]));
+  const counts = {};
+
+  reservations.forEach((r) => {
+    const room = roomMap.get(r.roomId);
+    const buildingName = room ? room.buildingName : "Naməlum";
+    counts[buildingName] = (counts[buildingName] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  new Chart(document.getElementById("buildingChart"), {
+    type: "pie",
+    data: {
+      labels: sorted.map(([name]) => name),
+      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: sorted.map((_, i) => PASTEL_PALETTE[i % PASTEL_PALETTE.length]), borderWidth: 0 }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, padding: 12, font: { size: 11.5 } } },
       },
     },
   });
@@ -152,7 +191,8 @@ async function init() {
 
     buildPeakHoursChart(reservations);
     buildStatusDonutChart(reservations);
-    buildRoomUsageChart(reservations, rooms);
+    buildWeekdayChart(reservations);
+    buildBuildingChart(reservations, rooms);
   } catch (err) {
     showAlert(alertBox, err.message);
   }

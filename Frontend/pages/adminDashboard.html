@@ -107,9 +107,19 @@
         </div>
       </div>
 
-      <div class="card chart-card">
-        <div class="chart-card-head"><h3>Otaqlar üzrə istifadə</h3></div>
-        <div class="chart-canvas-wrap wide"><canvas id="roomUsageChart"></canvas></div>
+      <div class="charts-grid">
+        <div class="card chart-card">
+          <div class="chart-card-head">
+            <h3>Həftənin günü üzrə rezervasiyalar</h3>
+            <span class="chart-highlight" id="peakDayBadge"></span>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="weekdayChart"></canvas></div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-head"><h3>Bina üzrə rezervasiyalar</h3></div>
+          <div class="chart-canvas-wrap"><canvas id="buildingChart"></canvas></div>
+        </div>
       </div>
     </main>
   </div>

@@ -67,11 +67,16 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function formatRange(startIso, endIso) {
+const STATUS_LABELS = { ongoing: "Davam edir", upcoming: "Planlaşdırılıb", past: "Bitib" };
+const STATUS_BADGE_CLASS = { ongoing: "badge-booked", upcoming: "badge-neutral", past: "badge-completed" };
+
+function getBlackoutStatus(startIso, endIso) {
+  const now = new Date();
   const start = new Date(startIso);
   const end = new Date(endIso);
-  const dateStr = start.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" });
-  return `${dateStr}, ${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
+  if (now < start) return "upcoming";
+  if (now > end) return "past";
+  return "ongoing";
 }
 
 function openModal(blackout) {
@@ -164,21 +169,33 @@ form.addEventListener("submit", async (e) => {
 });
 
 function createBlackoutCardHtml(b) {
+  const status = getBlackoutStatus(b.startDate, b.endDate);
+  const start = new Date(b.startDate);
+  const end = new Date(b.endDate);
+  const monthAbbr = start.toLocaleDateString("az-AZ", { month: "short" });
+  const dayNum = start.toLocaleDateString("az-AZ", { day: "2-digit" });
+  const timeRange = `${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
+
   return `
     <div class="card blackout-card">
-      <div class="blackout-card-body">
-        <div class="blackout-card-head">
-          <div class="blackout-card-title">
-            <i class="bi bi-calendar-x"></i>
+      <div class="blackout-date-block ${status}">
+        <span class="blackout-date-month">${escapeHtml(monthAbbr)}</span>
+        <span class="blackout-date-day">${dayNum}</span>
+      </div>
+      <div class="blackout-card-content">
+        <div class="blackout-card-top">
+          <div>
             <h4>${escapeHtml(b.roomName)}</h4>
+            <p class="blackout-card-building">${escapeHtml(b.buildingName || "")}</p>
           </div>
-          <div class="row-actions">
-            <button class="icon-action-btn edit-btn" data-id="${b.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-            <button class="icon-action-btn delete-btn" data-id="${b.id}" title="Sil"><i class="bi bi-trash"></i></button>
-          </div>
+          <span class="badge ${STATUS_BADGE_CLASS[status]}"><span class="badge-dot"></span>${STATUS_LABELS[status]}</span>
         </div>
-        <div class="blackout-card-meta"><i class="bi bi-clock"></i>${formatRange(b.startDate, b.endDate)}</div>
-        <p class="blackout-card-reason">${escapeHtml(b.reason)}</p>
+        <div class="blackout-card-time"><i class="bi bi-clock"></i>${timeRange}</div>
+        <span class="chip">${escapeHtml(b.reason)}</span>
+        <div class="row-actions">
+          <button class="icon-action-btn edit-btn" data-id="${b.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
+          <button class="icon-action-btn delete-btn" data-id="${b.id}" title="Sil"><i class="bi bi-trash"></i></button>
+        </div>
       </div>
     </div>`;
 }

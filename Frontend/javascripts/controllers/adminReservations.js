@@ -14,8 +14,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 const tableBody = document.getElementById("reservationsTableBody");
 
 const filterUser = document.getElementById("filterUser");
-const filterFrom = document.getElementById("filterFrom");
-const filterTo = document.getElementById("filterTo");
+const filterDate = document.getElementById("filterDate");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 
 const filterBuildingDropdown = initDropdown({
@@ -86,6 +85,13 @@ function formatRange(startIso, endIso) {
   return `${dateStr}, ${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
 }
 
+function getInitials(fullName) {
+  const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 function buildRows() {
   return reservations.map((r) => {
     const user = users.find((u) => u.id === r.reservedByUserId);
@@ -99,6 +105,7 @@ function buildRows() {
       roomId: r.roomId,
       roomName: r.roomName,
       buildingName: room ? room.buildingName : "",
+      floorName: room ? room.floorName : "",
       fullName: user ? `${user.firstName} ${user.lastName}` : r.reservedByUserName,
       userName: user ? user.userName : "—",
       email: user ? user.email : "—",
@@ -124,11 +131,13 @@ function applyFilters(rows) {
     if (buildingFilter && row.buildingName !== buildingFilter) return false;
     if (roomFilter && row.roomId !== roomFilter) return false;
     if (statusFilter && getEffectiveStatus(row.status, row.endDate) !== statusFilter) return false;
-    if (filterFrom.value && new Date(row.startDate) < new Date(filterFrom.value)) return false;
-    if (filterTo.value) {
-      const toDate = new Date(filterTo.value);
-      toDate.setHours(23, 59, 59, 999);
-      if (new Date(row.startDate) > toDate) return false;
+    if (filterDate.value) {
+      const dayStart = new Date(filterDate.value);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(filterDate.value);
+      dayEnd.setHours(23, 59, 59, 999);
+      const rowStart = new Date(row.startDate);
+      if (rowStart < dayStart || rowStart > dayEnd) return false;
     }
     return true;
   });
@@ -138,27 +147,30 @@ function renderTable() {
   const rows = applyFilters(allRows);
 
   if (!rows.length) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="text-muted" style="text-align:center; padding:2rem;">Nəticə tapılmadı.</td></tr>`;
+    tableBody.innerHTML = `<div class="empty-state" style="padding:2rem;"><i class="bi bi-calendar-x"></i>Nəticə tapılmadı.</div>`;
     return;
   }
 
   tableBody.innerHTML = rows
     .map(
       (row) => `
-    <tr>
-      <td>${escapeHtml(row.fullName)}</td>
-      <td>${escapeHtml(row.userName)}</td>
-      <td>${escapeHtml(row.email)}</td>
-      <td>${escapeHtml(row.roomName)}</td>
-      <td>${formatRange(row.startDate, row.endDate)}</td>
-      <td>${statusBadgeHtml(row.status, row.endDate)}</td>
-      <td>
-        <div class="row-actions">
-          <button class="btn btn-secondary btn-sm view-btn" data-id="${row.id}" title="Ətraflı bax"><i class="bi bi-eye"></i></button>
-          ${getEffectiveStatus(row.status, row.endDate) === "Confirmed" ? `<button class="btn btn-outline btn-sm cancel-btn" data-id="${row.id}" title="Ləğv et"><i class="bi bi-x-circle"></i></button>` : ""}
-        </div>
-      </td>
-    </tr>`
+    <div class="reservation-row">
+      <div class="row-avatar">${getInitials(row.fullName)}</div>
+      <div class="reservation-user">
+        <p class="reservation-name">${escapeHtml(row.fullName)}</p>
+        <p class="reservation-email">${escapeHtml(row.email)}</p>
+      </div>
+      <div class="reservation-room">
+        <p><span class="reservation-room-label">Otaq:</span> ${escapeHtml(row.roomName)}</p>
+        <p class="reservation-building"><span class="reservation-room-label">Bina:</span> ${escapeHtml(row.buildingName || "")}${row.floorName ? ` <span class="reservation-floor">(${escapeHtml(row.floorName)})</span>` : ""}</p>
+      </div>
+      <div class="reservation-time"><i class="bi bi-calendar3"></i>${formatRange(row.startDate, row.endDate)}</div>
+      ${statusBadgeHtml(row.status, row.endDate)}
+      <div class="row-actions">
+        <button class="icon-action-btn view-btn" data-id="${row.id}" title="Ətraflı bax"><i class="bi bi-eye"></i></button>
+        <button class="icon-action-btn cancel-btn" data-id="${row.id}" title="Ləğv et" ${getEffectiveStatus(row.status, row.endDate) !== "Confirmed" ? "disabled" : ""}><i class="bi bi-x-circle"></i></button>
+      </div>
+    </div>`
     )
     .join("");
 
@@ -220,7 +232,7 @@ async function handleCancel(id) {
   }
 }
 
-[filterFrom, filterTo].forEach((el) => el.addEventListener("change", renderTable));
+filterDate.addEventListener("change", renderTable);
 filterUser.addEventListener("input", renderTable);
 
 clearFiltersBtn.addEventListener("click", () => {
@@ -229,8 +241,7 @@ clearFiltersBtn.addEventListener("click", () => {
   populateRoomFilterOptions("");
   filterRoomDropdown.setValue("");
   filterStatusDropdown.setValue("");
-  filterFrom.value = "";
-  filterTo.value = "";
+  filterDate.value = "";
   renderTable();
 });
 

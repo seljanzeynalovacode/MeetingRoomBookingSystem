@@ -858,6 +858,51 @@ body.admin-body { margin: 0; }
 .admin-table tbody tr:nth-child(even) td { background: var(--bg); }
 .admin-table tbody tr:hover td { background: var(--violet-50); }
 
+.reservation-rows { display: flex; flex-direction: column; }
+.reservation-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0.9rem 1.3rem; border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.reservation-row:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.reservation-row:last-child { border-bottom: none; border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.reservation-row:hover { background: var(--violet-50); }
+.row-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--violet-300), var(--amber-300));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--violet-900);
+}
+.reservation-user { flex: 1 1 160px; min-width: 0; }
+.reservation-name { font-size: 13.5px; font-weight: 700; margin: 0; }
+.reservation-email { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
+.reservation-room { flex: 1 1 140px; min-width: 0; }
+.reservation-room p:first-child { font-size: 13px; margin: 0; }
+.reservation-building { font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0; }
+.reservation-room-label { color: var(--violet-700); font-weight: 700; }
+.reservation-floor { color: var(--text-muted); }
+.reservation-time { flex: 1 1 140px; min-width: 0; font-size: 12.5px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.reservation-time i { color: var(--text-muted); }
+.reservation-row .badge { flex-shrink: 0; }
+.reservation-row .row-actions { flex-shrink: 0; }
+
+.user-list { display: flex; flex-direction: column; }
+.user-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0.9rem 1.3rem; border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.user-row:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.user-row:last-child { border-bottom: none; border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.user-row:hover { background: var(--violet-50); }
+.user-row .icon-action-btn { flex-shrink: 0; }
+.user-identity { flex: 1.1; min-width: 0; }
+.user-name { font-size: 13.5px; font-weight: 700; margin: 0; }
+.user-meta { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
+.user-username { margin-top: 4px; }
+.user-username span { font-weight: 700; color: var(--violet-700); }
+.user-roles { flex: 2; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+
 .role-chip {
   display: inline-flex; align-items: center; gap: 5px;
   background: var(--violet-50); color: var(--violet-700);
@@ -892,6 +937,8 @@ body.admin-body { margin: 0; }
   display: inline-flex; align-items: center; justify-content: center;
 }
 .icon-action-btn:hover { border-color: var(--red-500); color: var(--red-700); background: var(--red-100); }
+.icon-action-btn:disabled { opacity: 0.45; cursor: not-allowed; color: var(--text-muted); }
+.icon-action-btn:disabled:hover { border-color: var(--border); color: var(--text-muted); background: none; }
 
 .role-manage-card { padding: 1.5rem; margin-bottom: 2.25rem; }
 
@@ -978,6 +1025,8 @@ body.admin-body { margin: 0; }
 
 .filter-toolbar { padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
 .filter-toolbar-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; }
+.filter-toolbar-row-nowrap { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+.filter-toolbar-row-nowrap .filter-group-inline { flex-shrink: 0; }
 .filter-group-inline { display: flex; flex-direction: column; gap: 0.4rem; min-width: 150px; }
 .filter-group-inline .field-label { margin: 0; }
 .filter-group-inline select, .filter-group-inline input, .filter-group-inline .dd-wrap { min-width: 150px; }
@@ -1115,15 +1164,26 @@ body.admin-body { margin: 0; }
 
 /* ===== Blackout cards ===== */
 
-.blackout-list { display: flex; flex-direction: column; gap: 1rem; }
-.blackout-card-body { padding: 1.1rem 1.3rem; }
-.blackout-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.6rem; }
-.blackout-card-title { display: flex; align-items: center; gap: 10px; }
-.blackout-card-title i { color: var(--red-500); font-size: 16px; }
-.blackout-card-title h4 { font-size: 14.5px; }
-.blackout-card-meta { font-size: 12.5px; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px; }
-.blackout-card-meta i { color: var(--text-muted); }
-.blackout-card-reason { font-size: 13px; color: var(--text-primary); margin: 0; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+.blackout-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.blackout-card { padding: 1.1rem; display: flex; gap: 12px; }
+
+.blackout-date-block { flex-shrink: 0; width: 52px; text-align: center; border-radius: var(--r-sm); padding: 8px 4px; }
+.blackout-date-block.ongoing { background: var(--red-100); }
+.blackout-date-block.upcoming { background: var(--violet-50); }
+.blackout-date-block.past { background: var(--amber-100); }
+.blackout-date-month { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.blackout-date-day { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; }
+.blackout-date-block.ongoing .blackout-date-month, .blackout-date-block.ongoing .blackout-date-day { color: var(--red-700); }
+.blackout-date-block.upcoming .blackout-date-month, .blackout-date-block.upcoming .blackout-date-day { color: var(--violet-700); }
+.blackout-date-block.past .blackout-date-month, .blackout-date-block.past .blackout-date-day { color: var(--amber-700); }
+
+.blackout-card-content { flex: 1; min-width: 0; }
+.blackout-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.blackout-card-top h4 { font-size: 14px; margin: 0; }
+.blackout-card-building { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
+.blackout-card-time { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin: 10px 0 8px; }
+.blackout-card-time i { color: var(--text-muted); }
+.blackout-card-content .row-actions { margin-top: 10px; }
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear { display: none; }
 

@@ -18,6 +18,11 @@ public class UnitOfWork : IUnitOfWork
         Func<Task<TResult>> operation,
         IsolationLevel isolationLevel = IsolationLevel.Serializable)
     {
+        if (_context.Database.CurrentTransaction != null)
+        {
+            return await operation();
+        }
+
         var strategy = _context.Database.CreateExecutionStrategy();
 
         return await ExecutionStrategyExtensions.ExecuteAsync(strategy, async () =>

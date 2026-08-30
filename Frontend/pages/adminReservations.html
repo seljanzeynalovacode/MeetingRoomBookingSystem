@@ -60,7 +60,7 @@
       <div id="alertBox"></div>
 
       <div class="card filter-toolbar">
-        <div class="filter-toolbar-row">
+        <div class="filter-toolbar-row filter-toolbar-row-nowrap">
                     <div class="filter-group-inline">
             <label class="field-label">İstifadəçi</label>
             <input type="text" class="input" id="filterUser" placeholder="Ad, email və ya istifadəçi adı..." />
@@ -87,34 +87,18 @@
             </div>
           </div>
           <div class="filter-group-inline">
-            <label class="field-label">Tarix (başlanğıc)</label>
-            <input type="date" class="input" id="filterFrom" />
+            <label class="field-label">Tarix</label>
+            <input type="date" class="input" id="filterDate" />
           </div>
           <div class="filter-group-inline">
-            <label class="field-label">Tarix (son)</label>
-            <input type="date" class="input" id="filterTo" />
+            <label class="field-label" style="visibility:hidden;">Sıfırla</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Ad Soyad</th>
-                <th>İstifadəçi adı</th>
-                <th>Email</th>
-                <th>Otaq</th>
-                <th>Tarix/Saat</th>
-                <th>Status</th>
-                <th>Əməliyyatlar</th>
-              </tr>
-            </thead>
-            <tbody id="reservationsTableBody"></tbody>
-          </table>
-        </div>
+        <div class="reservation-rows" id="reservationsTableBody"></div>
       </div>
     </main>
   </div>
