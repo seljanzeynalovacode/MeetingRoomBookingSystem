@@ -200,6 +200,8 @@ public class ReservationService : IReservationService
     {
         return _repository.GetQueryable()
             .Include(r => r.Room)
+                .ThenInclude(room => room.Floor)
+                    .ThenInclude(floor => floor.Building)
             .Include(r => r.ReservedByUser);
     }
     public async Task<ICollection<ResponseReservationDto>> GetByUserIdAsync(Guid userId)

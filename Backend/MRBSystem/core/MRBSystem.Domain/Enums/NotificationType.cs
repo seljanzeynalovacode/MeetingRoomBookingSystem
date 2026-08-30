@@ -4,5 +4,6 @@ public enum NotificationType
 {
     Created,
     Updated,
-    Cancelled
+    Cancelled,
+    ParticipantInvited
 }

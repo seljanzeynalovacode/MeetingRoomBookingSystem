@@ -63,10 +63,14 @@ public class NotificationDeliveryService : BackgroundService
 
         foreach (var notification in pendingNotifications)
         {
+            var recipientEmail = notification.UserId.HasValue
+                ? notification.User!.Email!
+                : notification.GuestEmail!;
+
             try
             {
                 await emailService.SendEmailAsync(
-                    notification.User.Email!,
+                    recipientEmail,
                     notification.Title,
                     notification.Message);
 
@@ -77,7 +81,7 @@ public class NotificationDeliveryService : BackgroundService
             {
                 _logger.LogError(ex,
                     "Failed to deliver notification {NotificationId} to {Email}. Will retry on next cycle.",
-                    notification.Id, notification.User.Email);
+                    notification.Id, recipientEmail);
             }
         }
     }

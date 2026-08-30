@@ -4,7 +4,7 @@ import { showFieldErrors, clearFieldErrors } from "../components/alert.js";
 import { getSystemSettings } from "../api/systemSettingsApi.js";
 
 let modalEl = null;
-let pendingParticipants = [];
+let pendingParticipantEmails = [""];
 let existingParticipants = [];
 let currentOptions = null;
 let currentSettings = { minReservationMinutes: 30, maxReservationHours: 4, bookingHorizonDays: 30 };
@@ -59,7 +59,7 @@ function ensureModal() {
         <div class="field">
           <label class="field-label">Qonaqlar (email)</label>
           <div class="participant-list" id="participantList"></div>
-          <div class="participant-add-row">
+          <div class="participant-add-row" id="participantAddRow">
             <input type="email" class="input" id="participantEmailInput" placeholder="qonaq@nümunə.com" />
             <button type="button" class="btn btn-secondary btn-sm" id="addParticipantBtn"><i class="bi bi-plus"></i></button>
           </div>
@@ -108,36 +108,73 @@ function clearModalAlert() {
 
 function renderParticipants() {
   const listEl = modalEl.querySelector("#participantList");
-  const items = currentOptions.mode === "edit" ? existingParticipants : pendingParticipants;
+  const addRow = modalEl.querySelector("#participantAddRow");
 
-  if (!items.length) {
-    listEl.innerHTML = "";
-    return;
-  }
+  if (currentOptions.mode === "edit") {
+    addRow.style.display = "";
 
-  listEl.innerHTML = items
-    .map((p, idx) => {
-      const email = p.guestEmail || p.email;
-      const key = currentOptions.mode === "edit" ? p.id : idx;
-      return `<div class="participant-row"><span class="p-email"><i class="bi bi-person"></i> ${escapeHtml(email)}</span><button type="button" data-key="${key}" class="remove-participant-btn" aria-label="Sil"><i class="bi bi-x"></i></button></div>`;
-    })
-    .join("");
+    if (!existingParticipants.length) {
+      listEl.innerHTML = "";
+      return;
+    }
 
-  listEl.querySelectorAll(".remove-participant-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const key = btn.dataset.key;
-      if (currentOptions.mode === "edit") {
+    listEl.innerHTML = existingParticipants
+      .map(
+        (p) =>
+          `<div class="participant-row"><span class="p-email"><i class="bi bi-person"></i> ${escapeHtml(p.guestEmail || p.email)}</span><button type="button" data-id="${p.id}" class="remove-participant-btn" aria-label="Sil"><i class="bi bi-x"></i></button></div>`
+      )
+      .join("");
+
+    listEl.querySelectorAll(".remove-participant-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         try {
-          await deleteParticipant(key);
-          existingParticipants = existingParticipants.filter((p) => p.id !== key);
+          await deleteParticipant(btn.dataset.id);
+          existingParticipants = existingParticipants.filter((p) => p.id !== btn.dataset.id);
           renderParticipants();
         } catch (err) {
           showModalAlert(err.message);
         }
-      } else {
-        pendingParticipants.splice(Number(key), 1);
-        renderParticipants();
-      }
+      });
+    });
+    return;
+  }
+
+  addRow.style.display = "none";
+
+  listEl.innerHTML = pendingParticipantEmails
+    .map((email, idx) => {
+      const isLast = idx === pendingParticipantEmails.length - 1;
+      const actionBtn = isLast
+        ? `<button type="button" class="btn btn-secondary btn-sm participant-add-btn" aria-label="Qonaq əlavə et"><i class="bi bi-plus"></i></button>`
+        : `<button type="button" class="btn btn-outline btn-sm participant-remove-btn" data-idx="${idx}" aria-label="Sil"><i class="bi bi-x"></i></button>`;
+      return `
+        <div class="participant-add-row">
+          <input type="email" class="input participant-email-input" data-idx="${idx}" placeholder="qonaq@nümunə.com" value="${escapeHtml(email)}" />
+          ${actionBtn}
+        </div>`;
+    })
+    .join("");
+
+  listEl.querySelectorAll(".participant-email-input").forEach((input) => {
+    input.addEventListener("input", () => {
+      pendingParticipantEmails[Number(input.dataset.idx)] = input.value;
+    });
+  });
+
+  const addBtn = listEl.querySelector(".participant-add-btn");
+  if (addBtn) {
+    addBtn.addEventListener("click", () => {
+      pendingParticipantEmails.push("");
+      renderParticipants();
+      const inputs = listEl.querySelectorAll(".participant-email-input");
+      inputs[inputs.length - 1]?.focus();
+    });
+  }
+
+  listEl.querySelectorAll(".participant-remove-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      pendingParticipantEmails.splice(Number(btn.dataset.idx), 1);
+      renderParticipants();
     });
   });
 }
@@ -147,23 +184,17 @@ async function addParticipantFromInput() {
   const email = input.value.trim();
   if (!email) return;
 
-  if (currentOptions.mode === "edit") {
-    try {
-      const created = await createParticipant({
-        ReservationId: currentOptions.reservation.id,
-        GuestEmail: email,
-        GuestName: null,
-      });
-      existingParticipants.push(created);
-      renderParticipants();
-      input.value = "";
-    } catch (err) {
-      showModalAlert(err.message);
-    }
-  } else {
-    pendingParticipants.push({ email });
+  try {
+    const created = await createParticipant({
+      ReservationId: currentOptions.reservation.id,
+      GuestEmail: email,
+      GuestName: null,
+    });
+    existingParticipants.push(created);
     renderParticipants();
     input.value = "";
+  } catch (err) {
+    showModalAlert(err.message);
   }
 }
 
@@ -251,10 +282,11 @@ async function handleSubmit(e) {
         RoomId: currentOptions.room.id,
       });
 
-      if (pendingParticipants.length) {
+      const guestEmails = pendingParticipantEmails.map((e) => e.trim()).filter(Boolean);
+      if (guestEmails.length) {
         const results = await Promise.allSettled(
-          pendingParticipants.map((p) =>
-            createParticipant({ ReservationId: reservation.id, GuestEmail: p.email, GuestName: null })
+          guestEmails.map((email) =>
+            createParticipant({ ReservationId: reservation.id, GuestEmail: email, GuestName: null })
           )
         );
         const failed = results.filter((r) => r.status === "rejected").length;
@@ -284,7 +316,7 @@ async function handleSubmit(e) {
 
 export async function openBookingModal(options) {
   currentOptions = options;
-  pendingParticipants = [];
+  pendingParticipantEmails = [""];
   existingParticipants = [];
   ensureModal();
 

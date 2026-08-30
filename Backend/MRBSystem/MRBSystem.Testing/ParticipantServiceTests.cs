@@ -46,11 +46,14 @@ public class ParticipantServiceTests : IDisposable
         currentUser.Setup(x => x.UserId).Returns(currentUserId);
         currentUser.Setup(x => x.IsInRole("Admin")).Returns(isAdmin);
 
+        var notificationService = new Mock<INotificationService>();
+
         return new ParticipantService(
             new GenericRepository<Participant>(_context),
             new GenericRepository<Reservation>(_context),
             currentUser.Object,
-            _mapper);
+            _mapper,
+            notificationService.Object);
     }
 
     [Fact]

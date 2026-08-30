@@ -22,6 +22,9 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .HasConversion<string>()
             .HasMaxLength(20);
 
+        builder.Property(n => n.GuestEmail)
+            .HasMaxLength(256);
+
         builder.HasOne(n => n.User)
             .WithMany()
             .HasForeignKey(n => n.UserId)

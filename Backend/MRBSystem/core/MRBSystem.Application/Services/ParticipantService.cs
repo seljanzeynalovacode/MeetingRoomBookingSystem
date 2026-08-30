@@ -15,17 +15,20 @@ public class ParticipantService : IParticipantService
     private readonly IGenericRepository<Reservation> _reservationRepository;
     private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
+    private readonly INotificationService _notificationService;
 
     public ParticipantService(
         IGenericRepository<Participant> repository,
         IGenericRepository<Reservation> reservationRepository,
         ICurrentUserService currentUser,
-        IMapper mapper)
+        IMapper mapper,
+        INotificationService notificationService)
     {
         _repository = repository;
         _reservationRepository = reservationRepository;
         _currentUser = currentUser;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseParticipantDto> CreateAsync(CreateParticipantDto dto)
@@ -37,6 +40,8 @@ public class ParticipantService : IParticipantService
 
         var reservation = await _reservationRepository.GetQueryable()
             .Include(r => r.Room)
+                .ThenInclude(room => room.Floor)
+                    .ThenInclude(floor => floor.Building)
             .FirstOrDefaultAsync(r => r.Id == dto.ReservationId)
             ?? throw new NotFoundException($"Reservation with id {dto.ReservationId} not found.");
 
@@ -53,6 +58,11 @@ public class ParticipantService : IParticipantService
 
         var entity = _mapper.Map<Participant>(dto);
         await _repository.AddAsync(entity);
+
+        if (!string.IsNullOrWhiteSpace(dto.GuestEmail))
+        {
+            await _notificationService.CreateGuestInvitationAsync(reservation, dto.GuestEmail, dto.GuestName);
+        }
 
         var created = await _repository.GetQueryable()
             .Include(p => p.User)

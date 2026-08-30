@@ -57,6 +57,7 @@ public class NotificationService : INotificationService
             reservation.ReservedByUser.LastName,
             reservation.Title,
             reservation.Room.Name,
+            reservation.Room.Floor.Building.Name,
             reservation.StartDate,
             reservation.EndDate
         );
@@ -68,6 +69,31 @@ public class NotificationService : INotificationService
             Title = title,
             Message = message,
             Type = type,
+            ScheduledFor = DateTime.UtcNow
+        };
+
+        await _repository.AddAsync(notification);
+    }
+
+    public async Task CreateGuestInvitationAsync(Reservation reservation, string guestEmail, string? guestName)
+    {
+        var (title, message) = NotificationTemplates.BuildGuestInvitation(
+            guestName,
+            reservation.Title,
+            reservation.Room.Name,
+            reservation.Room.Floor.Building.Name,
+            reservation.StartDate,
+            reservation.EndDate
+        );
+
+        var notification = new Notification
+        {
+            UserId = null,
+            GuestEmail = guestEmail,
+            ReservationId = reservation.Id,
+            Title = title,
+            Message = message,
+            Type = NotificationType.ParticipantInvited,
             ScheduledFor = DateTime.UtcNow
         };
 
