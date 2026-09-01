@@ -5,6 +5,7 @@ import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
+import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 
 if (!isLoggedIn()) {
@@ -13,6 +14,7 @@ if (!isLoggedIn()) {
 }
 
 initNotificationBell();
+initChatWidget();
 
 const GRID_START_HOUR = 7;
 const GRID_END_HOUR = 22;
@@ -467,6 +469,7 @@ document.addEventListener("click", () => avatarMenu.classList.remove("open"));
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
+  clearChatState();
   window.location.href = "login.html";
 });
 

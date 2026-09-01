@@ -1,95 +1,116 @@
-﻿using AutoMapper;
+using AutoMapper;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using MRBSystem.Application.Mapper;
+using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
-using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
-using MRBSystem.Domain.Repository;
+using MRBSystem.Persistence.Data;
+using MRBSystem.Persistence.Repository;
+using MRBSystem.Tests;
 
-namespace MRBSystem.Application.Services;
+namespace MRBSystem.Testing;
 
-public class SystemSettingsService : ISystemSettingsService
+public class SystemSettingsServiceTests : IDisposable
 {
-    private readonly IGenericRepository<SystemSettings> _repository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-    private readonly ILogger<SystemSettingsService> _logger;
+    private readonly TestMRBAppDbContext _context;
+    private readonly SystemSettingsService _service;
 
-    public SystemSettingsService(
-        IGenericRepository<SystemSettings> repository,
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        ILogger<SystemSettingsService> logger)
+    public SystemSettingsServiceTests()
     {
-        _repository = repository;
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-        _logger = logger;
+        var connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
+        connection.Open();
+
+        var options = new DbContextOptionsBuilder<MRBAppDbContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        _context = new TestMRBAppDbContext(options);
+        _context.Database.EnsureCreated();
+
+        var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
+
+        _service = new SystemSettingsService(
+            new GenericRepository<SystemSettings>(_context),
+            new FakeUnitOfWork(),
+            mapperConfig.CreateMapper(),
+            NullLogger<SystemSettingsService>.Instance);
     }
 
-    public async Task<ResponseSystemSettingsDto> GetAsync()
+    [Fact]
+    public async Task GetAsync_NoExistingSettings_CreatesAndReturnsDefaults()
     {
-        var entity = await GetOrCreateEntityAsync();
-        return _mapper.Map<ResponseSystemSettingsDto>(entity);
+        var result = await _service.GetAsync();
+
+        result.MinReservationMinutes.Should().Be(30);
+        result.MaxReservationHours.Should().Be(4);
+        result.BookingHorizonDays.Should().Be(30);
+        result.MaxActiveReservationsPerUser.Should().Be(5);
+        result.MaxCalendarRangeDays.Should().Be(90);
     }
 
-    public async Task<ResponseSystemSettingsDto> UpdateAsync(UpdateSystemSettingsDto dto)
+    [Fact]
+    public async Task GetAsync_CalledTwice_DoesNotDuplicateSettings()
     {
-        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        await _service.GetAsync();
+        await _service.GetAsync();
+
+        var count = await _context.SystemSettings.CountAsync();
+        count.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_NoExistingSettings_CreatesNewWithProvidedValues()
+    {
+        var dto = new UpdateSystemSettingsDto
         {
-            var existing = await _repository.GetQueryable().FirstOrDefaultAsync();
+            MinReservationMinutes = 15,
+            MaxReservationHours = 6,
+            BufferMinutes = 10,
+            BookingHorizonDays = 60,
+            IsActiveReservationLimitEnabled = true,
+            MaxActiveReservationsPerUser = 3,
+            MaxCalendarRangeDays = 120
+        };
 
-            if (existing == null)
-            {
-                var created = new SystemSettings
-                {
-                    MinReservationMinutes = dto.MinReservationMinutes,
-                    MaxReservationHours = dto.MaxReservationHours,
-                    BufferMinutes = dto.BufferMinutes,
-                    BookingHorizonDays = dto.BookingHorizonDays,
-                    IsActiveReservationLimitEnabled = dto.IsActiveReservationLimitEnabled,
-                    MaxActiveReservationsPerUser = dto.MaxActiveReservationsPerUser,
-                    MaxCalendarRangeDays = dto.MaxCalendarRangeDays
-                };
-                await _repository.AddAsync(created);
-                return created;
-            }
+        var result = await _service.UpdateAsync(dto);
 
-            existing.MinReservationMinutes = dto.MinReservationMinutes;
-            existing.MaxReservationHours = dto.MaxReservationHours;
-            existing.BufferMinutes = dto.BufferMinutes;
-            existing.BookingHorizonDays = dto.BookingHorizonDays;
-            existing.IsActiveReservationLimitEnabled = dto.IsActiveReservationLimitEnabled;
-            existing.MaxActiveReservationsPerUser = dto.MaxActiveReservationsPerUser;
-            existing.MaxCalendarRangeDays = dto.MaxCalendarRangeDays;
-            await _repository.UpdateAsync(existing);
-            return existing;
-        });
-
-        _logger.LogInformation("System settings updated.");
-        return _mapper.Map<ResponseSystemSettingsDto>(entity);
+        result.MinReservationMinutes.Should().Be(15);
+        result.MaxActiveReservationsPerUser.Should().Be(3);
+        result.IsActiveReservationLimitEnabled.Should().BeTrue();
     }
 
-    private async Task<SystemSettings> GetOrCreateEntityAsync()
+    [Fact]
+    public async Task UpdateAsync_ExistingSettings_UpdatesInPlaceWithoutDuplicating()
     {
-        return await _unitOfWork.ExecuteInTransactionAsync(async () =>
-        {
-            var entity = await _repository.GetQueryable().FirstOrDefaultAsync();
-            if (entity != null) return entity;
+        await _service.GetAsync(); // default qeydi yaradır
+        _context.ChangeTracker.Clear(); // real HTTP sorğusunda hər dəfə təzə DbContext olardı — burda əl ilə təqlid edirik
 
-            entity = new SystemSettings
-            {
-                MinReservationMinutes = 30,
-                MaxReservationHours = 4,
-                BufferMinutes = 0,
-                BookingHorizonDays = 30,
-                IsActiveReservationLimitEnabled = false,
-                MaxActiveReservationsPerUser = 5,
-                MaxCalendarRangeDays = 90
-            };
-            await _repository.AddAsync(entity);
-            _logger.LogInformation("Default system settings created.");
-            return entity;
-        });
+        var dto = new UpdateSystemSettingsDto
+        {
+            MinReservationMinutes = 45,
+            MaxReservationHours = 2,
+            BufferMinutes = 5,
+            BookingHorizonDays = 14,
+            IsActiveReservationLimitEnabled = false,
+            MaxActiveReservationsPerUser = 10,
+            MaxCalendarRangeDays = 30
+        };
+
+        await _service.UpdateAsync(dto);
+
+        var count = await _context.SystemSettings.CountAsync();
+        count.Should().Be(1);
+
+        var updated = await _context.SystemSettings.FirstAsync();
+        updated.MinReservationMinutes.Should().Be(45);
+        updated.MaxActiveReservationsPerUser.Should().Be(10);
+    }
+
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
     }
 }

@@ -19,6 +19,9 @@ public class RoomServiceTests : IDisposable
     private readonly Guid _buildingId = Guid.NewGuid();
     private readonly Guid _floorId = Guid.NewGuid();
 
+    // 2024-01-08 = Bazar ertəsi (iş günü), saat 10:00 Bakı vaxtı = 06:00 UTC
+    private static readonly DateTime WorkHourStart = new(2024, 1, 8, 6, 0, 0, DateTimeKind.Utc);
+
     public RoomServiceTests()
     {
         var connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
@@ -44,7 +47,13 @@ public class RoomServiceTests : IDisposable
                 new GenericRepository<SystemSettings>(_context),
                 new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
-                NullLogger<SystemSettingsService>.Instance));
+                NullLogger<SystemSettingsService>.Instance),
+        new WorkingHourService(
+                new GenericRepository<BuildingWorkingHour>(_context),
+                new GenericRepository<Building>(_context),
+                new FakeUnitOfWork(),
+                mapperConfig.CreateMapper(),
+                NullLogger<WorkingHourService>.Instance));
 
         SeedBuildingAndFloor();
     }
@@ -58,8 +67,8 @@ public class RoomServiceTests : IDisposable
         {
             BuildingId = _buildingId,
             Capacity = 5,
-            StartDate = DateTime.UtcNow.AddHours(1),
-            EndDate = DateTime.UtcNow.AddHours(2)
+            StartDate = WorkHourStart,
+            EndDate = WorkHourStart.AddHours(1)
         });
 
         result.Should().ContainSingle(r => r.RoomId == room.Id);
@@ -74,8 +83,8 @@ public class RoomServiceTests : IDisposable
         {
             BuildingId = _buildingId,
             Capacity = 10,
-            StartDate = DateTime.UtcNow.AddHours(1),
-            EndDate = DateTime.UtcNow.AddHours(2)
+            StartDate = WorkHourStart,
+            EndDate = WorkHourStart.AddHours(1)
         });
 
         result.Should().BeEmpty();
@@ -85,8 +94,8 @@ public class RoomServiceTests : IDisposable
     public async Task SearchAvailableAsync_RoomWithOverlappingReservation_IsExcluded()
     {
         var room = await SeedRoomAsync(capacity: 10);
-        var start = DateTime.UtcNow.AddHours(1);
-        var end = DateTime.UtcNow.AddHours(2);
+        var start = WorkHourStart;
+        var end = WorkHourStart.AddHours(1);
 
         var user = new AppUser
         {
@@ -122,8 +131,8 @@ public class RoomServiceTests : IDisposable
     public async Task SearchAvailableAsync_RoomWithBlackout_IsExcluded()
     {
         var room = await SeedRoomAsync(capacity: 10);
-        var start = DateTime.UtcNow.AddHours(1);
-        var end = DateTime.UtcNow.AddHours(2);
+        var start = WorkHourStart;
+        var end = WorkHourStart.AddHours(1);
 
         _context.RoomBlackouts.Add(new RoomBlackout
         {

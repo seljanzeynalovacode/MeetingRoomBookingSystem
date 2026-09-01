@@ -481,7 +481,7 @@ select.input { appearance: none; cursor: pointer; }
 
 .room-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
+  grid-template-columns: repeat(auto-fill, 320px);
   gap: 1.25rem;
 }
 
@@ -1581,3 +1581,122 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .notification-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
 .notification-message { font-size: 12px; color: var(--text-secondary); margin-bottom: 3px; }
 .notification-time { font-size: 11px; color: var(--text-muted); }
+
+/* ===== Chat widget (AI room-search bot) — kənarda "dock" olunan panel ===== */
+.dash-layout main { transition: padding-right 0.3s var(--ease); }
+body.chat-dock-open .dash-layout main { padding-right: 320px; }
+
+.chat-widget-fab {
+  position: fixed; right: 1.75rem; bottom: 1.75rem; z-index: 500;
+  width: 62px; height: 62px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--violet-600), var(--violet-500));
+  color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: var(--shadow-lg);
+  transition: transform 0.15s var(--ease), background 0.15s, opacity 0.2s var(--ease);
+}
+.chat-widget-fab:hover { transform: translateY(-2px) scale(1.05); }
+.chat-widget-fab.open { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+.chat-dock {
+  position: fixed; top: 76px; right: 0; bottom: 0; width: 380px; max-width: 100vw;
+  background: var(--surface-raised); border-left: 1px solid var(--border);
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+  box-shadow: var(--shadow-lg); z-index: 490;
+  display: flex; flex-direction: column; overflow: hidden;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.32s var(--ease), opacity 0.32s var(--ease);
+  pointer-events: none;
+}
+.chat-dock.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
+
+.chat-widget-head {
+  padding: 1.1rem 1.3rem;
+  background: linear-gradient(135deg, var(--violet-700), var(--violet-500));
+  color: #fff; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.chat-widget-head::before {
+  content: ""; position: absolute; top: -40px; right: -30px; width: 140px; height: 140px;
+  background: rgba(255,255,255,0.08); border-radius: 50%;
+}
+.chat-widget-head-icon {
+  width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.16);
+  display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.chat-widget-head-text { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.chat-widget-head-title { font-size: 14.5px; font-weight: 700; }
+.chat-widget-close {
+  background: oklch(58% 0.19 25 / 0.45); border: 1px solid oklch(58% 0.19 25 / 0.7);
+  color: #fff; cursor: pointer;
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; position: relative; z-index: 1; transition: background 0.15s, border-color 0.15s;
+}
+.chat-widget-close:hover { background: oklch(50% 0.19 25 / 0.65); border-color: oklch(50% 0.19 25 / 0.85); }
+
+.chat-widget-messages {
+  flex: 1; overflow-y: auto; padding: 1.2rem; display: flex; flex-direction: column; gap: 14px;
+  background: oklch(98.5% 0.004 70);
+}
+
+.chat-msg-row { display: flex; gap: 8px; align-items: flex-end; }
+.chat-msg-row.user { flex-direction: row-reverse; }
+
+.chat-msg-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+  background: linear-gradient(135deg, var(--violet-300), var(--violet-500)); color: #fff;
+}
+
+.chat-msg-bubble { max-width: 76%; padding: 0.65rem 0.9rem; font-size: 13px; line-height: 1.5; box-shadow: var(--shadow-sm); }
+.chat-msg-row.bot .chat-msg-bubble {
+  background: var(--surface-raised); color: var(--text-primary);
+  border-radius: 4px 14px 14px 14px; border: 1px solid var(--border);
+}
+.chat-msg-row.user .chat-msg-bubble {
+  background: linear-gradient(135deg, var(--violet-600), var(--violet-500)); color: #fff;
+  border-radius: 14px 4px 14px 14px;
+}
+
+.chat-msg-bubble.typing { display: flex; gap: 4px; align-items: center; padding: 0.8rem 1rem; }
+.chat-msg-bubble.typing span {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted);
+  animation: chatTypingBounce 1.2s infinite ease-in-out;
+}
+.chat-msg-bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+.chat-msg-bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes chatTypingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+.chat-widget-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 1.2rem 0.9rem; flex-shrink: 0; }
+.chat-widget-chip {
+  font-size: 11.5px; font-weight: 600; color: var(--violet-700); background: var(--violet-50);
+  border: 1px solid var(--violet-100); padding: 0.4rem 0.75rem; border-radius: var(--r-pill);
+  cursor: pointer; transition: background 0.15s;
+}
+.chat-widget-chip:hover { background: var(--violet-100); }
+
+.chat-widget-input-row {
+  display: flex; gap: 8px; padding: 0.9rem 1rem; border-top: 1px solid var(--border);
+  background: var(--surface-raised); flex-shrink: 0;
+}
+.chat-widget-input-row .input {
+  flex: 1; border: 1.5px solid var(--border); border-radius: var(--r-pill);
+  padding: 0.7rem 1.1rem; font-size: 13px; font-family: 'Manrope', sans-serif; outline: none;
+  background: var(--surface); transition: border-color 0.15s, background 0.15s;
+}
+.chat-widget-input-row .input:focus { border-color: var(--violet-500); background: #fff; box-shadow: var(--glow-violet); }
+.chat-widget-send {
+  width: 42px; height: 42px; border-radius: 50%; border: none; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--violet-600), var(--violet-500)); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px;
+  transition: transform 0.15s;
+}
+.chat-widget-send:hover { transform: scale(1.06); }
+.chat-widget-send:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+@media (max-width: 480px) {
+  .chat-widget-fab { right: 1rem; bottom: 1rem; }
+  .chat-dock { width: 100vw; }
+  body.chat-dock-open .dash-layout main { padding-right: 0; }
+}

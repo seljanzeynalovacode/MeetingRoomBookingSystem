@@ -465,6 +465,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MRBSystem.WebAPI.Controllers.ChatController",
+    "Method": "SendMessage",
+    "RelativePath": "api/Chat",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MRBSystem.Contracts.DTOs.ChatDtos.ChatRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MRBSystem.WebAPI.Controllers.EquipmentsController",
     "Method": "GetEquipments",
     "RelativePath": "api/Equipments",

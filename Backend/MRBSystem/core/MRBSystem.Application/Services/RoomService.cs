@@ -12,6 +12,7 @@ namespace MRBSystem.Application.Services;
 
 public class RoomService : IRoomService
 {
+    private const int AzerbaijanUtcOffsetHours = 4;
     private readonly IGenericRepository<Room> _repository;
     private readonly IGenericRepository<Floor> _floorRepository;
     private readonly IGenericRepository<Reservation> _reservationRepository;
@@ -19,6 +20,7 @@ public class RoomService : IRoomService
     private readonly IGenericRepository<RoomEquipment> _roomEquipmentRepository;
     private readonly IMapper _mapper;
     private readonly ISystemSettingsService _systemSettingsService;
+    private readonly IWorkingHourService _workingHourService;
 
     public RoomService(
         IGenericRepository<Room> repository,
@@ -27,7 +29,8 @@ public class RoomService : IRoomService
         IGenericRepository<RoomBlackout> blackoutRepository,
         IGenericRepository<RoomEquipment> roomEquipmentRepository,
         IMapper mapper,
-        ISystemSettingsService systemSettingsService)
+        ISystemSettingsService systemSettingsService,
+        IWorkingHourService workingHourService)
     {
         _repository = repository;
         _floorRepository = floorRepository;
@@ -36,6 +39,7 @@ public class RoomService : IRoomService
         _roomEquipmentRepository = roomEquipmentRepository;
         _mapper = mapper;
         _systemSettingsService = systemSettingsService;
+        _workingHourService = workingHourService;
     }
 
     public async Task<ResponseRoomDto> CreateAsync(CreateRoomDto dto)
@@ -106,6 +110,28 @@ public class RoomService : IRoomService
         if (dto.StartDate >= dto.EndDate)
         {
             throw new ArgumentException("StartDate must be earlier than EndDate.");
+        }
+
+        var localStart = dto.StartDate.AddHours(AzerbaijanUtcOffsetHours);
+        var localEnd = dto.EndDate.AddHours(AzerbaijanUtcOffsetHours);
+
+        var workingHours = await _workingHourService.GetByBuildingIdAsync(dto.BuildingId);
+        var todayHours = workingHours.FirstOrDefault(h => h.DayOfWeek == localStart.DayOfWeek.ToString());
+
+        if (todayHours == null || !todayHours.IsWorkingDay)
+        {
+            throw new ArgumentException("Seçilmiş tarixdə bina iş günü deyil.");
+        }
+
+        var startOffset = localStart.TimeOfDay;
+        var endOffset = localEnd - localStart.Date;
+
+        if (startOffset < todayHours.StartTime || endOffset > todayHours.EndTime)
+        {
+            var startText = todayHours.StartTime.ToString(@"hh\:mm");
+            var endText = todayHours.EndTime.ToString(@"hh\:mm");
+            throw new ArgumentException(
+                $"Seçilmiş saat iş saatları xaricindədir. Zəhmət olmasa {startText}-{endText} aralığında bir saat təyin edin.");
         }
 
         var candidateRooms = await _repository.GetQueryable()

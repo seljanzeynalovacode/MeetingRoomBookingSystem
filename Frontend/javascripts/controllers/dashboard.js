@@ -5,6 +5,7 @@ import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
+import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 
 if (!isLoggedIn()) {
@@ -13,6 +14,7 @@ if (!isLoggedIn()) {
 }
 
 initNotificationBell();
+initChatWidget();
 
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");
@@ -475,6 +477,7 @@ document.addEventListener("click", () => avatarMenu.classList.remove("open"));
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
+  clearChatState();
   window.location.href = "login.html";
 });
 

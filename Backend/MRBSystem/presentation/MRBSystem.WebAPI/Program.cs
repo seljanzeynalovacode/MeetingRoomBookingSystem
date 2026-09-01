@@ -149,6 +149,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddHttpClient<IChatService, GeminiChatService>();
 
 
 
