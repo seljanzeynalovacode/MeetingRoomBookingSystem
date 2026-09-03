@@ -66,7 +66,11 @@ public class ReservationServiceTests : IDisposable
                 new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
                 NullLogger<WorkingHourService>.Instance),
-            _systemSettingsService);
+            _systemSettingsService,
+            new TimeZoneService(new FakeConfiguration(new Dictionary<string, string?>
+            {
+                ["Localization:TimeZoneId"] = "Asia/Baku"
+            })));
     }
 
     [Fact]

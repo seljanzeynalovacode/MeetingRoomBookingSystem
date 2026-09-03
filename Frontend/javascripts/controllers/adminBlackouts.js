@@ -66,6 +66,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function toDateOnlyString(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 const STATUS_LABELS = { ongoing: "Davam edir", upcoming: "Planlaşdırılıb", past: "Bitib" };
 const STATUS_BADGE_CLASS = { ongoing: "badge-booked", upcoming: "badge-neutral", past: "badge-completed" };
 
@@ -88,14 +95,14 @@ function openModal(blackout) {
     roomDropdown.setDisabled(true);
     const start = new Date(blackout.startDate);
     const end = new Date(blackout.endDate);
-    dateInput.value = start.toISOString().slice(0, 10);
+    dateInput.value = toDateOnlyString(start);
     startInput.value = start.toTimeString().slice(0, 5);
     endInput.value = end.toTimeString().slice(0, 5);
     reasonInput.value = blackout.reason;
   } else {
     roomDropdown.setDisabled(false);
     roomDropdown.setValue(rooms[0]?.id || "");
-    dateInput.value = new Date().toISOString().slice(0, 10);
+    dateInput.value = toDateOnlyString(new Date());
     startInput.value = "09:00";
     endInput.value = "10:00";
     reasonInput.value = "";

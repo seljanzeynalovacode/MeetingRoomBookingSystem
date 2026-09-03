@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MRBSystem.Contracts.DTOs.ChatDtos;
 using MRBSystem.Contracts.Services;
 
@@ -18,6 +19,7 @@ public class ChatController : ControllerBase
 
     [HttpPost]
     [Authorize]
+    [EnableRateLimiting("ChatPolicy")]
     public async Task<IActionResult> SendMessage([FromBody] ChatRequestDto dto)
     {
         var result = await _chatService.SendMessageAsync(dto);

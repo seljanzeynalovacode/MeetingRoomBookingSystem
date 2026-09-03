@@ -13,7 +13,6 @@ public class GeminiChatService : IChatService
 {
     private const string Model = "gemini-3.5-flash-lite";
     private const int MaxToolRounds = 3;
-    private const int AzerbaijanUtcOffsetHours = 4;
 
     private const string SystemPrompt =
         "Sən MeetingSpace görüş otağı rezervasiya sisteminin köməkçi botusan. " +
@@ -38,19 +37,22 @@ public class GeminiChatService : IChatService
     private readonly IRoomService _roomService;
     private readonly IBuildingService _buildingService;
     private readonly ILogger<GeminiChatService> _logger;
+    private readonly ITimeZoneService _timeZoneService;
 
     public GeminiChatService(
         HttpClient httpClient,
         IConfiguration configuration,
         IRoomService roomService,
         IBuildingService buildingService,
-        ILogger<GeminiChatService> logger)
+        ILogger<GeminiChatService> logger,
+        ITimeZoneService timeZoneService)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _roomService = roomService;
         _buildingService = buildingService;
         _logger = logger;
+        _timeZoneService = timeZoneService;
     }
 
     public async Task<ChatResponseDto> SendMessageAsync(ChatRequestDto dto)
@@ -71,7 +73,7 @@ public class GeminiChatService : IChatService
             Parts = new List<GeminiPart> { new() { Text = dto.Message } },
         });
 
-        var today = DateTime.UtcNow.AddHours(AzerbaijanUtcOffsetHours).Date;
+        var today = _timeZoneService.ToLocal(DateTime.UtcNow).Date;
         var systemInstruction =
             $"{SystemPrompt} Bugünkü həqiqi tarix: {today:yyyy-MM-dd} ({today.DayOfWeek}). " +
             "İstifadəçi 'bugün', 'sabah', 'srağagün' kimi nisbi tarix ifadələri işlətsə, bu tarixə əsaslanaraq hesabla.";
@@ -207,10 +209,8 @@ public class GeminiChatService : IChatService
         {
             return new { error = "Tarix/saat formatı düzgün deyil. Tarix YYYY-MM-DD, saat HH:mm formatında olmalıdır." };
         }
-
-        // Bakı UTC+4-dür (yay vaxtına keçid yoxdur) — yerli vaxtı UTC-yə çeviririk.
-        var startDate = localStart.AddHours(-4);
-        var endDate = localEnd.AddHours(-4);
+        var startDate = _timeZoneService.ToUtc(localStart);
+        var endDate = _timeZoneService.ToUtc(localEnd);
 
         try
         {

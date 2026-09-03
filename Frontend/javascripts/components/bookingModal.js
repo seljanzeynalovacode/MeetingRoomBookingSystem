@@ -15,6 +15,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function toDateOnlyString(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function ensureModal() {
   if (modalEl) return modalEl;
 
@@ -341,8 +348,8 @@ export async function openBookingModal(options) {
   const modalTitleEl = modalEl.querySelector("#bookingModalTitle");
   const submitBtn = modalEl.querySelector("#bookingModalSubmitBtn");
 
-  dateInput.min = new Date().toISOString().slice(0, 10);
-  dateInput.max = isAdmin ? "" : new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  dateInput.min = toDateOnlyString(new Date());
+  dateInput.max = isAdmin ? "" : toDateOnlyString(new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000));
 
   if (options.mode === "edit") {
     modalTitleEl.textContent = "Rezervasiyanı redaktə et";
@@ -352,7 +359,7 @@ export async function openBookingModal(options) {
 
     const start = new Date(options.reservation.startDate);
     const end = new Date(options.reservation.endDate);
-    dateInput.value = start.toISOString().slice(0, 10);
+    dateInput.value = toDateOnlyString(start);
     startInput.value = start.toTimeString().slice(0, 5);
     endInput.value = end.toTimeString().slice(0, 5);
 
@@ -368,7 +375,7 @@ export async function openBookingModal(options) {
     submitBtn.textContent = "Rezerv et";
     roomNameEl.textContent = options.room.name;
     titleInput.value = "";
-    dateInput.value = options.prefillDate || new Date().toISOString().slice(0, 10);
+    dateInput.value = options.prefillDate || toDateOnlyString(new Date());
     startInput.value = options.prefillStart || "";
     endInput.value = options.prefillEnd || "";
     renderParticipants();

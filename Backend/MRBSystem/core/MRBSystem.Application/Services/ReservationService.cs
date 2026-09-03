@@ -13,8 +13,6 @@ namespace MRBSystem.Application.Services;
 
 public class ReservationService : IReservationService
 {
-    private const int AzerbaijanUtcOffsetHours = 4;
-
     private readonly IGenericRepository<Reservation> _repository;
     private readonly IGenericRepository<Room> _roomRepository;
     private readonly IGenericRepository<RoomBlackout> _blackoutRepository;
@@ -25,6 +23,7 @@ public class ReservationService : IReservationService
     private readonly ILogger<ReservationService> _logger;
     private readonly IWorkingHourService _workingHourService;
     private readonly ISystemSettingsService _systemSettingsService;
+    private readonly ITimeZoneService _timeZoneService;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
@@ -36,7 +35,8 @@ public class ReservationService : IReservationService
         ILogger<ReservationService> logger,
         IGenericRepository<Room> roomRepository,
         IWorkingHourService workingHourService,
-        ISystemSettingsService systemSettingsService)
+        ISystemSettingsService systemSettingsService,
+        ITimeZoneService timeZoneService)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
@@ -48,8 +48,8 @@ public class ReservationService : IReservationService
         _roomRepository = roomRepository;
         _workingHourService = workingHourService;
         _systemSettingsService = systemSettingsService;
+        _timeZoneService = timeZoneService;
     }
-
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
     {
         var room = await _roomRepository.GetByIdAsync(dto.RoomId);
@@ -273,24 +273,10 @@ public class ReservationService : IReservationService
           .Select(r => r.Floor.BuildingId)
           .FirstAsync();
 
-        var localStart = startDate.AddHours(AzerbaijanUtcOffsetHours);
-        var localEnd = endDate.AddHours(AzerbaijanUtcOffsetHours);
+        var localStart = _timeZoneService.ToLocal(startDate);
+        var localEnd = _timeZoneService.ToLocal(endDate);
 
-        var workingHours = await _workingHourService.GetByBuildingIdAsync(buildingId);
-        var todayHours = workingHours.FirstOrDefault(h => h.DayOfWeek == localStart.DayOfWeek.ToString());
-
-        var startOffset = localStart.TimeOfDay;
-        var endOffset = localEnd - localStart.Date;
-
-        if (todayHours == null || !todayHours.IsWorkingDay
-            || startOffset < todayHours.StartTime
-            || endOffset > todayHours.EndTime)
-        {
-            _logger.LogWarning(
-                "Reservation for room {RoomId} falls outside building working hours: {StartDate} - {EndDate}",
-                roomId, startDate, endDate);
-            throw new ArgumentException("Rezervasiya binanın iş saatları xaricindədir.");
-        }
+        await _workingHourService.EnsureWithinWorkingHoursAsync(buildingId, localStart, localEnd);
 
 
         var bufferMinutes = settings.BufferMinutes;

@@ -137,6 +137,28 @@ public class WorkingHourService : IWorkingHourService
         _logger.LogInformation("Default working hours seeded for building {BuildingId}", buildingId);
     }
 
+    public async Task EnsureWithinWorkingHoursAsync(Guid buildingId, DateTime localStart, DateTime localEnd)
+    {
+        var workingHours = await GetByBuildingIdAsync(buildingId);
+        var todayHours = workingHours.FirstOrDefault(h => h.DayOfWeek == localStart.DayOfWeek.ToString());
+
+        if (todayHours == null || !todayHours.IsWorkingDay)
+        {
+            throw new ArgumentException("Seçilmiş tarixdə bina iş günü deyil.");
+        }
+
+        var startOffset = localStart.TimeOfDay;
+        var endOffset = localEnd - localStart.Date;
+
+        if (startOffset < todayHours.StartTime || endOffset > todayHours.EndTime)
+        {
+            var startText = todayHours.StartTime.ToString(@"hh\:mm");
+            var endText = todayHours.EndTime.ToString(@"hh\:mm");
+            throw new ArgumentException(
+                $"Seçilmiş saat iş saatları xaricindədir. Zəhmət olmasa {startText}-{endText} aralığında bir saat təyin edin.");
+        }
+    }
+
     private static IEnumerable<BuildingWorkingHour> OrderByWeekday(IEnumerable<BuildingWorkingHour> rows)
         => rows.OrderBy(r => Array.IndexOf(WeekOrder, r.DayOfWeek));
 }

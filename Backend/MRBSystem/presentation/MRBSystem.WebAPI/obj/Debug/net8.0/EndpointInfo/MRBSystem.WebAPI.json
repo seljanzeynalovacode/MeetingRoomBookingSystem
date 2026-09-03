@@ -1928,27 +1928,38 @@
         "additionalProperties": false
       },
       "ChatMessageDto": {
+        "required": [
+          "role",
+          "text"
+        ],
         "type": "object",
         "properties": {
           "role": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "pattern": "^(user|model)$",
+            "type": "string"
           },
           "text": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "ChatRequestDto": {
+        "required": [
+          "message"
+        ],
         "type": "object",
         "properties": {
           "message": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
           },
           "history": {
+            "maxItems": 40,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ChatMessageDto"

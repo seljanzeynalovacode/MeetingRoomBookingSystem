@@ -13,6 +13,7 @@ using MRBSystem.Infrasturucture.Services;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 using Serilog;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -95,6 +96,17 @@ namespace MRBSystem.WebAPI
                             QueueLimit = 0
                         }));
 
+                options.AddPolicy("ChatPolicy", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                            ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0
+                        }));
+
                 options.OnRejected = async (context, cancellationToken) =>
                 {
                     context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
@@ -133,6 +145,7 @@ namespace MRBSystem.WebAPI
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+            builder.Services.AddSingleton<ITimeZoneService, TimeZoneService>();
 
             builder.Services.AddScoped<IBuildingService, BuildingService>();
             builder.Services.AddScoped<IFloorService, FloorService>();

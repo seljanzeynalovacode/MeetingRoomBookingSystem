@@ -53,7 +53,11 @@ public class RoomServiceTests : IDisposable
                 new GenericRepository<Building>(_context),
                 new FakeUnitOfWork(),
                 mapperConfig.CreateMapper(),
-                NullLogger<WorkingHourService>.Instance));
+                NullLogger<WorkingHourService>.Instance),
+        new TimeZoneService(new FakeConfiguration(new Dictionary<string, string?>
+        {
+            ["Localization:TimeZoneId"] = "Asia/Baku"
+        })));
 
         SeedBuildingAndFloor();
     }
