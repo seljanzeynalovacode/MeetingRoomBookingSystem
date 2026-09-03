@@ -106,6 +106,15 @@ public class RoomService : IRoomService
         return _mapper.Map<ICollection<ResponseRoomDto>>(entities);
     }
 
+    public async Task<bool> HasAnyMatchingRoomAsync(Guid buildingId, Guid? floorId, int capacity)
+    {
+        return await _repository.GetQueryable()
+            .AnyAsync(r => r.IsActive
+                && r.Floor.BuildingId == buildingId
+                && (floorId == null || r.FloorId == floorId)
+                && r.Capacity >= capacity);
+    }
+
     public async Task<ICollection<ResponseAvailableRoomDto>> SearchAvailableAsync(RoomAvailabilityRequestDto dto)
     {
         if (dto.StartDate >= dto.EndDate)

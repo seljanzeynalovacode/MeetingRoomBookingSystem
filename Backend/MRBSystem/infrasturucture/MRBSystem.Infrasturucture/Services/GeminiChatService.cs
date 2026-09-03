@@ -15,16 +15,27 @@ public class GeminiChatService : IChatService
     private const int MaxToolRounds = 3;
 
     private const string SystemPrompt =
-        "Sən MeetingSpace görüş otağı rezervasiya sisteminin köməkçi botusan. " +
+        "Sənin adın MeetAI-dır — MeetingSpace görüş otağı rezervasiya sisteminin süni intellekt köməkçisisən. " +
         "İstifadəçilərə hansı otaqların hansı vaxt boş olduğunu tapmaqda kömək edirsən. " +
-        "Yalnız 'search_available_rooms' alətindən istifadə et — rezervasiya yaratma, silmə və ya başqa əməliyyat etmə, " +
-        "yalnız məlumat ver. Cavablarını həmişə Azərbaycan dilində, qısa və aydın şəkildə ver. " +
+        "Yalnız 'search_available_rooms' və 'list_buildings' alətlərindən istifadə et — rezervasiya yaratma, silmə və ya başqa əməliyyat etmə, " +
+        "yalnız məlumat ver. İSTİFADƏÇİNİN SON MESAJININ DİLİNİ DİQQƏTLƏ MÜƏYYƏNLƏŞDİR (Azərbaycan, İngilis və ya Türk dili ola bilər) və cavabını MÜTLƏQ HƏMİN dildə yaz — bu, dillər bir-birinə bənzəsə belə (məsələn Türk və Azərbaycan dilləri) tətbiq olunur, sadəcə vərdişlə Azərbaycan dilinə keçmə. Cavablarını qısa və aydın şəkildə ver. " +
+        "ÇOX VACİB: cavabında YALNIZ 'search_available_rooms' alətinin qaytardığı otaqları göstər — " +
+        "alətin nəticəsində olmayan heç bir otaq adı, tutum və ya bina uydurma. " +
+        "Alət neçə otaq qaytarıbsa, cavabında dəqiq o qədər otaq olmalıdır, nə az, nə çox. " +
+        "'search_available_rooms' aləti eyni vaxtda YALNIZ BİR bina üçün işləyir — bir sorğuda bir neçə və ya bütün binaları avtomatik yoxlama/dövr etmə. " +
+        "İstifadəçi bir neçə və ya 'bütün binalar' haqqında soruşarsa, ona hansı KONKRET binanı yoxlamaq istədiyini soruş. " +
         "Əgər bina adı tapılmasa, alət sənə mövcud bina adlarının siyahısını qaytaracaq — " +
         "həmin adlardan istifadəçinin nəzərdə tutduğuna ən yaxın olanı seçib yenidən cəhd et. " +
-        "İstifadəçi tarix/saat vermirsə, aydınlaşdırıcı sual ver. " +
+        "İstifadəçi tarix/saat vermirsə VƏ söhbətin əvvəlki mesajlarında da bu məlumat yoxdursa, aydınlaşdırıcı sual ver. " +
+        "Əgər bina, tarix və ya saat söhbətin əvvəlki mesajlarında artıq qeyd olunubsa, bunu xatırla və təkrar soruşma — " +
+        "istifadəçi yalnız bir parametri (məs. müddəti) dəyişmək istəyirsə, qalan parametrləri əvvəlki mesajlardan götürüb alətə ötür. " +
+        "Bu qayda bina KATALOQU siyahısına aid deyil: istifadəçi 'hansı binalar var' kimi ümumi sual versə, " +
+        "HƏMİŞƏ 'list_buildings' alətini yenidən çağır — söhbətin əvvəlki cavabından təkrar etmə, çünki bina siyahısı vaxt keçdikcə dəyişə bilər (əlavə/silinə bilər). " +
+        "Əgər istifadəçi əvvəlki axtarışdan bir otaq haqqında əlavə təfərrüat (avadanlıq, tutum, mərtəbə) soruşursa, " +
+        "'mənim məlumatım yoxdur' demə — əvəzinə eyni bina/tarix/saat ilə alətə YENİDƏN müraciət et, çünki alət bu məlumatları hər çağırışda qaytarır. " +
         "Cavablarında Markdown ulduzlarından (**) və ya başqa formatlaşdırma simvollarından istifadə etmə. " +
         "Emoji, stiker və ya dekorativ simvollar işlətmə. " +
-        "Bir neçə otaq/nəticə olduqda məlumatları sadə, hər biri ayrı sətirdə olmaqla göstər — ulduz, tire və ya markdown işarəsi olmadan, sadəcə yeni sətirlə. " +
+        "Bir neçə otaq, bina və ya hər hansı digər siyahı (nəticə) təqdim edərkən: əvvəlcə iki nöqtə (':') ilə bitən qısa giriş cümləsi yaz, sonra hər elementi ayrı sətirdə göstər — ulduz, tire və ya markdown işarəsi olmadan, sadəcə yeni sətirlə. " +
         "Tək bir nəticə olduqda süni siyahı yaratma, adi cümlə şəklində yaz.";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -102,7 +113,11 @@ public class GeminiChatService : IChatService
 
             contents.Add(new GeminiContent { Role = "model", Parts = parts });
 
-            var toolResult = await SearchRoomsAsync(functionCallPart.FunctionCall!.Args);
+            var toolResult = functionCallPart.FunctionCall!.Name switch
+            {
+                "list_buildings" => await ListBuildingsAsync(),
+                _ => await SearchRoomsAsync(functionCallPart.FunctionCall.Args),
+            };
 
             contents.Add(new GeminiContent
             {
@@ -152,12 +167,19 @@ public class GeminiChatService : IChatService
                         new
                         {
                             name = "search_available_rooms",
-                            description = "Müəyyən tarix və saat aralığında, seçilmiş binada boş (mövcud) görüş otaqlarını axtarır.",
+                            description = "Müəyyən tarix və saat aralığında, seçilmiş binada boş (mövcud) görüş otaqlarını axtarır. Nəticədə hər otaq üçün ad, tutum, mərtəbə və avadanlıq siyahısı da qaytarılır.",
                             parameters = BuildSearchRoomsSchema(),
+                        },
+                        new
+                        {
+                            name = "list_buildings",
+                            description = "Sistemdəki bütün binaların cari siyahısını qaytarır. İstifadəçi hansı binaların mövcud olduğunu soruşanda istifadə et.",
+                            parameters = BuildListBuildingsSchema(),
                         },
                     },
                 },
             },
+            generationConfig = new { temperature = 0.3 },
         };
 
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={apiKey}";
@@ -209,6 +231,12 @@ public class GeminiChatService : IChatService
         {
             return new { error = "Tarix/saat formatı düzgün deyil. Tarix YYYY-MM-DD, saat HH:mm formatında olmalıdır." };
         }
+
+        if (localEnd <= _timeZoneService.ToLocal(DateTime.UtcNow))
+        {
+            return new { error = "Seçilmiş tarix/saat artıq keçmişdədir. Zəhmət olmasa gələcək bir tarix/saat üçün müraciət edin." };
+        }
+
         var startDate = _timeZoneService.ToUtc(localStart);
         var endDate = _timeZoneService.ToUtc(localEnd);
 
@@ -224,7 +252,13 @@ public class GeminiChatService : IChatService
 
             if (results.Count == 0)
             {
-                return new { message = "Bu vaxt aralığında uyğun boş otaq tapılmadı." };
+                var hasAnyMatch = await _roomService.HasAnyMatchingRoomAsync(building.Id, null, minCapacity);
+                return new
+                {
+                    message = hasAnyMatch
+                        ? "Bu şərtlərə uyğun otaq bu binada mövcuddur, amma seçilmiş saat aralığında artıq bron edilib."
+                        : "Bu tutumda/şərtlərlə uyğun otaq bu binada mövcud deyil."
+                };
             }
 
             return new
@@ -248,6 +282,21 @@ public class GeminiChatService : IChatService
             _logger.LogWarning(ex, "Otaq axtarışı zamanı xəta baş verdi.");
             return new { error = "Otaq axtarışı zamanı xəta baş verdi." };
         }
+    }
+
+    private async Task<object> ListBuildingsAsync()
+    {
+        var buildings = await _buildingService.GetAllAsync();
+        return new { buildings = buildings.Select(b => b.Name) };
+    }
+
+    private static object BuildListBuildingsSchema()
+    {
+        return new
+        {
+            type = "object",
+            properties = new { },
+        };
     }
 
     private static string? TryGetString(JsonElement args, string propertyName)

@@ -2,7 +2,7 @@ import { isLoggedIn, getAccessToken, refreshAccessToken } from "../api/apiClient
 import { updateProfile, changePassword, logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
-import { initChatWidget, clearChatState } from "../components/chatWidget.js";
+import { clearChatState } from "../components/chatWidget.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -10,7 +10,6 @@ if (!isLoggedIn()) {
 }
 
 initNotificationBell();
-initChatWidget();
 
 const alertBox = document.getElementById("alertBox");
 

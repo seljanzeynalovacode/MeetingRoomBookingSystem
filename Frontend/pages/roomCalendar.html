@@ -49,38 +49,57 @@
   <div class="dash-alert" id="alertBox"></div>
 
   <div class="calendar-layout">
-    <div class="calendar-header-row">
-      <div>
-        <h2>Təqvim</h2>
-        <p class="calendar-subtitle" id="calendarSubtitle"></p>
-      </div>
-
-      <div class="calendar-controls">
-        <button class="icon-btn" id="prevBtn" aria-label="Əvvəlki gün"><i class="bi bi-chevron-left"></i></button>
-        <span class="date-label" id="dateLabel"></span>
-        <button class="icon-btn" id="nextBtn" aria-label="Növbəti gün"><i class="bi bi-chevron-right"></i></button>
-        <button class="btn btn-secondary btn-sm" id="todayBtn">Bu gün</button>
-        <div class="view-toggle">
-          <button type="button" id="dayViewBtn" class="active"><i class="bi bi-calendar-day"></i> Gün</button>
-          <button type="button" id="weekViewBtn"><i class="bi bi-calendar-week"></i> Həftə</button>
+    <aside class="sidebar">
+      <div class="card filter-card">
+        <div class="filter-card-head">
+          <i class="bi bi-building"></i>
+          <h3>Bina və otaq</h3>
+        </div>
+        <div class="filter-group">
+          <label class="field-label" for="buildingSelectBtn">Bina</label>
+          <div class="dd-wrap">
+            <button type="button" class="dd-btn" id="buildingSelectBtn"><span>Bütün binalar</span><i class="bi bi-chevron-down"></i></button>
+            <div class="dd-panel" id="buildingSelectPanel"></div>
+          </div>
+        </div>
+        <div class="filter-group" style="margin-bottom: 0;">
+          <label class="field-label" for="roomSelectBtn">Otaq</label>
+          <div class="dd-wrap">
+            <button type="button" class="dd-btn" id="roomSelectBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+            <div class="dd-panel" id="roomSelectPanel"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-        <div class="room-picker-row">
-      <label class="field-label" for="buildingSelectBtn" style="margin:0;">Bina</label>
-      <div class="dd-wrap">
-        <button type="button" class="dd-btn" id="buildingSelectBtn"><span>Bütün binalar</span><i class="bi bi-chevron-down"></i></button>
-        <div class="dd-panel" id="buildingSelectPanel"></div>
+      <div class="card room-info-card">
+        <div class="room-info-name" id="roomInfoName"></div>
+        <div class="room-info-row"><i class="bi bi-building"></i><span id="roomInfoLocation"></span></div>
       </div>
-      <label class="field-label" for="roomSelectBtn" style="margin:0;">Otaq</label>
-      <div class="dd-wrap">
-        <button type="button" class="dd-btn" id="roomSelectBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
-        <div class="dd-panel" id="roomSelectPanel"></div>
-      </div>
-    </div>
 
-    <div id="calendarContent"></div>
+      <div class="card legend-card">
+        <div class="legend-row"><span class="legend-dot" style="background:var(--violet-300)"></span>Rezervasiya</div>
+        <div class="legend-row"><span class="legend-dot" style="background:var(--red-500)"></span>Bloklama</div>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <div class="calendar-header-row">
+        <h2>Təqvim</h2>
+
+        <div class="calendar-controls">
+          <button class="icon-btn" id="prevBtn" aria-label="Əvvəlki gün"><i class="bi bi-chevron-left"></i></button>
+          <span class="date-label" id="dateLabel"></span>
+          <button class="icon-btn" id="nextBtn" aria-label="Növbəti gün"><i class="bi bi-chevron-right"></i></button>
+          <button class="btn btn-secondary btn-sm" id="todayBtn">Bu gün</button>
+          <div class="view-toggle">
+            <button type="button" id="dayViewBtn" class="active"><i class="bi bi-calendar-day"></i> Gün</button>
+            <button type="button" id="weekViewBtn"><i class="bi bi-calendar-week"></i> Həftə</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="calendarContent"></div>
+    </div>
   </div>
 
   <script type="module" src="../javascripts/controllers/roomCalendar.js"></script>

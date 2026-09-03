@@ -21,6 +21,9 @@ const listEl = document.getElementById("reservationList");
 
 const filterDate = document.getElementById("filterDate");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+const statConfirmed = document.getElementById("statConfirmed");
+const statCompleted = document.getElementById("statCompleted");
+const statCancelled = document.getElementById("statCancelled");
 
 const filterStatusDropdown = initDropdown({
   btn: document.getElementById("filterStatusBtn"),
@@ -230,10 +233,22 @@ function renderReservations() {
     sectionHtml(`<i class="bi bi-clock-history"></i>Keçmiş`, past);
 }
 
+function renderStats() {
+  const counts = { Confirmed: 0, Completed: 0, Cancelled: 0 };
+  reservations.forEach((r) => {
+    const status = getEffectiveStatus(r.status, r.endDate);
+    counts[status]++;
+  });
+  statConfirmed.textContent = counts.Confirmed;
+  statCompleted.textContent = counts.Completed;
+  statCancelled.textContent = counts.Cancelled;
+}
+
 async function loadReservations() {
   try {
     reservations = await getMyReservations();
     renderReservations();
+    renderStats();
   } catch (err) {
     showAlert(alertBox, err.message);
   }

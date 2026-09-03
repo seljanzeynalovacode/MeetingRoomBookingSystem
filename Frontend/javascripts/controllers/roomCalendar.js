@@ -1,6 +1,7 @@
 import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings, getAllFloors } from "../api/roomsApi.js";
 import { getRoomCalendar } from "../api/calendarApi.js";
+import { getWorkingHours } from "../api/workingHoursApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
@@ -16,13 +17,36 @@ if (!isLoggedIn()) {
 initNotificationBell();
 initChatWidget();
 
-const GRID_START_HOUR = 7;
-const GRID_END_HOUR = 22;
-const ROW_HEIGHT = 56;
-const HOURS = Array.from({ length: GRID_END_HOUR - GRID_START_HOUR }, (_, i) => GRID_START_HOUR + i);
+let GRID_START_HOUR = 7;
+let GRID_END_HOUR = 22;
+let HOURS = Array.from({ length: GRID_END_HOUR - GRID_START_HOUR }, (_, i) => GRID_START_HOUR + i);
+
+function toMinutes(time) {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+async function updateGridHoursForBuilding(buildingId) {
+  if (!buildingId) return;
+  try {
+    const hours = await getWorkingHours(buildingId);
+    const workingDays = hours.filter((h) => h.isWorkingDay);
+    if (!workingDays.length) return;
+
+    const minStart = Math.min(...workingDays.map((h) => toMinutes(h.startTime)));
+    const maxEnd = Math.max(...workingDays.map((h) => toMinutes(h.endTime)));
+
+    GRID_START_HOUR = Math.floor(minStart / 60);
+    GRID_END_HOUR = Math.max(Math.ceil(maxEnd / 60), GRID_START_HOUR + 1);
+    HOURS = Array.from({ length: GRID_END_HOUR - GRID_START_HOUR }, (_, i) => GRID_START_HOUR + i);
+  } catch {
+    // sakitcə keç, defolt saatlarla davam et
+  }
+}
 
 const alertBox = document.getElementById("alertBox");
-const calendarSubtitle = document.getElementById("calendarSubtitle");
+const roomInfoName = document.getElementById("roomInfoName");
+const roomInfoLocation = document.getElementById("roomInfoLocation");
 const dayViewBtn = document.getElementById("dayViewBtn");
 const weekViewBtn = document.getElementById("weekViewBtn");
 const prevBtn = document.getElementById("prevBtn");
@@ -142,11 +166,12 @@ function clampHour(h) {
 function computeBlockPosition(startIso, endIso) {
   const start = new Date(startIso);
   const end = new Date(endIso);
+  const totalHours = GRID_END_HOUR - GRID_START_HOUR;
   const startHourFloat = clampHour(start.getHours() + start.getMinutes() / 60);
   const endHourFloat = clampHour(end.getHours() + end.getMinutes() / 60);
-  const top = (startHourFloat - GRID_START_HOUR) * ROW_HEIGHT;
-  const height = Math.max((endHourFloat - startHourFloat) * ROW_HEIGHT, 22);
-  return { top, height };
+  const top = ((startHourFloat - GRID_START_HOUR) / totalHours) * 100;
+  const height = Math.max(((endHourFloat - startHourFloat) / totalHours) * 100, 2.5);
+  return { top: `${top}%`, height: `${height}%` };
 }
 
 let popoverOutsideHandler = null;
@@ -245,8 +270,8 @@ function renderDayView(calendarDays) {
     const { top, height } = computeBlockPosition(item.start, item.end);
     const block = document.createElement("div");
     block.className = item.type === "blackout" ? "grid-event-block blackout" : "grid-event-block";
-    block.style.top = `${top}px`;
-    block.style.height = `${height}px`;
+    block.style.top = top;
+    block.style.height = height;
     const start = new Date(item.start).toTimeString().slice(0, 5);
     const end = new Date(item.end).toTimeString().slice(0, 5);
     block.innerHTML = `${escapeHtml(item.title)}<span class="ge-time">${start}–${end}</span>`;
@@ -299,8 +324,8 @@ function renderWeekView(calendarDays) {
       const { top, height } = computeBlockPosition(item.start, item.end);
       const block = document.createElement("div");
       block.className = item.type === "blackout" ? "grid-event-block blackout week-block" : "grid-event-block week-block";
-      block.style.top = `${top}px`;
-      block.style.height = `${height}px`;
+      block.style.top = top;
+      block.style.height = height;
       const start = new Date(item.start).toTimeString().slice(0, 5);
       block.innerHTML = `<span class="ge-time-only">${start}</span>${escapeHtml(item.title)}`;
       block.addEventListener("click", (e) => {
@@ -334,7 +359,13 @@ function updateHeaderLabels(startDate, endDate) {
   }
 
   const room = rooms.find((r) => r.id === selectedRoomId);
-  calendarSubtitle.textContent = room ? `${room.name} · ${room.buildingName}, ${room.floorName}` : "";
+  if (room) {
+    roomInfoName.textContent = room.name;
+    roomInfoLocation.textContent = `${room.buildingName}, ${room.floorName} · ${room.capacity} nəfərlik`;
+  } else {
+    roomInfoName.textContent = "";
+    roomInfoLocation.textContent = "";
+  }
 }
 
 let fetchToken = 0;
@@ -355,6 +386,11 @@ async function fetchAndRender() {
 
   const myToken = ++fetchToken;
   setNavDisabled(true);
+
+  const room = rooms.find((r) => r.id === selectedRoomId);
+  const floor = room ? floors.find((f) => f.id === room.floorId) : null;
+  await updateGridHoursForBuilding(floor ? floor.buildingId : null);
+  if (myToken !== fetchToken) return;
 
   let startDate, endDate;
   if (viewMode === "day") {
@@ -438,7 +474,8 @@ const buildingDropdown = initDropdown({
     if (!filtered.length) {
       selectedRoomId = "";
       selectedRoomName = "";
-      calendarSubtitle.textContent = "";
+      roomInfoName.textContent = "";
+      roomInfoLocation.textContent = "";
       contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>Bu binada otaq yoxdur.</div>`;
       return;
     }

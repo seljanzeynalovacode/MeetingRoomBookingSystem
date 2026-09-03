@@ -11,5 +11,6 @@ public interface IRoomService
     Task<ResponseRoomDto> GetByIdAsync(Guid id);
     Task<ICollection<ResponseRoomDto>> GetAllAsync();
     Task<ICollection<ResponseAvailableRoomDto>> SearchAvailableAsync(RoomAvailabilityRequestDto dto);
+    Task<bool> HasAnyMatchingRoomAsync(Guid buildingId, Guid? floorId, int capacity);
     Task<ICollection<RoomCalendarDto>> GetRoomCalendarAsync(Guid roomId, DateTime startDate, DateTime endDate);
 }

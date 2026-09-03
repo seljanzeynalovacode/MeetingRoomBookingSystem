@@ -49,28 +49,55 @@
   <div class="dash-alert" id="alertBox"></div>
 
   <div class="reservations-layout">
-    <div class="content-head">
-      <h2>Rezervasiyalarım</h2>
-    </div>
-
-    <div class="card filter-toolbar">
-      <div class="filter-toolbar-row">
-        <div class="filter-group-inline">
+    <aside class="sidebar">
+      <div class="card filter-card">
+        <div class="filter-card-head">
+          <i class="bi bi-funnel"></i>
+          <h3>Filtrlər</h3>
+        </div>
+        <div class="filter-group">
           <label class="field-label">Status</label>
           <div class="dd-wrap">
             <button type="button" class="dd-btn" id="filterStatusBtn"><span>Hamısı</span><i class="bi bi-chevron-down"></i></button>
             <div class="dd-panel" id="filterStatusPanel"></div>
           </div>
         </div>
-        <div class="filter-group-inline">
-          <label class="field-label">Tarix</label>
-          <input type="date" class="input" id="filterDate" />
+        <div class="filter-group">
+          <label class="field-label" for="filterDate">Tarix</label>
+          <div class="input-wrap">
+            <i class="bi bi-calendar3 leading-icon"></i>
+            <input type="date" class="input has-icon" id="filterDate" />
+          </div>
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
+        <button type="button" class="btn btn-ghost btn-sm btn-block" id="clearFiltersBtn"><i class="bi bi-arrow-counterclockwise"></i>Sıfırla</button>
       </div>
-    </div>
 
-    <div class="mb2-groups" id="reservationList"></div>
+      <div class="card stats-card">
+        <div class="stats-row">
+          <span class="stats-dot" style="background:var(--green-500)"></span>
+          <span class="stats-label">Təsdiqlənib</span>
+          <span class="stats-value" id="statConfirmed">0</span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-dot" style="background:var(--amber-600)"></span>
+          <span class="stats-label">Tamamlanıb</span>
+          <span class="stats-value" id="statCompleted">0</span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-dot" style="background:var(--red-500)"></span>
+          <span class="stats-label">Ləğv edilib</span>
+          <span class="stats-value" id="statCancelled">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="content-head">
+        <h2>Rezervasiyalarım</h2>
+      </div>
+
+      <div class="mb2-groups" id="reservationList"></div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>

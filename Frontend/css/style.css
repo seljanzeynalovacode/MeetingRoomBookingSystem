@@ -71,6 +71,12 @@ a:hover { color: var(--violet-700); }
 }
 .btn-ghost:hover:not(:disabled) { background: oklch(94% 0.006 70); color: var(--text-primary); }
 
+.nav-links a.active,
+.nav-links a.active:hover {
+  background: var(--violet-500);
+  color: #fff;
+}
+
 .btn-sm { padding: 0.5rem 0.85rem; font-size: 12.5px; }
 .btn-lg { padding: 0.9rem 1.6rem; font-size: 15px; }
 .btn-block { width: 100%; }
@@ -330,7 +336,7 @@ body.dashboard-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease)
 }
 
 .topnav {
-  position: fixed; top: 0; left: 0; right: 0; height: 76px; z-index: 50;
+  position: fixed; top: 0; left: 0; right: 0; height: 76px; z-index: 560;
   display: flex; align-items: center; gap: 1.5rem;
   padding: 0 1.75rem;
   background: rgba(255,255,255,0.72);
@@ -394,7 +400,7 @@ body.dashboard-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease)
   position: absolute; top: calc(100% + 8px); right: 0;
   background: var(--surface-raised); border: 1px solid var(--border);
   border-radius: var(--r-md); box-shadow: var(--shadow-lg);
-  padding: 0.4rem; min-width: 160px; display: none; z-index: 60;
+  padding: 0.4rem; min-width: 160px; display: none; z-index: 550;
 }
 .avatar-menu.open { display: block; }
 .avatar-menu button, .avatar-menu a {
@@ -446,7 +452,7 @@ body.dashboard-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease)
 
 .dash-alert { max-width: 1360px; margin: 1.25rem auto 0; padding: 0 1.75rem; }
 
-.sidebar { position: sticky; top: 96px; align-self: start; }
+.sidebar { position: sticky; top: 96px; align-self: start; display: flex; flex-direction: column; gap: 1rem; }
 .filter-card { padding: 1.15rem; }
 .filter-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
 .filter-card h3 { font-size: 15px; margin-bottom: 0; display: flex; align-items: center; gap: 8px; }
@@ -614,7 +620,21 @@ select.input { appearance: none; cursor: pointer; }
 
 /* ===== My Bookings ===== */
 
-.reservations-layout { max-width: 900px; margin: 0 auto; padding: 1.75rem; }
+.reservations-layout {
+  max-width: 1360px; margin: 0 auto; padding: 1.75rem;
+  display: grid; grid-template-columns: 272px 1fr; gap: 1.75rem;
+}
+
+@media (max-width: 1080px) {
+  .reservations-layout { grid-template-columns: 1fr; }
+  .reservations-layout .sidebar { position: static; }
+}
+
+.stats-card { padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 10px; }
+.stats-row { display: flex; align-items: center; gap: 8px; }
+.stats-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.stats-label { flex: 1; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+.stats-value { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
 .mb2-groups { display: flex; flex-direction: column; }
 
@@ -708,13 +728,20 @@ select.input { appearance: none; cursor: pointer; }
 
 /* ===== Room Calendar (F5) ===== */
 
-.calendar-layout { max-width: 1200px; margin: 0 auto; padding: 1.75rem; }
+.calendar-layout {
+  max-width: 1360px; margin: 0 auto; padding: 1.75rem;
+  display: grid; grid-template-columns: 272px 1fr; gap: 1.75rem;
+  height: calc(100vh - 76px);
+}
+
+.main-col { display: flex; flex-direction: column; min-height: 0; }
+#calendarContent { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
 .calendar-header-row {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  flex-wrap: wrap; gap: 14px; margin-bottom: 1.4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px; margin-bottom: 1rem; flex-shrink: 0;
 }
-.calendar-subtitle { font-size: 13px; color: var(--text-secondary); margin: 0.2rem 0 0; }
+.calendar-header-row h2 { font-size: 18px; }
 
 .calendar-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .date-label { font-weight: 700; font-size: 14px; min-width: 190px; text-align: center; }
@@ -732,30 +759,35 @@ select.input { appearance: none; cursor: pointer; }
 .view-toggle button.active { background: var(--violet-500); color: #fff; }
 .view-toggle button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.room-picker-row {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 1.5rem;
-}
-.room-picker-row .dd-wrap { width: 100%; max-width: 320px; }
+.room-info-card { padding: 1.1rem; display: flex; flex-direction: column; gap: 10px; }
+.room-info-name { font-size: 15px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+.room-info-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); font-weight: 600; }
+.room-info-row i { color: var(--text-muted); flex-shrink: 0; }
+
+.legend-card { padding: 0.9rem 1.1rem; display: flex; flex-direction: column; gap: 8px; }
+.legend-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
 /* Day grid */
 .day-grid-wrap {
-  display: flex; border: 1px solid var(--border); border-radius: var(--r-lg);
+  flex: 1; min-height: 0; display: flex; border: 1px solid var(--border); border-radius: var(--r-lg);
   overflow: hidden; background: var(--surface-raised); box-shadow: var(--shadow-sm);
 }
-.hour-labels { width: 60px; flex-shrink: 0; border-right: 1px solid var(--border); }
+.hour-labels { width: 60px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
 .hour-labels .hour-label {
-  height: 56px; box-sizing: border-box; padding: 6px 10px 0 0;
+  flex: 1; box-sizing: border-box; padding: 6px 10px 0 0;
   font-size: 11px; font-weight: 700; color: var(--text-muted); text-align: right;
   border-bottom: 1px solid var(--border);
 }
-.day-grid-col { flex: 1; position: relative; }
+.hour-labels .hour-label:last-child { border-bottom: none; }
+.day-grid-col { flex: 1; position: relative; display: flex; flex-direction: column; }
 .grid-hour-row {
-  height: 56px; box-sizing: border-box; border-bottom: 1px solid var(--border);
+  flex: 1; box-sizing: border-box; border-bottom: 1px solid var(--border);
   cursor: pointer; transition: background 0.12s;
 }
+.grid-hour-row:last-child { border-bottom: none; }
 .grid-hour-row:hover { background: var(--violet-50); }
-.day-grid-col .grid-events-layer { position: absolute; top: 0; left: 8px; right: 8px; pointer-events: none; }
+.day-grid-col .grid-events-layer { position: absolute; top: 0; left: 8px; right: 8px; bottom: 0; pointer-events: none; }
 
 .grid-event-block {
   position: absolute; left: 0; right: 0;
@@ -790,30 +822,37 @@ select.input { appearance: none; cursor: pointer; }
 
 /* Week grid */
 .week-grid-wrap {
-  display: flex; border: 1px solid var(--border); border-radius: var(--r-lg);
+  flex: 1; min-height: 0; display: flex; border: 1px solid var(--border); border-radius: var(--r-lg);
   overflow: hidden; overflow-x: auto; background: var(--surface-raised); box-shadow: var(--shadow-sm);
 }
-.week-hour-labels { width: 60px; flex-shrink: 0; border-right: 1px solid var(--border); padding-top: 40px; }
+.week-hour-labels { width: 60px; flex-shrink: 0; border-right: 1px solid var(--border); padding-top: 40px; display: flex; flex-direction: column; }
 .week-hour-labels .hour-label {
-  height: 56px; box-sizing: border-box; padding: 6px 10px 0 0;
+  flex: 1; box-sizing: border-box; padding: 6px 10px 0 0;
   font-size: 11px; font-weight: 700; color: var(--text-muted); text-align: right;
   border-bottom: 1px solid var(--border);
 }
+.week-hour-labels .hour-label:last-child { border-bottom: none; }
 .week-days-wrap { display: flex; flex: 1; min-width: 840px; }
-.week-day-column { flex: 1; min-width: 120px; border-right: 1px solid var(--border); }
+.week-day-column { flex: 1; min-width: 120px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
 .week-day-column:last-child { border-right: none; }
 .week-day-header {
-  height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 40px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   font-size: 11.5px; font-weight: 700; color: var(--text-secondary);
   border-bottom: 1px solid var(--border); background: var(--surface);
 }
 .week-day-header .wdh-date { color: var(--text-muted); font-weight: 600; font-size: 10.5px; }
-.week-day-body { position: relative; }
-.week-day-body .grid-hour-row { border-bottom: 1px solid var(--border); }
-.week-day-body .grid-events-layer { position: absolute; top: 0; left: 3px; right: 3px; pointer-events: none; }
+.week-day-body { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.week-day-body .grid-hour-row { flex: 1; border-bottom: 1px solid var(--border); }
+.week-day-body .grid-hour-row:last-child { border-bottom: none; }
+.week-day-body .grid-events-layer { position: absolute; top: 0; left: 3px; right: 3px; bottom: 0; pointer-events: none; }
 .week-block { font-size: 10.5px; padding: 4px 6px; }
 .week-block .ge-time-only { display: block; font-weight: 700; opacity: 0.85; font-size: 9.5px; margin-bottom: 1px; }
 
+@media (max-width: 1080px) {
+  .calendar-layout { grid-template-columns: 1fr; height: auto; }
+  .calendar-layout .sidebar { position: static; }
+  .day-grid-wrap, .week-grid-wrap { min-height: 520px; }
+}
 @media (max-width: 900px) {
   .calendar-header-row { flex-direction: column; align-items: stretch; }
   .date-label { min-width: auto; }
@@ -1356,7 +1395,7 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .section-head h2 { font-size: 2.15rem; margin-bottom: 0.9rem; }
 .section-head p { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
 
-.features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.features-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; }
 .feature-card {
   background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--r-lg);
   box-shadow: var(--shadow-sm); padding: 1.8rem 1.5rem;
@@ -1371,6 +1410,7 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .feature-card:nth-child(2) .feature-ic { background: linear-gradient(135deg, var(--amber-500), var(--amber-600)); }
 .feature-card:nth-child(3) .feature-ic { background: linear-gradient(135deg, var(--green-500), oklch(45% 0.13 148)); }
 .feature-card:nth-child(4) .feature-ic { background: linear-gradient(135deg, var(--violet-600), var(--amber-600)); }
+.feature-card:nth-child(5) .feature-ic { background: linear-gradient(135deg, var(--amber-600), var(--violet-600)); }
 .feature-card h3 { font-size: 1.02rem; margin-bottom: 0.5rem; }
 .feature-card p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
 
@@ -1557,7 +1597,7 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
   position: absolute; top: calc(100% + 8px); right: 0; width: 340px;
   background: var(--surface-raised); border: 1px solid var(--border);
   border-radius: var(--r-md); box-shadow: var(--shadow-lg);
-  display: none; z-index: 60; overflow: hidden;
+  display: none; z-index: 550; overflow: hidden;
 }
 .notification-panel.open { display: block; }
 .notification-panel-head {
@@ -1583,8 +1623,12 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .notification-time { font-size: 11px; color: var(--text-muted); }
 
 /* ===== Chat widget (AI room-search bot) — kənarda "dock" olunan panel ===== */
-.dash-layout main { transition: padding-right 0.3s var(--ease); }
-body.chat-dock-open .dash-layout main { padding-right: 320px; }
+.dash-layout main,
+.calendar-layout,
+.reservations-layout { transition: padding-right 0.3s var(--ease); }
+body.chat-dock-open .dash-layout main,
+body.chat-dock-open .calendar-layout,
+body.chat-dock-open .reservations-layout { padding-right: 320px; }
 
 .chat-widget-fab {
   position: fixed; right: 1.75rem; bottom: 1.75rem; z-index: 500;
@@ -1698,5 +1742,7 @@ body.chat-dock-open .dash-layout main { padding-right: 320px; }
 @media (max-width: 480px) {
   .chat-widget-fab { right: 1rem; bottom: 1rem; }
   .chat-dock { width: 100vw; }
-  body.chat-dock-open .dash-layout main { padding-right: 0; }
+  body.chat-dock-open .dash-layout main,
+  body.chat-dock-open .calendar-layout,
+  body.chat-dock-open .reservations-layout { padding-right: 0; }
 }
