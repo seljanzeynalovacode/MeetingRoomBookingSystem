@@ -1,4 +1,4 @@
-import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
+import { isLoggedIn, getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getMyReservations, cancelReservation, updateReservation } from "../api/reservationsApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
@@ -333,3 +333,16 @@ clearFiltersBtn.addEventListener("click", () => {
 });
 
 loadReservations();
+
+const hubConnection = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE_URL.replace("/api", "")}/hubs/room-calendar`, {
+    accessTokenFactory: () => getAccessToken(),
+  })
+  .withAutomaticReconnect()
+  .build();
+
+hubConnection.on("MyReservationsChanged", () => {
+  loadReservations();
+});
+
+hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

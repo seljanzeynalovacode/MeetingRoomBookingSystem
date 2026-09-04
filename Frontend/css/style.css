@@ -918,24 +918,19 @@ body.admin-body { margin: 0; }
 .admin-nav-groups { flex: 1; display: flex; flex-direction: column; }
 .admin-nav { display: flex; flex-direction: column; gap: 3px; }
 .nav-section-label {
-  display: flex; align-items: center; gap: 8px;
   font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-muted); margin: 1.1rem 0.8rem 0.4rem;
-}
-.nav-section-label::before,
-.nav-section-label::after {
-  content: ""; flex: 1; height: 1px; background: var(--border);
 }
 .nav-section-label:first-of-type { margin-top: 0; }
 .admin-nav a {
   display: flex; align-items: center; gap: 10px;
   padding: 0.65rem 0.8rem; border-radius: var(--r-sm);
-  font-size: 13.5px; font-weight: 600; color: var(--text-secondary);
+  font-size: 13.5px; font-weight: 600; color: var(--violet-600);
   transition: background 0.15s, color 0.15s;
 }
-.admin-nav a i { font-size: 16px; width: 18px; text-align: center; color: var(--text-muted); }
+.admin-nav a i { font-size: 16px; width: 18px; text-align: center; color: var(--violet-600); }
 .admin-nav a:hover { background: var(--violet-50); color: var(--violet-700); }
-.admin-nav a:hover i { color: var(--violet-600); }
+.admin-nav a:hover i { color: var(--violet-700); }
 .admin-nav a.active { background: var(--violet-500); color: #fff; }
 .admin-nav a.active i { color: #fff; }
 
@@ -1226,7 +1221,6 @@ body.admin-body { margin: 0; }
   outline: none; background: var(--surface-raised);
 }
 .search-box input:focus { border-color: var(--violet-500); box-shadow: var(--glow-violet); }
-.admin-nav-groups .nav-section-label { color: var(--violet-600); }
 
 
 /* ===== Room cards (grouped by building) ===== */

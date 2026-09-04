@@ -24,6 +24,7 @@ public class ReservationService : IReservationService
     private readonly IWorkingHourService _workingHourService;
     private readonly ISystemSettingsService _systemSettingsService;
     private readonly ITimeZoneService _timeZoneService;
+    private readonly IRoomCalendarBroadcastService _roomCalendarBroadcastService;
 
     public ReservationService(
         IGenericRepository<Reservation> repository,
@@ -36,7 +37,8 @@ public class ReservationService : IReservationService
         IGenericRepository<Room> roomRepository,
         IWorkingHourService workingHourService,
         ISystemSettingsService systemSettingsService,
-        ITimeZoneService timeZoneService)
+        ITimeZoneService timeZoneService,
+        IRoomCalendarBroadcastService roomCalendarBroadcastService)
     {
         _repository = repository;
         _blackoutRepository = blackoutRepository;
@@ -49,6 +51,7 @@ public class ReservationService : IReservationService
         _workingHourService = workingHourService;
         _systemSettingsService = systemSettingsService;
         _timeZoneService = timeZoneService;
+        _roomCalendarBroadcastService = roomCalendarBroadcastService;
     }
     public async Task<ResponseReservationDto> CreateAsync(CreateReservationDto dto)
     {
@@ -82,6 +85,8 @@ public class ReservationService : IReservationService
         _logger.LogDebug(
             "Notification sent for created reservation {ReservationId} to relevant users",
             created.Id);
+
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(created.RoomId, created.ReservedByUserId);
 
         return _mapper.Map<ResponseReservationDto>(created);
     }
@@ -140,6 +145,8 @@ public class ReservationService : IReservationService
             "Notification sent for updated reservation {ReservationId} to relevant users",
             updated.Id);
 
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(updated.RoomId, updated.ReservedByUserId);
+
         return _mapper.Map<ResponseReservationDto>(updated);
     }
 
@@ -174,6 +181,8 @@ public class ReservationService : IReservationService
         var cancelled = await GetWithDetailsAsync().FirstAsync(r => r.Id == entity.Id);
 
         await _notificationService.CreateAsync(cancelled, NotificationType.Cancelled);
+
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(cancelled.RoomId, cancelled.ReservedByUserId);
     }
 
     public async Task<ResponseReservationDto> GetByIdAsync(Guid id)

@@ -1,5 +1,6 @@
 import { requireAdmin } from "../components/adminGuard.js";
 import { logout } from "../api/authApi.js";
+import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin, cancelReservation } from "../api/reservationsApi.js";
@@ -278,3 +279,16 @@ async function loadData() {
 }
 
 loadData();
+
+const hubConnection = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE_URL.replace("/api", "")}/hubs/room-calendar`, {
+    accessTokenFactory: () => getAccessToken(),
+  })
+  .withAutomaticReconnect()
+  .build();
+
+hubConnection.on("ReservationsChanged", () => {
+  loadData();
+});
+
+hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

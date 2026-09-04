@@ -15,17 +15,20 @@ public class RoomBlackoutService : IRoomBlackoutService
     private readonly IGenericRepository<Room> _roomRepository;
     private readonly IGenericRepository<Reservation> _reservationRepository;
     private readonly IMapper _mapper;
+    private readonly IRoomCalendarBroadcastService _roomCalendarBroadcastService;
 
     public RoomBlackoutService(
     IGenericRepository<RoomBlackout> repository,
     IGenericRepository<Room> roomRepository,
     IGenericRepository<Reservation> reservationRepository,
-    IMapper mapper)
+    IMapper mapper,
+    IRoomCalendarBroadcastService roomCalendarBroadcastService)
     {
         _repository = repository;
         _roomRepository = roomRepository;
         _reservationRepository = reservationRepository;
         _mapper = mapper;
+        _roomCalendarBroadcastService = roomCalendarBroadcastService;
     }
 
     public async Task<ResponseRoomBlackoutDto> CreateAsync(CreateRoomBlackoutDto dto)
@@ -55,6 +58,8 @@ public class RoomBlackoutService : IRoomBlackoutService
         var created = await _repository.GetQueryable()
             .Include(rb => rb.Room)
             .FirstAsync(rb => rb.Id == entity.Id);
+
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(created.RoomId);
 
         return _mapper.Map<ResponseRoomBlackoutDto>(created);
     }
@@ -87,12 +92,19 @@ public class RoomBlackoutService : IRoomBlackoutService
             .Include(rb => rb.Room)
             .FirstAsync(rb => rb.Id == id);
 
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(updated.RoomId);
+
         return _mapper.Map<ResponseRoomBlackoutDto>(updated);
     }
 
     public async Task DeleteAsync(Guid id)
     {
+        var entity = await _repository.GetByIdAsync(id)
+            ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
+
         await _repository.DeleteAsync(id);
+
+        await _roomCalendarBroadcastService.NotifyRoomCalendarChangedAsync(entity.RoomId);
     }
 
     public async Task<ResponseRoomBlackoutDto> GetByIdAsync(Guid id)

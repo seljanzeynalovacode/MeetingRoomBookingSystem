@@ -2,10 +2,12 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using MRBSystem.Shared.Exceptions;
 using MRBSystem.Application.Mapper;
 using MRBSystem.Application.Services;
 using MRBSystem.Contracts.DTOs.RoomBlackoutDtos;
+using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
@@ -36,7 +38,8 @@ public class RoomBlackoutServiceTests : IDisposable
             new GenericRepository<RoomBlackout>(_context),
             new GenericRepository<Room>(_context),
             new GenericRepository<Reservation>(_context),
-            mapperConfig.CreateMapper());
+            mapperConfig.CreateMapper(),
+            new Mock<IRoomCalendarBroadcastService>().Object);
 
         SeedRoom();
     }

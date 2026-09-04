@@ -1,4 +1,4 @@
-import { isLoggedIn, getAccessToken } from "../api/apiClient.js";
+import { isLoggedIn, getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings, getAllFloors } from "../api/roomsApi.js";
 import { getRoomCalendar } from "../api/calendarApi.js";
 import { getWorkingHours } from "../api/workingHoursApi.js";
@@ -27,6 +27,38 @@ function toMinutes(time) {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
 }
+
+const hubConnection = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE_URL.replace("/api", "")}/hubs/room-calendar`, {
+    accessTokenFactory: () => getAccessToken(),
+  })
+  .withAutomaticReconnect()
+  .build();
+
+let joinedRoomId = "";
+
+async function joinRoomGroup(roomId) {
+  if (joinedRoomId === roomId) return;
+  if (joinedRoomId) {
+    try {
+      await hubConnection.invoke("LeaveRoom", joinedRoomId);
+    } catch {
+      // bağlantı kəsilibsə, sakitcə keç
+    }
+  }
+  joinedRoomId = roomId;
+  if (roomId && hubConnection.state === signalR.HubConnectionState.Connected) {
+    await hubConnection.invoke("JoinRoom", roomId);
+  }
+}
+
+hubConnection.on("RoomCalendarChanged", () => {
+  fetchAndRender();
+});
+
+hubConnection.onreconnected(() => {
+  if (joinedRoomId) hubConnection.invoke("JoinRoom", joinedRoomId);
+});
 
 async function updateGridHoursForBuilding(buildingId) {
   if (!buildingId) return;
@@ -392,6 +424,7 @@ async function fetchAndRender() {
   const room = rooms.find((r) => r.id === selectedRoomId);
   const floor = room ? floors.find((f) => f.id === room.floorId) : null;
   await updateGridHoursForBuilding(floor ? floor.buildingId : null);
+  await joinRoomGroup(selectedRoomId);
   if (myToken !== fetchToken) return;
 
   let startDate, endDate;
@@ -513,6 +546,12 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 async function init() {
+  try {
+    await hubConnection.start();
+  } catch (err) {
+    console.error("SignalR bağlantısı qurula bilmədi:", err);
+  }
+
   const { initials, name } = getDisplayIdentity();
   avatarInitials.textContent = initials;
   avatarName.textContent = name;

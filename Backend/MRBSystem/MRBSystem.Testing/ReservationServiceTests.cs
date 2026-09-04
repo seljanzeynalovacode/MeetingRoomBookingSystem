@@ -9,11 +9,9 @@ using MRBSystem.Contracts.DTOs.ReservationDtos;
 using MRBSystem.Contracts.DTOs.SystemSettingsDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
-using MRBSystem.Domain.Repository;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
 using MRBSystem.Testing;
-using System.Data;
 
 namespace MRBSystem.Tests;
 
@@ -22,6 +20,7 @@ public class ReservationServiceTests : IDisposable
     private readonly TestMRBAppDbContext _context;
     private readonly ReservationService _reservationService;
     private readonly SystemSettingsService _systemSettingsService;
+    private readonly Mock<IRoomCalendarBroadcastService> _roomCalendarBroadcastService;
     private readonly Guid _userId = Guid.NewGuid();
     private readonly Guid _roomId = Guid.NewGuid();
 
@@ -42,6 +41,7 @@ public class ReservationServiceTests : IDisposable
         currentUser.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(false);
 
         var notificationService = new Mock<INotificationService>();
+        _roomCalendarBroadcastService = new Mock<IRoomCalendarBroadcastService>();
 
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
@@ -70,7 +70,8 @@ public class ReservationServiceTests : IDisposable
             new TimeZoneService(new FakeConfiguration(new Dictionary<string, string?>
             {
                 ["Localization:TimeZoneId"] = "Asia/Baku"
-            })));
+            })),
+            _roomCalendarBroadcastService.Object);
     }
 
     [Fact]
@@ -91,6 +92,7 @@ public class ReservationServiceTests : IDisposable
 
         result.Title.Should().Be("Sprint Planning");
         result.Status.Should().Be("Confirmed");
+        _roomCalendarBroadcastService.Verify(x => x.NotifyRoomCalendarChangedAsync(_roomId, _userId), Times.Once);
     }
 
     [Fact]

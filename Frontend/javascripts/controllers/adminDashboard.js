@@ -1,5 +1,6 @@
 import { requireAdmin } from "../components/adminGuard.js";
 import { logout } from "../api/authApi.js";
+import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin } from "../api/reservationsApi.js";
@@ -28,21 +29,42 @@ const CHART_COLORS = {
   violet: cssVar("--violet-500"),
   violetPeak: cssVar("--violet-600"),
   amber: cssVar("--amber-500"),
+  amberLight: cssVar("--amber-300"),
+  amberPeak: cssVar("--amber-500"),
   green: cssVar("--green-500"),
   red: cssVar("--red-500"),
   grid: cssVar("--border"),
   text: cssVar("--text-secondary"),
 };
 
-const PASTEL_PALETTE = [
-  "oklch(72% 0.19 350)",
-  "oklch(65% 0.16 300)",
-  "oklch(78% 0.17 55)",
-  "oklch(85% 0.16 95)",
-];
-
 Chart.defaults.font.family = "'Manrope', sans-serif";
 Chart.defaults.color = CHART_COLORS.text;
+
+let peakHoursChartInstance = null;
+let statusDonutChartInstance = null;
+let weekdayChartInstance = null;
+let buildingChartInstance = null;
+
+function setChartsEmptyState(isEmpty) {
+  document.querySelectorAll(".chart-canvas-wrap").forEach((wrap) => {
+    const canvas = wrap.querySelector("canvas");
+    let emptyEl = wrap.querySelector(".chart-empty-state");
+
+    if (isEmpty) {
+      if (canvas) canvas.style.display = "none";
+      if (!emptyEl) {
+        emptyEl = document.createElement("div");
+        emptyEl.className = "empty-state chart-empty-state";
+        emptyEl.style.padding = "2rem 1rem";
+        emptyEl.innerHTML = `<i class="bi bi-bar-chart"></i>Hələ rezervasiya yoxdur.`;
+        wrap.appendChild(emptyEl);
+      }
+    } else {
+      if (canvas) canvas.style.display = "";
+      if (emptyEl) emptyEl.remove();
+    }
+  });
+}
 
 logoutBtn.addEventListener("click", async () => {
   await logout();
@@ -67,7 +89,8 @@ function buildPeakHoursChart(reservations) {
   const labels = visibleCounts.map((_, i) => `${String(firstHour + i).padStart(2, "0")}:00`);
   const colors = visibleCounts.map((c, i) => (firstHour + i === peakHour && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
 
-  new Chart(document.getElementById("peakHoursChart"), {
+  if (peakHoursChartInstance) peakHoursChartInstance.destroy();
+  peakHoursChartInstance = new Chart(document.getElementById("peakHoursChart"), {
     type: "bar",
     data: {
       labels,
@@ -91,7 +114,8 @@ function buildStatusDonutChart(reservations) {
   const completed = reservations.filter((r) => r.status === "Confirmed" && new Date(r.endDate) < now).length;
   const cancelled = reservations.filter((r) => r.status === "Cancelled").length;
 
-  new Chart(document.getElementById("statusDonutChart"), {
+  if (statusDonutChartInstance) statusDonutChartInstance.destroy();
+  statusDonutChartInstance = new Chart(document.getElementById("statusDonutChart"), {
     type: "doughnut",
     data: {
       labels: ["Aktiv", "Tamamlanıb", "Ləğv edilib"],
@@ -120,9 +144,10 @@ function buildWeekdayChart(reservations) {
   const peakDayIndex = counts.indexOf(maxCount);
   peakDayBadge.textContent = maxCount > 0 ? `Pik: ${WEEKDAY_LABELS[peakDayIndex]}` : "";
 
-  const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
+  const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? CHART_COLORS.amberPeak : CHART_COLORS.amberLight));
 
-  new Chart(document.getElementById("weekdayChart"), {
+  if (weekdayChartInstance) weekdayChartInstance.destroy();
+  weekdayChartInstance = new Chart(document.getElementById("weekdayChart"), {
     type: "bar",
     data: {
       labels: WEEKDAY_LABELS,
@@ -151,18 +176,24 @@ function buildBuildingChart(reservations, rooms) {
   });
 
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const maxCount = Math.max(...sorted.map(([, count]) => count));
+  const colors = sorted.map(([, count]) => (count === maxCount ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
 
-  new Chart(document.getElementById("buildingChart"), {
-    type: "pie",
+  if (buildingChartInstance) buildingChartInstance.destroy();
+  buildingChartInstance = new Chart(document.getElementById("buildingChart"), {
+    type: "bar",
     data: {
       labels: sorted.map(([name]) => name),
-      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: sorted.map((_, i) => PASTEL_PALETTE[i % PASTEL_PALETTE.length]), borderWidth: 0 }],
+      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: colors, borderRadius: 6, maxBarThickness: 28 }],
     },
     options: {
+      indexAxis: "y",
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, padding: 12, font: { size: 11.5 } } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0, font: { size: 10.5 } }, grid: { color: CHART_COLORS.grid } },
+        y: { grid: { display: false }, ticks: { font: { size: 10.5 } } },
       },
     },
   });
@@ -183,12 +214,11 @@ async function init() {
     reservationCountEl.textContent = reservations.filter((r) => r.status === "Confirmed" && new Date(r.endDate) >= new Date()).length;
 
     if (!reservations.length) {
-      document.querySelectorAll(".chart-canvas-wrap").forEach((el) => {
-        el.innerHTML = `<div class="empty-state" style="padding:2rem 1rem;"><i class="bi bi-bar-chart"></i>Hələ rezervasiya yoxdur.</div>`;
-      });
+      setChartsEmptyState(true);
       return;
     }
 
+    setChartsEmptyState(false);
     buildPeakHoursChart(reservations);
     buildStatusDonutChart(reservations);
     buildWeekdayChart(reservations);
@@ -199,3 +229,16 @@ async function init() {
 }
 
 init();
+
+const hubConnection = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE_URL.replace("/api", "")}/hubs/room-calendar`, {
+    accessTokenFactory: () => getAccessToken(),
+  })
+  .withAutomaticReconnect()
+  .build();
+
+hubConnection.on("ReservationsChanged", () => {
+  init();
+});
+
+hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

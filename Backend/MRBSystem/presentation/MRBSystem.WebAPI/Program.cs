@@ -12,6 +12,8 @@ using MRBSystem.Domain.Repository;
 using MRBSystem.Infrasturucture.Services;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.WebAPI.Hubs;
+using MRBSystem.WebAPI.Services;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
@@ -80,7 +82,8 @@ namespace MRBSystem.WebAPI
                 {
                     policy.WithOrigins(corsAllowedOrigins)
                           .AllowAnyHeader()
-                          .AllowAnyMethod();
+                          .AllowAnyMethod()
+                          .AllowCredentials();
                 });
             });
 
@@ -158,7 +161,9 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IRoleService, RoleService>();
 
+            builder.Services.AddSignalR();
             builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<IRoomCalendarBroadcastService, SignalRRoomCalendarBroadcastService>();
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
@@ -188,6 +193,22 @@ namespace MRBSystem.WebAPI
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -309,6 +330,7 @@ namespace MRBSystem.WebAPI
 
 
             app.MapControllers();
+            app.MapHub<RoomCalendarHub>("/hubs/room-calendar");
 
             await app.RunAsync();
         }
