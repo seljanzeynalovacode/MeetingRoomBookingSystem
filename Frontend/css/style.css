@@ -369,6 +369,24 @@ body.dashboard-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease)
 .nav-right { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: auto; }
 .nav-right a.active,
 .nav-right a.active:hover { background: var(--violet-500); color: #fff; }
+
+.mobile-nav-toggle {
+  display: none; width: 38px; height: 38px; border-radius: var(--r-sm); border: 1.5px solid var(--border);
+  background: var(--surface-raised); color: var(--text-primary); align-items: center; justify-content: center;
+  cursor: pointer; font-size: 17px; flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav-toggle { display: flex; }
+  .nav-links {
+    display: none; position: fixed; top: 76px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 4px;
+    background: var(--surface-raised); border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem; box-shadow: var(--shadow-lg); z-index: 560; margin: 0;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { justify-content: flex-start; padding: 0.8rem 0.9rem; font-size: 14px; }
+}
 .icon-btn {
   width: 40px; height: 40px; border-radius: var(--r-sm);
   display: flex; align-items: center; justify-content: center;
@@ -620,14 +638,16 @@ select.input { appearance: none; cursor: pointer; }
 
 /* ===== My Bookings ===== */
 
-.reservations-layout {
+.reservations-layout { max-width: 900px; margin: 0 auto; padding: 1.75rem; }
+
+.mybookings-layout {
   max-width: 1360px; margin: 0 auto; padding: 1.75rem;
   display: grid; grid-template-columns: 272px 1fr; gap: 1.75rem;
 }
 
 @media (max-width: 1080px) {
-  .reservations-layout { grid-template-columns: 1fr; }
-  .reservations-layout .sidebar { position: static; }
+  .mybookings-layout { grid-template-columns: 1fr; }
+  .mybookings-layout .sidebar { position: static; }
 }
 
 .stats-card { padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 10px; }

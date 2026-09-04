@@ -3,6 +3,7 @@ import { updateProfile, changePassword, logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
 import { clearChatState } from "../components/chatWidget.js";
+import { initMobileNav } from "../components/mobileNav.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -10,6 +11,7 @@ if (!isLoggedIn()) {
 }
 
 initNotificationBell();
+initMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 

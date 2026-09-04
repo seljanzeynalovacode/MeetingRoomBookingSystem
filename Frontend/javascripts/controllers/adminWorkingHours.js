@@ -175,12 +175,14 @@ function renderWeek() {
   weekCard.querySelectorAll(".start-time").forEach((el) => {
     el.addEventListener("change", () => {
       hours.find((h) => h.dayOfWeek === el.dataset.day).startTime = el.value;
+      renderWeek();
     });
   });
 
   weekCard.querySelectorAll(".end-time").forEach((el) => {
     el.addEventListener("change", () => {
       hours.find((h) => h.dayOfWeek === el.dataset.day).endTime = el.value;
+      renderWeek();
     });
   });
 

@@ -6,6 +6,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { initMobileNav } from "../components/mobileNav.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -14,6 +15,7 @@ if (!isLoggedIn()) {
 
 initNotificationBell();
 initChatWidget();
+initMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");

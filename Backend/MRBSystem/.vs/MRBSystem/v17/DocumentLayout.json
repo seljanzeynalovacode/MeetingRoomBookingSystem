@@ -789,8 +789,7 @@
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-08-09T13:50:45.709Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-09T13:50:45.709Z"
             },
             {
               "$type": "Document",
@@ -802,8 +801,7 @@
               "RelativeToolTip": "MRBSystem.Testing\\RoomServiceTests.cs",
               "ViewState": "AgIAACAAAAAAAAAAAAAlwDoAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T20:39:19.297Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-18T20:39:19.297Z"
             },
             {
               "$type": "Document",
@@ -815,8 +813,7 @@
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-08-09T13:50:54.481Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-09T13:50:54.481Z"
             },
             {
               "$type": "Document",
@@ -828,8 +825,7 @@
               "RelativeToolTip": "core\\MRBSystem.Contracts\\Services\\IWorkingHourService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-27T18:22:47.649Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-27T18:22:47.649Z"
             },
             {
               "$type": "Document",
@@ -841,8 +837,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\WorkingHourService.cs",
               "ViewState": "AgIAAIMAAAAAAAAAAAAAwIsAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-27T18:23:30.988Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-27T18:23:30.988Z"
             },
             {
               "$type": "Document",
@@ -852,7 +847,7 @@
               "RelativeDocumentMoniker": "infrasturucture\\MRBSystem.Infrasturucture\\Services\\GeminiChatService.cs",
               "ToolTip": "C:\\Users\\ACER\\Documents\\Code Academy\\MeetingRoomBookingSystem\\Backend\\MRBSystem\\infrasturucture\\MRBSystem.Infrasturucture\\Services\\GeminiChatService.cs",
               "RelativeToolTip": "infrasturucture\\MRBSystem.Infrasturucture\\Services\\GeminiChatService.cs",
-              "ViewState": "AgIAALAAAAAAAAAAAAAAwLUAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-01T09:18:44.393Z",
               "EditorCaption": ""
@@ -867,8 +862,7 @@
               "RelativeToolTip": "MRBSystem.Testing\\ReservationServiceTests.cs",
               "ViewState": "AgIAAC8AAAAAAAAAAAAlwEcAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T20:17:32.936Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-18T20:17:32.936Z"
             },
             {
               "$type": "Document",
@@ -880,8 +874,7 @@
               "RelativeToolTip": "MRBSystem.Testing\\FakeConfiguration.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-03T13:23:26.999Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T13:23:26.999Z"
             },
             {
               "$type": "Document",
@@ -893,8 +886,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\ReservationService.cs",
               "ViewState": "AgIAAAQBAAAAAAAAAAAlwBQBAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T10:49:06.134Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-11T10:49:06.134Z"
             },
             {
               "$type": "Document",
@@ -906,8 +898,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\RoomService.cs",
               "ViewState": "AgIAAGYAAAAAAAAAAAAAAH0AAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-03T13:19:52.889Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T13:19:52.889Z"
             },
             {
               "$type": "Document",
@@ -919,8 +910,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\TimeZoneService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-03T13:17:52.341Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T13:17:52.341Z"
             },
             {
               "$type": "Document",
@@ -932,8 +922,7 @@
               "RelativeToolTip": "core\\MRBSystem.Contracts\\Services\\ITimeZoneService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-03T13:17:09.605Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T13:17:09.605Z"
             },
             {
               "$type": "Document",
@@ -945,8 +934,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\RoleService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-19T13:07:07.511Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-19T13:07:07.511Z"
             },
             {
               "$type": "Document",
@@ -958,8 +946,7 @@
               "RelativeToolTip": "core\\MRBSystem.Contracts\\DTOs\\ChatDtos\\ChatResponseDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-01T09:00:21.218Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-01T09:00:21.218Z"
             },
             {
               "$type": "Document",
@@ -971,8 +958,7 @@
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Program.cs",
               "ViewState": "AgIAAJEAAAAAAAAAAAAQwJMAAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T12:12:54.234Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-18T12:12:54.234Z"
             },
             {
               "$type": "Document",
@@ -984,8 +970,7 @@
               "RelativeToolTip": "presentation\\MRBSystem.WebAPI\\Controllers\\ChatController.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAAABUAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-03T12:19:10.363Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T12:19:10.363Z"
             },
             {
               "$type": "Document",
@@ -997,8 +982,7 @@
               "RelativeToolTip": "MRBSystem.Testing\\SystemSettingsServiceTests.cs",
               "ViewState": "AgIAADsAAAAAAAAAAAAgwAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-28T12:05:23.489Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-28T12:05:23.489Z"
             },
             {
               "$type": "Document",
@@ -1022,8 +1006,7 @@
               "RelativeToolTip": "core\\MRBSystem.Application\\Services\\SystemSettingsService.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAA1wEsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-27T20:00:01.926Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-27T20:00:01.926Z"
             },
             {
               "$type": "Document",
