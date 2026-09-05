@@ -1,11 +1,14 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { getAllBuildings } from "../api/roomsApi.js";
 import { getWorkingHours, updateWorkingHours } from "../api/workingHoursApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -34,13 +37,6 @@ const DAYS = [
 let buildings = [];
 let selectedBuildingId = "";
 let hours = [];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function toMinutes(time) {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;

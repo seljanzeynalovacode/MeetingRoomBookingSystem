@@ -89,6 +89,12 @@ export async function refreshAccessToken() {
   }
 }
 
+function redirectToLogin() {
+  if (!window.location.pathname.endsWith("login.html")) {
+    window.location.href = "login.html";
+  }
+}
+
 export async function apiFetch(path, { method = "GET", body, auth = false, isRetry = false } = {}) {
   const headers = { "Content-Type": "application/json" };
 
@@ -103,14 +109,21 @@ export async function apiFetch(path, { method = "GET", body, auth = false, isRet
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  if (response.status === 401 && auth && !isRetry && getRefreshToken()) {
-    try {
-      await refreshAccessToken();
-      return apiFetch(path, { method, body, auth, isRetry: true });
-    } catch {
-      clearTokens();
-      throw new ApiError(401, "Sessiya bitib, yenidən daxil olun.");
+  if (response.status === 401 && auth) {
+    if (!isRetry && getRefreshToken()) {
+      try {
+        await refreshAccessToken();
+        return apiFetch(path, { method, body, auth, isRetry: true });
+      } catch {
+        clearTokens();
+        redirectToLogin();
+        throw new ApiError(401, "Sessiya bitib, yenidən daxil olun.");
+      }
     }
+
+    clearTokens();
+    redirectToLogin();
+    throw new ApiError(401, "Sessiya bitib, yenidən daxil olun.");
   }
 
   if (!response.ok) {

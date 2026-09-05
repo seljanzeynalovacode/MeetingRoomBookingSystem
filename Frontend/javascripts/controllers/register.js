@@ -13,7 +13,7 @@ form.addEventListener("submit", async (e) => {
   const dto = {
     FirstName: form.FirstName.value.trim(),
     LastName: form.LastName.value.trim(),
-    Username: form.Username.value.trim(),
+    UserName: form.Username.value.trim(),
     Email: form.Email.value.trim(),
     Password: form.Password.value,
     ConfirmPassword: form.ConfirmPassword.value,

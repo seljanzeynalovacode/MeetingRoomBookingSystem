@@ -11,6 +11,7 @@ using MRBSystem.Contracts.Services;
 using MRBSystem.Domain.Entities;
 using MRBSystem.Persistence.Data;
 using MRBSystem.Persistence.Repository;
+using MRBSystem.Tests;
 
 namespace MRBSystem.Testing;
 
@@ -34,10 +35,15 @@ public class RoomBlackoutServiceTests : IDisposable
 
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<CustomProfile>(), NullLoggerFactory.Instance);
 
+        var currentUser = new Mock<ICurrentUserService>();
+        currentUser.Setup(x => x.IsInRole("Admin")).Returns(true);
+
         _service = new RoomBlackoutService(
             new GenericRepository<RoomBlackout>(_context),
             new GenericRepository<Room>(_context),
             new GenericRepository<Reservation>(_context),
+            new FakeUnitOfWork(),
+            currentUser.Object,
             mapperConfig.CreateMapper(),
             new Mock<IRoomCalendarBroadcastService>().Object);
 

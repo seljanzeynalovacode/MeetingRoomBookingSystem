@@ -14,6 +14,8 @@ public class RoomBlackoutService : IRoomBlackoutService
     private readonly IGenericRepository<RoomBlackout> _repository;
     private readonly IGenericRepository<Room> _roomRepository;
     private readonly IGenericRepository<Reservation> _reservationRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
     private readonly IRoomCalendarBroadcastService _roomCalendarBroadcastService;
 
@@ -21,18 +23,32 @@ public class RoomBlackoutService : IRoomBlackoutService
     IGenericRepository<RoomBlackout> repository,
     IGenericRepository<Room> roomRepository,
     IGenericRepository<Reservation> reservationRepository,
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
     IMapper mapper,
     IRoomCalendarBroadcastService roomCalendarBroadcastService)
     {
         _repository = repository;
         _roomRepository = roomRepository;
         _reservationRepository = reservationRepository;
+        _unitOfWork = unitOfWork;
+        _currentUser = currentUser;
         _mapper = mapper;
         _roomCalendarBroadcastService = roomCalendarBroadcastService;
     }
 
+    private void EnsureIsAdmin()
+    {
+        if (!_currentUser.IsInRole("Admin"))
+        {
+            throw new ForbiddenException("Bu əməliyyatı yalnız admin edə bilər.");
+        }
+    }
+
     public async Task<ResponseRoomBlackoutDto> CreateAsync(CreateRoomBlackoutDto dto)
     {
+        EnsureIsAdmin();
+
         if (dto.StartDate >= dto.EndDate)
         {
             throw new ArgumentException("StartDate must be earlier than EndDate.");
@@ -41,19 +57,23 @@ public class RoomBlackoutService : IRoomBlackoutService
         var room = await _roomRepository.GetByIdAsync(dto.RoomId)
             ?? throw new NotFoundException($"Room with id {dto.RoomId} not found.");
 
-        var hasConflict = await _reservationRepository.GetQueryable()
-            .AnyAsync(r => r.RoomId == dto.RoomId
-                && r.Status != ReservationStatus.Cancelled
-                && dto.StartDate < r.EndDate
-                && dto.EndDate > r.StartDate);
-
-        if (hasConflict)
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yaradıla bilməz.");
-        }
+            var hasConflict = await _reservationRepository.GetQueryable()
+                .AnyAsync(r => r.RoomId == dto.RoomId
+                    && r.Status != ReservationStatus.Cancelled
+                    && dto.StartDate < r.EndDate
+                    && dto.EndDate > r.StartDate);
 
-        var entity = _mapper.Map<RoomBlackout>(dto);
-        await _repository.AddAsync(entity);
+            if (hasConflict)
+            {
+                throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yaradıla bilməz.");
+            }
+
+            var blackout = _mapper.Map<RoomBlackout>(dto);
+            await _repository.AddAsync(blackout);
+            return blackout;
+        });
 
         var created = await _repository.GetQueryable()
             .Include(rb => rb.Room)
@@ -66,27 +86,33 @@ public class RoomBlackoutService : IRoomBlackoutService
 
     public async Task<ResponseRoomBlackoutDto> UpdateAsync(Guid id, UpdateRoomBlackoutDto dto)
     {
+        EnsureIsAdmin();
+
         if (dto.StartDate >= dto.EndDate)
         {
             throw new ArgumentException("StartDate must be earlier than EndDate.");
         }
 
-        var entity = await _repository.GetByIdAsync(id)
-            ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
-
-        var hasConflict = await _reservationRepository.GetQueryable()
-            .AnyAsync(r => r.RoomId == entity.RoomId
-                && r.Status != ReservationStatus.Cancelled
-                && dto.StartDate < r.EndDate
-                && dto.EndDate > r.StartDate);
-
-        if (hasConflict)
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yenilənə bilməz.");
-        }
+            var blackout = await _repository.GetByIdAsync(id)
+                ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
 
-        _mapper.Map(dto, entity);
-        await _repository.UpdateAsync(entity);
+            var hasConflict = await _reservationRepository.GetQueryable()
+                .AnyAsync(r => r.RoomId == blackout.RoomId
+                    && r.Status != ReservationStatus.Cancelled
+                    && dto.StartDate < r.EndDate
+                    && dto.EndDate > r.StartDate);
+
+            if (hasConflict)
+            {
+                throw new InvalidOperationException("Bu tarix aralığında otaqda mövcud rezervasiya(lar) var, blackout yenilənə bilməz.");
+            }
+
+            _mapper.Map(dto, blackout);
+            await _repository.UpdateAsync(blackout);
+            return blackout;
+        });
 
         var updated = await _repository.GetQueryable()
             .Include(rb => rb.Room)
@@ -99,6 +125,8 @@ public class RoomBlackoutService : IRoomBlackoutService
 
     public async Task DeleteAsync(Guid id)
     {
+        EnsureIsAdmin();
+
         var entity = await _repository.GetByIdAsync(id)
             ?? throw new NotFoundException($"RoomBlackout with id {id} not found.");
 

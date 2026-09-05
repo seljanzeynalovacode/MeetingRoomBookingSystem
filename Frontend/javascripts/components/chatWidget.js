@@ -1,15 +1,8 @@
 import { sendChatMessage } from "../api/chatApi.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 const STORAGE_KEY = "mrb_chat_state";
 const WELCOME_TEXT = "Salam! Mən MeetAI-yam — MeetingSpace-in süni intellekt köməkçisi. Hansı tarix/saatda, hansı binada boş otaq axtardığınızı yazın, mən tapım.";
-const SUGGESTIONS = ["Bugün boş otaqlar", "Baş binada 10 nəfərlik otaq"];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function formatMessageText(text) {
   const lines = escapeHtml(text).split("\n");
   const introIndex = lines.findIndex((line) => line.trim().endsWith(":"));
@@ -61,9 +54,6 @@ export function initChatWidget() {
         <button type="button" class="chat-widget-close" id="chatWidgetClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="chat-widget-messages" id="chatWidgetMessages"></div>
-      <div class="chat-widget-suggestions" id="chatWidgetSuggestions">
-        ${SUGGESTIONS.map((s) => `<span class="chat-widget-chip">${escapeHtml(s)}</span>`).join("")}
-      </div>
       <form class="chat-widget-input-row" id="chatWidgetForm">
         <input type="text" class="input" id="chatWidgetInput" placeholder="Sualınızı yazın..." autocomplete="off" />
         <button type="submit" class="chat-widget-send" id="chatWidgetSend" aria-label="Göndər"><i class="bi bi-send"></i></button>
@@ -76,7 +66,6 @@ export function initChatWidget() {
   const dock = document.getElementById("chatDock");
   const closeBtn = document.getElementById("chatWidgetClose");
   const messagesEl = document.getElementById("chatWidgetMessages");
-  const suggestionsEl = document.getElementById("chatWidgetSuggestions");
   const form = document.getElementById("chatWidgetForm");
   const input = document.getElementById("chatWidgetInput");
   const sendBtn = document.getElementById("chatWidgetSend");
@@ -151,10 +140,6 @@ export function initChatWidget() {
 
   fab.addEventListener("click", () => setOpen(!dock.classList.contains("open")));
   closeBtn.addEventListener("click", () => setOpen(false));
-
-  suggestionsEl.querySelectorAll(".chat-widget-chip").forEach((chip) => {
-    chip.addEventListener("click", () => sendText(chip.textContent));
-  });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();

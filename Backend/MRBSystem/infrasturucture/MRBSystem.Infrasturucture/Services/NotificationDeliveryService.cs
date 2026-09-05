@@ -73,15 +73,38 @@ public class NotificationDeliveryService : BackgroundService
                     recipientEmail,
                     notification.Title,
                     notification.Message);
-
-                notification.SentAt = DateTime.UtcNow;
-                await notificationRepository.UpdateAsync(notification);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex,
                     "Failed to deliver notification {NotificationId} to {Email}. Will retry on next cycle.",
                     notification.Id, recipientEmail);
+                continue;
+            }
+
+            notification.SentAt = DateTime.UtcNow;
+
+            const int maxMarkSentAttempts = 3;
+            for (var attempt = 1; attempt <= maxMarkSentAttempts; attempt++)
+            {
+                try
+                {
+                    await notificationRepository.UpdateAsync(notification);
+                    break;
+                }
+                catch (Exception ex) when (attempt < maxMarkSentAttempts)
+                {
+                    _logger.LogWarning(ex,
+                        "Attempt {Attempt} to mark notification {NotificationId} as sent failed, retrying.",
+                        attempt, notification.Id);
+                    await Task.Delay(TimeSpan.FromMilliseconds(200 * attempt));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Notification {NotificationId} was emailed to {Email} but could not be marked as sent after {Attempts} attempts — it may be re-sent on the next cycle.",
+                        notification.Id, recipientEmail, maxMarkSentAttempts);
+                }
             }
         }
     }

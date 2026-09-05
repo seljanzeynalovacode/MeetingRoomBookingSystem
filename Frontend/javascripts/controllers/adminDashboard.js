@@ -1,12 +1,14 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin } from "../api/reservationsApi.js";
-import { showAlert } from "../components/alert.js";
+import { showAlert, clearAlert } from "../components/alert.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -239,6 +241,18 @@ const hubConnection = new signalR.HubConnectionBuilder()
 
 hubConnection.on("ReservationsChanged", () => {
   init();
+});
+
+hubConnection.onreconnecting(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi, yenidən qoşulmağa çalışılır...", "warning");
+});
+
+hubConnection.onreconnected(() => {
+  clearAlert(alertBox);
+});
+
+hubConnection.onclose(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi. Yeni dəyişiklikləri görmək üçün səhifəni yeniləyin.", "warning");
 });
 
 hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

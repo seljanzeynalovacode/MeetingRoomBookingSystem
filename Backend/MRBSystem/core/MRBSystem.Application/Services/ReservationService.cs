@@ -62,6 +62,11 @@ public class ReservationService : IReservationService
             throw new NotFoundException($"Room with id {dto.RoomId} not found.");
         }
 
+        if (!room.IsActive)
+        {
+            throw new InvalidOperationException("Bu otaq hazırda aktiv deyil və rezervasiya üçün əlçatan deyil.");
+        }
+
         var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var settings = await _systemSettingsService.GetAsync();
@@ -114,7 +119,18 @@ public class ReservationService : IReservationService
                     $"Room with id {dto.RoomId} not found.");
             }
 
+            if (!room.IsActive)
+            {
+                throw new InvalidOperationException("Bu otaq hazırda aktiv deyil və rezervasiya üçün əlçatan deyil.");
+            }
+
             EnsureCanModify(reservation);
+
+            if (reservation.Status == ReservationStatus.Cancelled)
+            {
+                _logger.LogWarning("Attempted to update an already cancelled reservation {ReservationId}", id);
+                throw new InvalidOperationException("Ləğv edilmiş rezervasiya dəyişdirilə bilməz.");
+            }
 
             var settings = await _systemSettingsService.GetAsync();
             await ValidateDatesAsync(

@@ -1,4 +1,5 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
@@ -7,8 +8,10 @@ import { getAllReservationsAdmin, cancelReservation } from "../api/reservationsA
 import { getParticipantsByReservation } from "../api/participantsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -63,13 +66,6 @@ let users = [];
 let rooms = [];
 let buildings = [];
 let allRows = [];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function getEffectiveStatus(status, endDate) {
   if (status === "Cancelled") return "Cancelled";
   return new Date(endDate) < new Date() ? "Completed" : "Confirmed";
@@ -214,9 +210,9 @@ async function openDetails(id) {
         )
         .join("");
     }
-  } catch {
+  } catch (err) {
     const box = document.getElementById("detailsParticipants");
-    if (box) box.textContent = "Yüklənə bilmədi.";
+    if (box) box.textContent = err?.message || "Yüklənə bilmədi.";
   }
 }
 
@@ -289,6 +285,18 @@ const hubConnection = new signalR.HubConnectionBuilder()
 
 hubConnection.on("ReservationsChanged", () => {
   loadData();
+});
+
+hubConnection.onreconnecting(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi, yenidən qoşulmağa çalışılır...", "warning");
+});
+
+hubConnection.onreconnected(() => {
+  clearAlert(alertBox);
+});
+
+hubConnection.onclose(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi. Yeni dəyişiklikləri görmək üçün səhifəni yeniləyin.", "warning");
 });
 
 hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

@@ -1,9 +1,12 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { getAllEquipment, createEquipment, updateEquipment, deleteEquipment } from "../api/roomsApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -56,13 +59,6 @@ function getEquipmentIcon(name) {
   return "bi-box-seam";
 }
 let editingId = null;
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function openModal(item) {
   editingId = item ? item.id : null;
   modalTitle.textContent = item ? "Avadanlığı redaktə et" : "Yeni avadanlıq";
@@ -103,7 +99,7 @@ form.addEventListener("submit", async (e) => {
     closeModal();
     await loadEquipment();
   } catch (err) {
-    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";

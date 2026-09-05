@@ -1,4 +1,5 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import {
   getAllRoles,
@@ -11,8 +12,10 @@ import {
 } from "../api/adminApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const roleListEl = document.getElementById("roleList");
@@ -40,13 +43,7 @@ resetUserSearchBtn.addEventListener("click", () => {
 
 let roles = [];
 let users = [];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
+let roleAssignDropdowns = new Map();
 function renderRoles() {
   const roleCountEl = document.getElementById("roleCount");
   if (roleCountEl) roleCountEl.textContent = `${roles.length} rol`;
@@ -137,11 +134,9 @@ function createUserRowHtml(user) {
   const availableRoles = roles.filter((r) => !user.roles.includes(r.name));
   const assignSelectHtml = availableRoles.length
     ? `<div class="assign-role-row">
-         <div class="select-wrap">
-           <select class="input assign-role-select" data-user-id="${user.id}">
-             ${availableRoles.map((r) => `<option value="${escapeHtml(r.name)}">${escapeHtml(r.name)}</option>`).join("")}
-           </select>
-           <i class="bi bi-chevron-down select-chevron"></i>
+         <div class="dd-wrap assign-role-dd" data-user-id="${user.id}">
+           <button type="button" class="dd-btn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+           <div class="dd-panel"></div>
          </div>
          <button type="button" class="btn btn-secondary btn-sm assign-role-btn" data-user-id="${user.id}"><i class="bi bi-plus"></i></button>
        </div>`
@@ -163,7 +158,14 @@ function createUserRowHtml(user) {
     </div>`;
 }
 
+function destroyRoleDropdowns() {
+  roleAssignDropdowns.forEach((dd) => dd.destroy());
+  roleAssignDropdowns.clear();
+}
+
 function renderUsers() {
+  destroyRoleDropdowns();
+
   if (!users.length) {
     usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-people"></i>İstifadəçi tapılmadı.</div>`;
     return;
@@ -186,11 +188,29 @@ function renderUsers() {
 
   usersTableBody.innerHTML = matched.map(createUserRowHtml).join("");
 
+  usersTableBody.querySelectorAll(".assign-role-dd").forEach((wrap) => {
+    const userId = wrap.dataset.userId;
+    const user = matched.find((u) => u.id === userId);
+    if (!user) return;
+    const availableRoles = roles.filter((r) => !user.roles.includes(r.name));
+    const dd = initDropdown({
+      btn: wrap.querySelector(".dd-btn"),
+      panel: wrap.querySelector(".dd-panel"),
+      options: availableRoles.map((r) => ({ value: r.name, label: r.name })),
+      placeholder: "Seçin",
+      onChange: () => {},
+    });
+    roleAssignDropdowns.set(userId, dd);
+  });
+
   usersTableBody.querySelectorAll(".assign-role-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const userId = btn.dataset.userId;
-      const select = usersTableBody.querySelector(`.assign-role-select[data-user-id="${userId}"]`);
-      const roleName = select.value;
+      const roleName = roleAssignDropdowns.get(userId)?.getValue();
+      if (!roleName) {
+        showAlert(alertBox, "Zəhmət olmasa bir rol seçin.");
+        return;
+      }
       clearAlert(alertBox);
       btn.disabled = true;
       try {

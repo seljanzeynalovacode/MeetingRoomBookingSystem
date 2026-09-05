@@ -9,6 +9,7 @@ import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -56,8 +57,17 @@ hubConnection.on("RoomCalendarChanged", () => {
   fetchAndRender();
 });
 
+hubConnection.onreconnecting(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi, yenidən qoşulmağa çalışılır...", "warning");
+});
+
 hubConnection.onreconnected(() => {
+  clearAlert(alertBox);
   if (joinedRoomId) hubConnection.invoke("JoinRoom", joinedRoomId);
+});
+
+hubConnection.onclose(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi. Yeni dəyişiklikləri görmək üçün səhifəni yeniləyin.", "warning");
 });
 
 async function updateGridHoursForBuilding(buildingId) {
@@ -102,13 +112,6 @@ let selectedRoomId = "";
 let selectedRoomName = "";
 let viewMode = "day";
 let anchorDate = new Date();
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function capitalize(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }

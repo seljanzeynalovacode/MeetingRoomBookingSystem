@@ -8,6 +8,7 @@ import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -90,13 +91,6 @@ let allEquipmentTypes = [];
 let currentRoomsList = [];
 const selectedEquipmentIds = new Set();
 const ROOM_ART_VARIANTS = ["rv-1", "rv-2", "rv-3", "rv-4"];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function parseJwt(token) {
   try {
     const payload = token.split(".")[1];

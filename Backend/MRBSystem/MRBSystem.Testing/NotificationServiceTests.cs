@@ -40,6 +40,7 @@ public class NotificationServiceTests :IDisposable
 
         return new NotificationService(
             new GenericRepository<Notification>(_context),
+            new GenericRepository<Participant>(_context),
             currentUser.Object,
             mapperConfig.CreateMapper());
     }

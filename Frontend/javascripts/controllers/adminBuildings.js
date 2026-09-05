@@ -1,4 +1,5 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import {
   getAllBuildings,
@@ -12,8 +13,10 @@ import {
 } from "../api/roomsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -85,13 +88,6 @@ function applySuggestedFloorDefaults() {
   floorNameInput.value = suggestFloorName(nextLevel);
   floorLevelInput.value = nextLevel;
 }
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 /* ---------- Building modal ---------- */
 
 function openBuildingModal(building) {
@@ -134,7 +130,7 @@ buildingForm.addEventListener("submit", async (e) => {
     closeBuildingModal();
     await loadData();
   } catch (err) {
-    buildingModalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(buildingModalAlert, err.message);
   } finally {
     buildingSubmitBtn.disabled = false;
     buildingSubmitBtn.textContent = editingBuildingId ? "Yadda saxla" : "Yarat";
@@ -196,7 +192,7 @@ floorForm.addEventListener("submit", async (e) => {
     closeFloorModal();
     await loadData();
   } catch (err) {
-    floorModalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(floorModalAlert, err.message);
   } finally {
     floorSubmitBtn.disabled = false;
     floorSubmitBtn.textContent = editingFloorId ? "Yadda saxla" : "Yarat";

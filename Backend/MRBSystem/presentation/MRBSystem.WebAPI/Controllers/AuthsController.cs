@@ -53,6 +53,7 @@ namespace MRBSystem.WebAPI.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto dto)
         {
             var result = await _authService.RefreshTokenAsync(dto.RefreshToken);

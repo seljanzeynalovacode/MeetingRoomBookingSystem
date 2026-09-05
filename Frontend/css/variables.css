@@ -6,14 +6,14 @@
   --surface-raised: #ffffff;
   --text-primary: oklch(21% 0.02 55);
   --text-secondary: oklch(46% 0.018 55);
-  --text-muted: oklch(62% 0.012 55);
+  --text-muted: oklch(55% 0.012 55);
   --border: oklch(90% 0.008 70);
   --border-strong: oklch(83% 0.01 70);
 
   --violet-50: oklch(96% 0.02 292);
   --violet-100: oklch(92% 0.045 292);
   --violet-300: oklch(78% 0.12 292);
-  --violet-500: oklch(58% 0.19 292);
+  --violet-500: oklch(54% 0.19 292);
   --violet-600: oklch(50% 0.19 292);
   --violet-700: oklch(40% 0.17 292);
   --violet-900: oklch(24% 0.1 292);

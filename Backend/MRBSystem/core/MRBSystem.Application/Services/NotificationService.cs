@@ -13,15 +13,18 @@ namespace MRBSystem.Application.Services;
 public class NotificationService : INotificationService
 {
     private readonly IGenericRepository<Notification> _repository;
+    private readonly IGenericRepository<Participant> _participantRepository;
     private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
     public NotificationService(
         IGenericRepository<Notification> repository,
+        IGenericRepository<Participant> participantRepository,
         ICurrentUserService currentUser,
         IMapper mapper)
     {
         _repository = repository;
+        _participantRepository = participantRepository;
         _currentUser = currentUser;
         _mapper = mapper;
     }
@@ -73,6 +76,28 @@ public class NotificationService : INotificationService
         };
 
         await _repository.AddAsync(notification);
+
+        var participantUserIds = await _participantRepository.GetQueryable()
+            .Where(p => p.ReservationId == reservation.Id
+                && p.UserId != null
+                && p.UserId != reservation.ReservedByUserId
+                && p.ResponseStatus != ResponseStatus.Declined)
+            .Select(p => p.UserId!.Value)
+            .Distinct()
+            .ToListAsync();
+
+        foreach (var participantUserId in participantUserIds)
+        {
+            await _repository.AddAsync(new Notification
+            {
+                UserId = participantUserId,
+                ReservationId = reservation.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                ScheduledFor = DateTime.UtcNow
+            });
+        }
     }
 
     public async Task CreateGuestInvitationAsync(Reservation reservation, string guestEmail, string? guestName)

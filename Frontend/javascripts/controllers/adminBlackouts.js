@@ -1,11 +1,14 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { logout } from "../api/authApi.js";
 import { getAllRoomBlackouts, createRoomBlackout, updateRoomBlackout, deleteRoomBlackout } from "../api/roomBlackoutsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -59,13 +62,6 @@ let rooms = [];
 let buildings = [];
 let allRows = [];
 let editingId = null;
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function toDateOnlyString(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -134,7 +130,7 @@ form.addEventListener("submit", async (e) => {
   const reason = reasonInput.value.trim();
 
   if (!date || !start || !end || !reason) {
-    modalAlert.innerHTML = `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i><span>Bütün sahələri doldurun.</span></div>`;
+    showAlert(modalAlert, "Bütün sahələri doldurun.", "warning");
     return;
   }
 
@@ -142,7 +138,7 @@ form.addEventListener("submit", async (e) => {
   const endDate = new Date(`${date}T${end}`);
 
   if (startDate >= endDate) {
-    modalAlert.innerHTML = `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i><span>Bitmə vaxtı başlanğıcdan sonra olmalıdır.</span></div>`;
+    showAlert(modalAlert, "Bitmə vaxtı başlanğıcdan sonra olmalıdır.", "warning");
     return;
   }
 
@@ -167,7 +163,7 @@ form.addEventListener("submit", async (e) => {
     closeModal();
     await loadData();
   } catch (err) {
-    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";

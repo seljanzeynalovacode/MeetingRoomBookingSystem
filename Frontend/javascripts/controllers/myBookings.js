@@ -7,6 +7,7 @@ import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
   window.location.href = "login.html";
@@ -48,13 +49,6 @@ const avatarName = document.getElementById("avatarName");
 const logoutBtn = document.getElementById("logoutBtn");
 
 let reservations = [];
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function parseJwt(token) {
   try {
     const payload = token.split(".")[1];
@@ -343,6 +337,18 @@ const hubConnection = new signalR.HubConnectionBuilder()
 
 hubConnection.on("MyReservationsChanged", () => {
   loadReservations();
+});
+
+hubConnection.onreconnecting(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi, yenidən qoşulmağa çalışılır...", "warning");
+});
+
+hubConnection.onreconnected(() => {
+  clearAlert(alertBox);
+});
+
+hubConnection.onclose(() => {
+  showAlert(alertBox, "Canlı yeniləmə bağlantısı kəsildi. Yeni dəyişiklikləri görmək üçün səhifəni yeniləyin.", "warning");
 });
 
 hubConnection.start().catch((err) => console.error("SignalR bağlantısı qurula bilmədi:", err));

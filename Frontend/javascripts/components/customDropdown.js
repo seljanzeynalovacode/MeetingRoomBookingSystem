@@ -1,8 +1,4 @@
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 export function initDropdown({ btn, panel, options, value, placeholder = "Seçin", onChange, portal = false }) {
   let selected = value ?? "";
@@ -102,6 +98,9 @@ export function initDropdown({ btn, panel, options, value, placeholder = "Seçin
     setPlaceholder(newPlaceholder) {
       placeholder = newPlaceholder;
       updateLabel();
+    },
+    destroy() {
+      document.removeEventListener("click", close);
     },
   };
 }

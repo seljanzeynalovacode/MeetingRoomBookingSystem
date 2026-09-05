@@ -1,4 +1,5 @@
 import { getMyNotifications, markNotificationAsRead } from "../api/notificationsApi.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 const POLL_INTERVAL_MS = 30000;
 
@@ -12,13 +13,6 @@ function timeAgo(dateString) {
   if (diffDay === 1) return "Dünən";
   return `${diffDay} gün əvvəl`;
 }
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 export function initNotificationBell() {
   const btn = document.getElementById("notificationBtn");
   const panel = document.getElementById("notificationPanel");

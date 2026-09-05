@@ -1,11 +1,14 @@
 import { requireAdmin } from "../components/adminGuard.js";
+import { initAdminMobileNav } from "../components/mobileNav.js";
 import { getAllRooms, getAllFloors, getAllBuildings, getAllEquipment, createRoom, updateRoom, deleteRoom } from "../api/roomsApi.js";
 import { getAllRoomEquipment, createRoomEquipment, updateRoomEquipment, deleteRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
+initAdminMobileNav();
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -33,13 +36,6 @@ let roomEquipmentList = [];
 let currentRoomEquipment = [];
 let pendingEquipment = [];
 let editingId = null;
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function populateFilterFloorOptions(buildingId) {
   const filtered = buildingId ? floors.filter((f) => f.buildingId === buildingId) : floors;
   filterFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: f.name })), "");
@@ -139,7 +135,7 @@ async function toggleRoomEquipment(equipmentId) {
     }
     renderRoomEquipmentChips();
   } catch (err) {
-    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(modalAlert, err.message);
   }
 }
 
@@ -158,7 +154,7 @@ async function updateRoomEquipmentQuantity(equipmentId, quantity) {
     const globalEntry = roomEquipmentList.find((re) => re.id === existing.id);
     if (globalEntry) globalEntry.quantity = updated.quantity;
   } catch (err) {
-    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(modalAlert, err.message);
   }
 }
 
@@ -236,7 +232,7 @@ form.addEventListener("submit", async (e) => {
     closeModal();
     await loadRooms();
   } catch (err) {
-    modalAlert.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-circle"></i><span>${escapeHtml(err.message)}</span></div>`;
+    showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";

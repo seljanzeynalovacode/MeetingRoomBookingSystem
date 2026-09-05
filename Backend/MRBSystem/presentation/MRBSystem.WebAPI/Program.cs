@@ -132,6 +132,12 @@ namespace MRBSystem.WebAPI
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
 
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+
                 // Token provider təyin edilir
                 options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
                 options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
@@ -167,7 +173,10 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
-            builder.Services.AddHttpClient<IChatService, GeminiChatService>();
+            builder.Services.AddHttpClient<IChatService, GeminiChatService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
 
 
 
@@ -208,6 +217,26 @@ namespace MRBSystem.WebAPI
                         }
 
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = async context =>
+                    {
+                        var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var tokenStamp = context.Principal?.FindFirstValue("SecurityStamp");
+
+                        if (userId == null || tokenStamp == null)
+                        {
+                            context.Fail("Invalid token.");
+                            return;
+                        }
+
+                        var userManager = context.HttpContext.RequestServices
+                            .GetRequiredService<UserManager<AppUser>>();
+                        var user = await userManager.FindByIdAsync(userId);
+
+                        if (user == null || user.SecurityStamp != tokenStamp)
+                        {
+                            context.Fail("Bu token artıq etibarlı deyil, yenidən daxil olun.");
+                        }
                     }
                 };
             });

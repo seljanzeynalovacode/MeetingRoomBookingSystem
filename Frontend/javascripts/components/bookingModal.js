@@ -2,19 +2,13 @@ import { createReservation, updateReservation } from "../api/reservationsApi.js"
 import { createParticipant, getParticipantsByReservation, deleteParticipant } from "../api/participantsApi.js";
 import { showFieldErrors, clearFieldErrors } from "../components/alert.js";
 import { getSystemSettings } from "../api/systemSettingsApi.js";
+import { escapeHtml } from "../utils/escapeHtml.js";
 
 let modalEl = null;
 let pendingParticipantEmails = [""];
 let existingParticipants = [];
 let currentOptions = null;
 let currentSettings = { minReservationMinutes: 30, maxReservationHours: 4, bookingHorizonDays: 30 };
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
 function toDateOnlyString(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");

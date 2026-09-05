@@ -127,6 +127,9 @@ public class RoomService : IRoomService
 
         await _workingHourService.EnsureWithinWorkingHoursAsync(dto.BuildingId, localStart, localEnd);
 
+        var settings = await _systemSettingsService.GetAsync();
+        var bufferMinutes = settings.BufferMinutes;
+
         var candidateRooms = await _repository.GetQueryable()
             .Include(r => r.Floor)
                 .ThenInclude(f => f.Building)
@@ -168,8 +171,8 @@ public class RoomService : IRoomService
         var busyByReservation = await _reservationRepository.GetQueryable()
             .Where(r => candidateRoomIds.Contains(r.RoomId)
                 && r.Status != ReservationStatus.Cancelled
-                && dto.StartDate < r.EndDate
-                && dto.EndDate > r.StartDate)
+                && r.EndDate.AddMinutes(bufferMinutes) > dto.StartDate
+                && dto.EndDate.AddMinutes(bufferMinutes) > r.StartDate)
             .Select(r => r.RoomId)
             .Distinct()
             .ToListAsync();

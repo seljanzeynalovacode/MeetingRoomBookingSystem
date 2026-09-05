@@ -77,7 +77,7 @@ public class AuthService : IAuthService
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
-            UserName = dto.Username,
+            UserName = dto.UserName,
             Email = dto.Email,
             CreatedAt = DateTime.UtcNow
         };
@@ -541,7 +541,8 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
             new Claim(ClaimTypes.GivenName, user.FirstName),
             new Claim(ClaimTypes.Surname, user.LastName),
-            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
+            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new Claim("SecurityStamp", user.SecurityStamp ?? string.Empty)
         };
 
         foreach (var role in roles)

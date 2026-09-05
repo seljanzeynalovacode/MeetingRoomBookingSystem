@@ -242,5 +242,10 @@ public class RoleService : IRoleService
             _logger.LogError("Failed to remove role '{RoleName}' from user with ID: {UserId}. Errors: {Errors}", roleName, userId, string.Join(", ", result.Errors.Select(e => e.Description)));
             throw new InvalidOperationException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
+
+        await _userManager.UpdateSecurityStampAsync(user);
+        _logger.LogInformation(
+            "Role '{RoleName}' removed from user with ID: {UserId}; security stamp updated so any already-issued access tokens are invalidated.",
+            roleName, userId);
     }
 }

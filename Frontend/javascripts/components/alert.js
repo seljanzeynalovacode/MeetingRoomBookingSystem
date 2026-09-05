@@ -1,14 +1,10 @@
+import { escapeHtml } from "../utils/escapeHtml.js";
+
 const ICONS = {
   danger: "bi-exclamation-circle",
   success: "bi-check-circle",
   warning: "bi-exclamation-triangle",
 };
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
 
 export function showAlert(container, message, type = "danger") {
   const icon = ICONS[type] || ICONS.danger;
