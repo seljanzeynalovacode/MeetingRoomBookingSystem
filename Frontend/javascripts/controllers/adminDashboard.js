@@ -1,5 +1,5 @@
-import { requireAdmin } from "../components/adminGuard.js";
-import { initAdminMobileNav } from "../components/mobileNav.js";
+import { requireAdmin, getDisplayIdentity } from "../components/adminGuard.js";
+import { initAdminMobileNav, initAdminAccountMenu } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
@@ -9,6 +9,15 @@ import { showAlert, clearAlert } from "../components/alert.js";
 
 requireAdmin();
 initAdminMobileNav();
+initAdminAccountMenu();
+
+{
+  const { initials, name } = getDisplayIdentity();
+  const adminAccountInitials = document.getElementById("adminAccountInitials");
+  const adminAccountName = document.getElementById("adminAccountName");
+  if (adminAccountInitials) adminAccountInitials.textContent = initials;
+  if (adminAccountName) adminAccountName.textContent = name;
+}
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -27,10 +36,12 @@ function cssVar(name) {
 }
 
 const CHART_COLORS = {
-  violetLight: cssVar("--violet-300"),
+  violetLight: cssVar("--violet-100"),
   violet: cssVar("--violet-500"),
   violetPeak: cssVar("--violet-600"),
+  violetDeep: cssVar("--violet-900"),
   amber: cssVar("--amber-500"),
+  amberSoft: cssVar("--amber-400"),
   amberLight: cssVar("--amber-300"),
   amberPeak: cssVar("--amber-500"),
   green: cssVar("--green-500"),
@@ -39,7 +50,38 @@ const CHART_COLORS = {
   text: cssVar("--text-secondary"),
 };
 
-Chart.defaults.font.family = "'Manrope', sans-serif";
+function peakBarGradient(context) {
+  const { ctx, chartArea } = context.chart;
+  if (!chartArea) return CHART_COLORS.violetPeak;
+  const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  gradient.addColorStop(0, CHART_COLORS.violet);
+  gradient.addColorStop(1, CHART_COLORS.violetDeep);
+  return gradient;
+}
+
+function peakBarGradientHorizontal(context) {
+  const { ctx, chartArea } = context.chart;
+  if (!chartArea) return CHART_COLORS.violetPeak;
+  const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
+  gradient.addColorStop(0, CHART_COLORS.violetDeep);
+  gradient.addColorStop(1, CHART_COLORS.violet);
+  return gradient;
+}
+
+const barShadowPlugin = {
+  id: "barShadow",
+  beforeDatasetsDraw(chart) {
+    chart.ctx.save();
+    chart.ctx.shadowColor = "rgba(29,78,216,0.35)";
+    chart.ctx.shadowBlur = 14;
+    chart.ctx.shadowOffsetY = 8;
+  },
+  afterDatasetsDraw(chart) {
+    chart.ctx.restore();
+  },
+};
+
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 Chart.defaults.color = CHART_COLORS.text;
 
 let peakHoursChartInstance = null;
@@ -89,14 +131,15 @@ function buildPeakHoursChart(reservations) {
   const visibleCounts = hourCounts.slice(firstHour, lastHour + 1);
 
   const labels = visibleCounts.map((_, i) => `${String(firstHour + i).padStart(2, "0")}:00`);
-  const colors = visibleCounts.map((c, i) => (firstHour + i === peakHour && c > 0 ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
+  const colors = visibleCounts.map((c, i) => (firstHour + i === peakHour && c > 0 ? peakBarGradient : CHART_COLORS.violetLight));
 
   if (peakHoursChartInstance) peakHoursChartInstance.destroy();
   peakHoursChartInstance = new Chart(document.getElementById("peakHoursChart"), {
     type: "bar",
+    plugins: [barShadowPlugin],
     data: {
       labels,
-      datasets: [{ data: visibleCounts, backgroundColor: colors, borderRadius: 6, maxBarThickness: 22 }],
+      datasets: [{ data: visibleCounts, backgroundColor: (context) => (typeof colors[context.dataIndex] === "function" ? colors[context.dataIndex](context) : colors[context.dataIndex]), borderRadius: 8, maxBarThickness: 22 }],
     },
     options: {
       responsive: true,
@@ -121,7 +164,7 @@ function buildStatusDonutChart(reservations) {
     type: "doughnut",
     data: {
       labels: ["Aktiv", "Tamamlanıb", "Ləğv edilib"],
-      datasets: [{ data: [confirmed, completed, cancelled], backgroundColor: [CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.red], borderWidth: 0 }],
+      datasets: [{ data: [confirmed, completed, cancelled], backgroundColor: [CHART_COLORS.violetPeak, CHART_COLORS.amberSoft, CHART_COLORS.red], borderWidth: 0 }],
     },
     options: {
       responsive: true,
@@ -146,14 +189,15 @@ function buildWeekdayChart(reservations) {
   const peakDayIndex = counts.indexOf(maxCount);
   peakDayBadge.textContent = maxCount > 0 ? `Pik: ${WEEKDAY_LABELS[peakDayIndex]}` : "";
 
-  const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? CHART_COLORS.amberPeak : CHART_COLORS.amberLight));
+  const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? peakBarGradient : CHART_COLORS.violetLight));
 
   if (weekdayChartInstance) weekdayChartInstance.destroy();
   weekdayChartInstance = new Chart(document.getElementById("weekdayChart"), {
     type: "bar",
+    plugins: [barShadowPlugin],
     data: {
       labels: WEEKDAY_LABELS,
-      datasets: [{ data: counts, backgroundColor: colors, borderRadius: 6, maxBarThickness: 40 }],
+      datasets: [{ data: counts, backgroundColor: (context) => (typeof colors[context.dataIndex] === "function" ? colors[context.dataIndex](context) : colors[context.dataIndex]), borderRadius: 8, maxBarThickness: 40 }],
     },
     options: {
       responsive: true,
@@ -179,14 +223,15 @@ function buildBuildingChart(reservations, rooms) {
 
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   const maxCount = Math.max(...sorted.map(([, count]) => count));
-  const colors = sorted.map(([, count]) => (count === maxCount ? CHART_COLORS.violetPeak : CHART_COLORS.violetLight));
+  const colors = sorted.map(([, count]) => (count === maxCount ? peakBarGradientHorizontal : CHART_COLORS.violetLight));
 
   if (buildingChartInstance) buildingChartInstance.destroy();
   buildingChartInstance = new Chart(document.getElementById("buildingChart"), {
     type: "bar",
+    plugins: [barShadowPlugin],
     data: {
       labels: sorted.map(([name]) => name),
-      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: colors, borderRadius: 6, maxBarThickness: 28 }],
+      datasets: [{ data: sorted.map(([, count]) => count), backgroundColor: (context) => (typeof colors[context.dataIndex] === "function" ? colors[context.dataIndex](context) : colors[context.dataIndex]), borderRadius: 8, maxBarThickness: 28 }],
     },
     options: {
       indexAxis: "y",

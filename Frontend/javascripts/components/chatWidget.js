@@ -2,7 +2,7 @@ import { sendChatMessage } from "../api/chatApi.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 
 const STORAGE_KEY = "mrb_chat_state";
-const WELCOME_TEXT = "Salam! Mən MeetAI-yam — MeetingSpace-in süni intellekt köməkçisi. Hansı tarix/saatda, hansı binada boş otaq axtardığınızı yazın, mən tapım.";
+const WELCOME_TEXT = "Salam! Mən MeetAI-yam — MeetHub-in süni intellekt köməkçisi. Hansı tarix/saatda, hansı binada boş otaq axtardığınızı yazın, mən tapım.";
 function formatMessageText(text) {
   const lines = escapeHtml(text).split("\n");
   const introIndex = lines.findIndex((line) => line.trim().endsWith(":"));

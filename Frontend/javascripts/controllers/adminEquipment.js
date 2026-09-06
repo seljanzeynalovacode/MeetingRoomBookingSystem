@@ -1,5 +1,5 @@
-import { requireAdmin } from "../components/adminGuard.js";
-import { initAdminMobileNav } from "../components/mobileNav.js";
+import { requireAdmin, getDisplayIdentity } from "../components/adminGuard.js";
+import { initAdminMobileNav, initAdminAccountMenu } from "../components/mobileNav.js";
 import { getAllEquipment, createEquipment, updateEquipment, deleteEquipment } from "../api/roomsApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
@@ -7,6 +7,15 @@ import { escapeHtml } from "../utils/escapeHtml.js";
 
 requireAdmin();
 initAdminMobileNav();
+initAdminAccountMenu();
+
+{
+  const { initials, name } = getDisplayIdentity();
+  const adminAccountInitials = document.getElementById("adminAccountInitials");
+  const adminAccountName = document.getElementById("adminAccountName");
+  if (adminAccountInitials) adminAccountInitials.textContent = initials;
+  if (adminAccountName) adminAccountName.textContent = name;
+}
 
 const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");

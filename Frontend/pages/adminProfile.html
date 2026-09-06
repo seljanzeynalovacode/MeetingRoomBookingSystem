@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profil — Admin — MeetHub</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="../css/style.css" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand-mark">
+        <i class="bi bi-calendar-check logo"></i>
+        <span class="wordmark">MeetHub</span>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+      <button type="button" class="admin-nav-toggle" id="adminNavToggle" aria-label="Menyunu aç/bağla"><i class="bi bi-list"></i></button>
+
+      <div class="admin-nav-groups">
+        <div class="nav-section-label">Ümumi</div>
+        <nav class="admin-nav">
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+        </nav>
+
+        <div class="nav-section-label">Struktur</div>
+        <nav class="admin-nav">
+          <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
+          <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+        </nav>
+
+        <div class="nav-section-label">Fəaliyyət</div>
+        <nav class="admin-nav">
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
+          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i>İş saatları</a>
+        </nav>
+
+        <div class="nav-section-label">Sistem</div>
+        <nav class="admin-nav">
+          <a href="adminSettings.html"><i class="bi bi-gear"></i>Ayarlar</a>
+        </nav>
+      </div>
+
+      <div class="admin-sidebar-footer">
+        <div class="admin-account" id="adminAccountTrigger">
+          <span class="admin-account-av" id="adminAccountInitials">--</span>
+          <span class="admin-account-name" id="adminAccountName">Admin</span>
+          <i class="bi bi-chevron-down"></i>
+          <div class="admin-account-menu" id="adminAccountMenu">
+            <a href="adminProfile.html" class="active"><i class="bi bi-person"></i>Profil</a>
+            <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="admin-main" style="max-width:900px;">
+      <div class="admin-topbar">
+        <div>
+          <h1>Profil</h1>
+          <p>Admin hesabınızın məlumatlarını idarə edin.</p>
+        </div>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <div class="card profile-hero-card">
+        <div id="profileHeroAvatar" class="profile-hero-avatar">--</div>
+        <div>
+          <div id="profileHeroName" class="profile-hero-name">Admin</div>
+          <div id="profileHeroEmail" class="profile-hero-email"></div>
+        </div>
+      </div>
+
+      <div class="profile-columns">
+        <div class="card profile-column">
+          <div class="profile-card-body">
+            <h3 class="profile-card-title"><i class="bi bi-person-vcard"></i>Profil məlumatları</h3>
+            <form id="profileForm" novalidate>
+              <div class="field">
+                <label class="field-label" for="firstNameInput">Ad</label>
+                <div class="input-wrap">
+                  <i class="bi bi-person leading-icon"></i>
+                  <input type="text" class="input has-icon" id="firstNameInput" required minlength="2" maxlength="100" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="lastNameInput">Soyad</label>
+                <div class="input-wrap">
+                  <i class="bi bi-person leading-icon"></i>
+                  <input type="text" class="input has-icon" id="lastNameInput" required minlength="2" maxlength="100" />
+                </div>
+              </div>
+              <div class="field field-tight">
+                <label class="field-label" for="userNameInput">İstifadəçi adı</label>
+                <div class="input-wrap">
+                  <i class="bi bi-at leading-icon"></i>
+                  <input type="text" class="input has-icon" id="userNameInput" required minlength="3" maxlength="256" />
+                </div>
+              </div>
+              <div class="profile-form-actions">
+                <button type="submit" class="btn btn-primary" id="profileSubmitBtn">Yadda saxla</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card profile-column">
+          <div class="profile-card-body">
+            <h3 class="profile-card-title"><i class="bi bi-shield-lock"></i>Şifrəni dəyiş</h3>
+            <form id="passwordForm" novalidate>
+              <div class="field">
+                <label class="field-label" for="currentPasswordInput">Mövcud şifrə</label>
+                <div class="input-wrap">
+                  <i class="bi bi-lock leading-icon"></i>
+                  <input type="password" class="input has-icon" id="currentPasswordInput" required />
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="newPasswordInput">Yeni şifrə</label>
+                <div class="input-wrap">
+                  <i class="bi bi-lock leading-icon"></i>
+                  <input type="password" class="input has-icon" id="newPasswordInput" required minlength="6" maxlength="100" />
+                </div>
+              </div>
+              <div class="field field-tight">
+                <label class="field-label" for="confirmNewPasswordInput">Yeni şifrəni təsdiqlə</label>
+                <div class="input-wrap">
+                  <i class="bi bi-lock leading-icon"></i>
+                  <input type="password" class="input has-icon" id="confirmNewPasswordInput" required minlength="6" maxlength="100" />
+                </div>
+              </div>
+              <div class="profile-form-actions">
+                <button type="submit" class="btn btn-primary" id="passwordSubmitBtn">Şifrəni dəyiş</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../javascripts/controllers/adminProfile.js"></script>
+</body>
+</html>

@@ -29,3 +29,18 @@ export function requireAdmin() {
     window.location.href = "dashboard.html";
   }
 }
+
+export function getDisplayIdentity() {
+  const token = getAccessToken();
+  if (!token) return { initials: "--", name: "Admin" };
+
+  const claims = parseJwt(token) || {};
+  const givenName = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"] || "";
+  const surname = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"] || "";
+  const email = claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] || claims["email"] || "";
+
+  const name = givenName ? `${givenName} ${surname}`.trim() : email ? email.split("@")[0] : "Admin";
+  const initials = givenName && surname ? (givenName[0] + surname[0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+
+  return { initials, name };
+}

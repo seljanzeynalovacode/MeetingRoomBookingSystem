@@ -39,3 +39,15 @@ export function initAdminMobileNav() {
     }
   });
 }
+
+export function initAdminAccountMenu() {
+  const trigger = document.getElementById("adminAccountTrigger");
+  const menu = document.getElementById("adminAccountMenu");
+  if (!trigger || !menu) return;
+
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("open");
+  });
+  document.addEventListener("click", () => menu.classList.remove("open"));
+}

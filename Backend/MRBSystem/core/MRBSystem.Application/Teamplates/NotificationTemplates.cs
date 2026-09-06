@@ -37,7 +37,7 @@ public static class NotificationTemplates
             Saat: {startTime} - {endTime}
             Rezervasiyanız uğurla təsdiqləndi.
             Hörmətlə,
-            MeetingSpace
+            MeetHub
             """
             ),
             NotificationType.Updated => (
@@ -51,7 +51,7 @@ public static class NotificationTemplates
             Tarix: {date}
             Saat: {startTime} - {endTime}
             Hörmətlə,
-            MeetingSpace
+            MeetHub
             """
             ),
             NotificationType.Cancelled => (
@@ -65,7 +65,7 @@ public static class NotificationTemplates
             Tarix: {date}
             Saat: {startTime} - {endTime}
             Hörmətlə,
-            MeetingSpace
+            MeetHub
             """
             ),
 
@@ -106,7 +106,7 @@ public static class NotificationTemplates
         Görüşdə iştirakınızı gözləyirik.
 
         Hörmətlə,
-        MeetingSpace
+        MeetHub
         """
         );
     }
