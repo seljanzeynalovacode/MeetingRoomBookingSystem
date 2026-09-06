@@ -16,3 +16,5 @@ appsettings.Development.json
 
 Logs/
 logs/
+
+.claude/
