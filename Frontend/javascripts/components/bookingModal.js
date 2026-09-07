@@ -324,7 +324,8 @@ export async function openBookingModal(options) {
   const isAdmin = options.isAdmin === true;
 
   try {
-    currentSettings = await getSystemSettings();
+    const buildingId = options.mode === "edit" ? options.reservation.buildingId : options.room.buildingId;
+    currentSettings = await getSystemSettings(buildingId);
   } catch {
     // Ayarlar yüklənə bilmədi — defolt dəyərlərlə davam et
   }

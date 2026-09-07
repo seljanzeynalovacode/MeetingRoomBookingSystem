@@ -273,11 +273,12 @@ function openSlotBooking(dateStr, hour) {
   if (!selectedRoomId) return;
   const startStr = `${String(hour).padStart(2, "0")}:00`;
   const endStr = `${String(Math.min(hour + 1, 23)).padStart(2, "0")}:00`;
+  const currentRoom = rooms.find((r) => r.id === selectedRoomId);
 
   openBookingModal({
     mode: "create",
     isAdmin: getRoles().includes("Admin"),
-    room: { id: selectedRoomId, name: selectedRoomName },
+    room: { id: selectedRoomId, name: selectedRoomName, buildingId: currentRoom ? currentRoom.buildingId : null },
     prefillDate: dateStr,
     prefillStart: startStr,
     prefillEnd: endStr,

@@ -535,6 +535,9 @@ namespace MRBSystem.Persistence.Migrations
                     b.Property<int>("BufferMinutes")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("BuildingId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -557,6 +560,10 @@ namespace MRBSystem.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BuildingId")
+                        .IsUnique()
+                        .HasFilter("[BuildingId] IS NOT NULL");
 
                     b.ToTable("SystemSettings");
                 });
@@ -790,6 +797,16 @@ namespace MRBSystem.Persistence.Migrations
                     b.Navigation("Equipment");
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("MRBSystem.Domain.Entities.SystemSettings", b =>
+                {
+                    b.HasOne("MRBSystem.Domain.Entities.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Building");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

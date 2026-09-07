@@ -207,7 +207,7 @@ public class ReservationServiceTests : IDisposable
     public async Task CreateAsync_WithinBufferWindow_ThrowsConflict()
     {
         await SeedRoomAndUserAsync();
-        await _systemSettingsService.UpdateAsync(BuildSettingsDto(bufferMinutes: 15));
+        await _systemSettingsService.UpdateAsync(null, BuildSettingsDto(bufferMinutes: 15));
 
         var start = NextLocalTime(10);
         var end = start.AddHours(1);
@@ -237,7 +237,7 @@ public class ReservationServiceTests : IDisposable
     public async Task CreateAsync_ActiveReservationLimitReached_ThrowsInvalidOperationException()
     {
         await SeedRoomAndUserAsync();
-        await _systemSettingsService.UpdateAsync(BuildSettingsDto(
+        await _systemSettingsService.UpdateAsync(null, BuildSettingsDto(
             isActiveReservationLimitEnabled: true,
             maxActiveReservationsPerUser: 1));
 
@@ -268,7 +268,7 @@ public class ReservationServiceTests : IDisposable
     public async Task CreateAsync_BeyondBookingHorizon_ThrowsArgumentException()
     {
         await SeedRoomAndUserAsync();
-        await _systemSettingsService.UpdateAsync(BuildSettingsDto(bookingHorizonDays: 1));
+        await _systemSettingsService.UpdateAsync(null, BuildSettingsDto(bookingHorizonDays: 1));
 
         var start = DateTime.UtcNow.AddDays(5);
         var dto = new CreateReservationDto

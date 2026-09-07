@@ -2,6 +2,8 @@
 
 public class SystemSettings : BaseEntity
 {
+    public Guid? BuildingId { get; set; }
+    public Building? Building { get; set; }
     public int MinReservationMinutes { get; set; }
     public int MaxReservationHours { get; set; }
     public int BufferMinutes { get; set; }

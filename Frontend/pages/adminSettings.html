@@ -68,14 +68,22 @@
       <div id="alertBox"></div>
 
       <div class="settings-top-row">
-        <div class="settings-info-banner">
+        <div class="settings-info-banner" id="settingsInfoBanner">
           <i class="bi bi-info-circle"></i>
-          <span>Bu dəyişikliklər bütün binalar və istifadəçilər üçün ümumidir</span>
+          <span id="settingsInfoText">Bu dəyişikliklər bütün binalar və istifadəçilər üçün ümumidir</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="resetToGlobalBtn" hidden><i class="bi bi-arrow-counterclockwise"></i>Qlobala qaytar</button>
+        </div>
+        <div class="dd-wrap">
+          <button type="button" class="dd-btn" id="buildingSelectBtn">
+            <span>Qlobal ayarlar</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="dd-panel" id="buildingSelectPanel"></div>
         </div>
         <button type="button" class="btn btn-primary" id="saveBtn"><i class="bi bi-check-lg"></i>Yadda saxla</button>
       </div>
 
-      <div class="settings-grid">
+      <div class="settings-grid" id="settingsGrid">
 
         <div class="card settings-card">
           <div class="settings-card-head">

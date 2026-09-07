@@ -3,6 +3,7 @@
 public record ResponseSystemSettingsDto
 {
     public Guid Id { get; set; }
+    public Guid? BuildingId { get; set; }
     public int MinReservationMinutes { get; set; }
     public int MaxReservationHours { get; set; }
     public int BufferMinutes { get; set; }

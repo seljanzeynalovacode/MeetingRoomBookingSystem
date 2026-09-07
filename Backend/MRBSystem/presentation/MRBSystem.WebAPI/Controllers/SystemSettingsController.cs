@@ -17,17 +17,25 @@ public class SystemSettingsController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] Guid? buildingId)
     {
-        var result = await _systemSettingsService.GetAsync();
+        var result = await _systemSettingsService.GetAsync(buildingId);
         return Ok(result);
     }
 
     [HttpPut]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update([FromBody] UpdateSystemSettingsDto dto)
+    public async Task<IActionResult> Update([FromQuery] Guid? buildingId, [FromBody] UpdateSystemSettingsDto dto)
     {
-        var result = await _systemSettingsService.UpdateAsync(dto);
+        var result = await _systemSettingsService.UpdateAsync(buildingId, dto);
         return Ok(result);
+    }
+
+    [HttpDelete("{buildingId:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ResetToGlobal(Guid buildingId)
+    {
+        await _systemSettingsService.ResetToGlobalAsync(buildingId);
+        return NoContent();
     }
 }

@@ -67,11 +67,16 @@ public class ReservationService : IReservationService
             throw new InvalidOperationException("Bu otaq hazırda aktiv deyil və rezervasiya üçün əlçatan deyil.");
         }
 
+        var buildingId = await _roomRepository.GetQueryable()
+            .Where(r => r.Id == dto.RoomId)
+            .Select(r => r.Floor.BuildingId)
+            .FirstAsync();
+
         var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            var settings = await _systemSettingsService.GetAsync();
+            var settings = await _systemSettingsService.GetAsync(buildingId);
             await EnsureUnderActiveReservationLimitAsync(settings);
-            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, settings);
+            await ValidateDatesAsync(dto.RoomId, dto.StartDate, dto.EndDate, settings, buildingId);
 
             var reservation = _mapper.Map<Reservation>(dto);
             reservation.ReservedByUserId = _currentUser.UserId;
@@ -132,12 +137,18 @@ public class ReservationService : IReservationService
                 throw new InvalidOperationException("Ləğv edilmiş rezervasiya dəyişdirilə bilməz.");
             }
 
-            var settings = await _systemSettingsService.GetAsync();
+            var buildingId = await _roomRepository.GetQueryable()
+                .Where(r => r.Id == dto.RoomId)
+                .Select(r => r.Floor.BuildingId)
+                .FirstAsync();
+
+            var settings = await _systemSettingsService.GetAsync(buildingId);
             await ValidateDatesAsync(
                 dto.RoomId,
                 dto.StartDate,
                 dto.EndDate,
                 settings,
+                buildingId,
                 excludeReservationId: id);
 
             _mapper.Map(dto, reservation);
@@ -252,7 +263,7 @@ public class ReservationService : IReservationService
         return _mapper.Map<ICollection<ResponseReservationDto>>(entities);
     }
 
-    private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, ResponseSystemSettingsDto settings, Guid? excludeReservationId = null)
+    private async Task ValidateDatesAsync(Guid roomId, DateTime startDate, DateTime endDate, ResponseSystemSettingsDto settings, Guid buildingId, Guid? excludeReservationId = null)
     {
         if (startDate >= endDate)
         {
@@ -292,11 +303,6 @@ public class ReservationService : IReservationService
                 _currentUser.UserId, roomId, settings.BookingHorizonDays, startDate);
             throw new ArgumentException($"Rezervasiya yalnız növbəti {settings.BookingHorizonDays} gün ərzində yaradıla bilər.");
         }
-
-        var buildingId = await _roomRepository.GetQueryable()
-          .Where(r => r.Id == roomId)
-          .Select(r => r.Floor.BuildingId)
-          .FirstAsync();
 
         var localStart = _timeZoneService.ToLocal(startDate);
         var localEnd = _timeZoneService.ToLocal(endDate);

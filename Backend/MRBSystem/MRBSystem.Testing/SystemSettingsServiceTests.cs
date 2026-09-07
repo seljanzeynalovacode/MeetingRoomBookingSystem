@@ -74,7 +74,7 @@ public class SystemSettingsServiceTests : IDisposable
             MaxCalendarRangeDays = 120
         };
 
-        var result = await _service.UpdateAsync(dto);
+        var result = await _service.UpdateAsync(null, dto);
 
         result.MinReservationMinutes.Should().Be(15);
         result.MaxActiveReservationsPerUser.Should().Be(3);
@@ -98,7 +98,7 @@ public class SystemSettingsServiceTests : IDisposable
             MaxCalendarRangeDays = 30
         };
 
-        await _service.UpdateAsync(dto);
+        await _service.UpdateAsync(null, dto);
 
         var count = await _context.SystemSettings.CountAsync();
         count.Should().Be(1);
@@ -106,6 +106,60 @@ public class SystemSettingsServiceTests : IDisposable
         var updated = await _context.SystemSettings.FirstAsync();
         updated.MinReservationMinutes.Should().Be(45);
         updated.MaxActiveReservationsPerUser.Should().Be(10);
+    }
+
+    [Fact]
+    public async Task ResetToGlobalAsync_ExistingOverride_DeletesItAndFallsBackToGlobal()
+    {
+        var building = new Building { Name = "Test Building", Address = "Test Address" };
+        _context.Buildings.Add(building);
+        await _context.SaveChangesAsync();
+        var buildingId = building.Id;
+
+        var globalDto = new UpdateSystemSettingsDto
+        {
+            MinReservationMinutes = 30,
+            MaxReservationHours = 4,
+            BufferMinutes = 0,
+            BookingHorizonDays = 30,
+            IsActiveReservationLimitEnabled = false,
+            MaxActiveReservationsPerUser = 5,
+            MaxCalendarRangeDays = 90
+        };
+        var overrideDto = new UpdateSystemSettingsDto
+        {
+            MinReservationMinutes = 10,
+            MaxReservationHours = 2,
+            BufferMinutes = 5,
+            BookingHorizonDays = 14,
+            IsActiveReservationLimitEnabled = true,
+            MaxActiveReservationsPerUser = 2,
+            MaxCalendarRangeDays = 30
+        };
+
+        await _service.UpdateAsync(null, globalDto);
+        await _service.UpdateAsync(buildingId, overrideDto);
+        _context.ChangeTracker.Clear();
+
+        await _service.ResetToGlobalAsync(buildingId);
+        _context.ChangeTracker.Clear();
+
+        var count = await _context.SystemSettings.CountAsync();
+        count.Should().Be(1); // yalnız qlobal sətir qalır
+
+        var result = await _service.GetAsync(buildingId);
+        result.BuildingId.Should().BeNull();
+        result.MinReservationMinutes.Should().Be(30);
+    }
+
+    [Fact]
+    public async Task ResetToGlobalAsync_NoExistingOverride_DoesNothing()
+    {
+        var buildingId = Guid.NewGuid();
+
+        var act = async () => await _service.ResetToGlobalAsync(buildingId);
+
+        await act.Should().NotThrowAsync();
     }
 
     public void Dispose()

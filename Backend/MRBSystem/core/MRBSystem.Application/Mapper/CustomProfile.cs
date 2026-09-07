@@ -48,6 +48,7 @@ public class CustomProfile : Profile
         //  Room 
         CreateMap<Room, ResponseRoomDto>()
             .ForMember(dest => dest.FloorName, opt => opt.MapFrom(src => src.Floor.Name))
+            .ForMember(dest => dest.BuildingId, opt => opt.MapFrom(src => src.Floor.BuildingId))
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Floor.Building.Name));
         CreateMap<CreateRoomDto, Room>(MemberList.Source);
         CreateMap<UpdateRoomDto, Room>(MemberList.Source);
@@ -77,6 +78,7 @@ public class CustomProfile : Profile
         CreateMap<Reservation, ResponseReservationDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name))
+            .ForMember(dest => dest.BuildingId, opt => opt.MapFrom(src => src.Room.Floor.BuildingId))
             .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Room.Floor.Building.Name))
             .ForMember(dest => dest.ReservedByUserName,
                 opt => opt.MapFrom(src => src.ReservedByUser.FirstName + " " + src.ReservedByUser.LastName));

@@ -9,5 +9,6 @@ public record ResponseRoomDto : BaseDto
     public bool IsActive { get; set; }
     public Guid FloorId { get; set; }
     public string FloorName { get; set; } = null!;
+    public Guid BuildingId { get; set; }
     public string BuildingName { get; set; } = null!;
 }

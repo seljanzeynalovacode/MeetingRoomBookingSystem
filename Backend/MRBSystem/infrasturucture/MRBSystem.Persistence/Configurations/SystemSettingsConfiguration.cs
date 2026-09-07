@@ -9,5 +9,12 @@ public class SystemSettingsConfiguration : IEntityTypeConfiguration<SystemSettin
     public void Configure(EntityTypeBuilder<SystemSettings> builder)
     {
         builder.HasKey(s => s.Id);
+
+        builder.HasOne(s => s.Building)
+            .WithMany()
+            .HasForeignKey(s => s.BuildingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(s => s.BuildingId).IsUnique();
     }
 }

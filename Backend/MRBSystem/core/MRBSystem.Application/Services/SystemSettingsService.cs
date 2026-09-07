@@ -27,39 +27,80 @@ public class SystemSettingsService : ISystemSettingsService
         _logger = logger;
     }
 
-    public async Task<ResponseSystemSettingsDto> GetAsync()
+    public async Task<ResponseSystemSettingsDto> GetAsync(Guid? buildingId = null)
     {
-        var entity = await GetOrCreateEntityAsync();
+        if (buildingId == null)
+        {
+            var global = await GetOrCreateGlobalEntityAsync();
+            return _mapper.Map<ResponseSystemSettingsDto>(global);
+        }
+
+        var buildingEntity = await _repository.GetQueryable()
+            .FirstOrDefaultAsync(s => s.BuildingId == buildingId);
+
+        if (buildingEntity != null)
+        {
+            return _mapper.Map<ResponseSystemSettingsDto>(buildingEntity);
+        }
+
+        // Binaya məxsus override yoxdursa, qlobal defolta fallback et
+        var globalFallback = await GetOrCreateGlobalEntityAsync();
+        return _mapper.Map<ResponseSystemSettingsDto>(globalFallback);
+    }
+
+    public async Task<ResponseSystemSettingsDto> UpdateAsync(Guid? buildingId, UpdateSystemSettingsDto dto)
+    {
+        var entity = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var existing = await _repository.GetQueryable()
+                .FirstOrDefaultAsync(s => s.BuildingId == buildingId);
+
+            if (existing == null)
+            {
+                existing = new SystemSettings { BuildingId = buildingId };
+                await _repository.AddAsync(existing);
+            }
+
+            existing.MinReservationMinutes = dto.MinReservationMinutes;
+            existing.MaxReservationHours = dto.MaxReservationHours;
+            existing.BufferMinutes = dto.BufferMinutes;
+            existing.BookingHorizonDays = dto.BookingHorizonDays;
+            existing.IsActiveReservationLimitEnabled = dto.IsActiveReservationLimitEnabled;
+            existing.MaxActiveReservationsPerUser = dto.MaxActiveReservationsPerUser;
+            existing.MaxCalendarRangeDays = dto.MaxCalendarRangeDays;
+
+            await _repository.UpdateAsync(existing);
+            return existing;
+        });
+
+        _logger.LogInformation("System settings updated for building {BuildingId}.", buildingId?.ToString() ?? "GLOBAL");
         return _mapper.Map<ResponseSystemSettingsDto>(entity);
     }
 
-    public async Task<ResponseSystemSettingsDto> UpdateAsync(UpdateSystemSettingsDto dto)
+    public async Task ResetToGlobalAsync(Guid buildingId)
     {
-        var entity = await GetOrCreateEntityAsync();
+        var existing = await _repository.GetQueryable()
+            .FirstOrDefaultAsync(s => s.BuildingId == buildingId);
 
-        entity.MinReservationMinutes = dto.MinReservationMinutes;
-        entity.MaxReservationHours = dto.MaxReservationHours;
-        entity.BufferMinutes = dto.BufferMinutes;
-        entity.BookingHorizonDays = dto.BookingHorizonDays;
-        entity.IsActiveReservationLimitEnabled = dto.IsActiveReservationLimitEnabled;
-        entity.MaxActiveReservationsPerUser = dto.MaxActiveReservationsPerUser;
-        entity.MaxCalendarRangeDays = dto.MaxCalendarRangeDays;
+        if (existing == null)
+        {
+            return;
+        }
 
-        await _repository.UpdateAsync(entity);
-        _logger.LogInformation("System settings updated.");
-
-        return _mapper.Map<ResponseSystemSettingsDto>(entity);
+        await _repository.DeleteAsync(existing.Id);
+        _logger.LogInformation("System settings override removed for building {BuildingId}, reverted to global.", buildingId);
     }
 
-    private async Task<SystemSettings> GetOrCreateEntityAsync()
+    private async Task<SystemSettings> GetOrCreateGlobalEntityAsync()
     {
         return await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            var entity = await _repository.GetQueryable().FirstOrDefaultAsync();
+            var entity = await _repository.GetQueryable().FirstOrDefaultAsync(s => s.BuildingId == null);
             if (entity != null) return entity;
 
             entity = new SystemSettings
             {
+                BuildingId = null,
                 MinReservationMinutes = 30,
                 MaxReservationHours = 4,
                 BufferMinutes = 0,
@@ -69,7 +110,7 @@ public class SystemSettingsService : ISystemSettingsService
                 MaxCalendarRangeDays = 90
             };
             await _repository.AddAsync(entity);
-            _logger.LogInformation("Default system settings created.");
+            _logger.LogInformation("Default global system settings created.");
             return entity;
         });
     }

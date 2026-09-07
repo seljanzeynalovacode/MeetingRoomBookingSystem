@@ -127,7 +127,7 @@ public class RoomService : IRoomService
 
         await _workingHourService.EnsureWithinWorkingHoursAsync(dto.BuildingId, localStart, localEnd);
 
-        var settings = await _systemSettingsService.GetAsync();
+        var settings = await _systemSettingsService.GetAsync(dto.BuildingId);
         var bufferMinutes = settings.BufferMinutes;
 
         var candidateRooms = await _repository.GetQueryable()
@@ -209,6 +209,7 @@ public class RoomService : IRoomService
             RoomName = r.Name,
             Capacity = r.Capacity,
             FloorName = r.Floor.Name,
+            BuildingId = r.Floor.BuildingId,
             BuildingName = r.Floor.Building.Name,
             Equipment = equipmentByRoom
                 .Where(re => re.RoomId == r.Id)
@@ -224,7 +225,13 @@ public class RoomService : IRoomService
             throw new ArgumentException("StartDate must be earlier than or equal to EndDate.");
         }
 
-        var settings = await _systemSettingsService.GetAsync();
+        var buildingId = await _repository.GetQueryable()
+            .Where(r => r.Id == roomId)
+            .Select(r => (Guid?)r.Floor.BuildingId)
+            .FirstOrDefaultAsync()
+            ?? throw new NotFoundException($"Room with id {roomId} not found.");
+
+        var settings = await _systemSettingsService.GetAsync(buildingId);
         if ((endDate.Date - startDate.Date).TotalDays > settings.MaxCalendarRangeDays)
         {
             throw new ArgumentException($"Date range cannot exceed {settings.MaxCalendarRangeDays} days.");
