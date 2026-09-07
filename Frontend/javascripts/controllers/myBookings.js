@@ -308,7 +308,7 @@ document.addEventListener("click", () => avatarMenu.classList.remove("open"));
 logoutBtn.addEventListener("click", async () => {
   await logout();
   clearChatState();
-  window.location.href = "login.html";
+  window.location.href = "landing.html";
 });
 
 const { initials, name } = getDisplayIdentity();

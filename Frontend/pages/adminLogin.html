@@ -13,11 +13,8 @@
 </style>
 </head>
 <body>
-  <div class="scene">
-    <div class="blob blob-violet"></div>
-    <div class="blob blob-amber"></div>
-
-    <div class="stage">
+  <div class="auth-shell">
+    <div class="auth-form-col">
       <div class="auth-card">
         <div class="brand-mark">
           <i class="bi bi-calendar-check logo"></i>
@@ -27,8 +24,9 @@
         <div id="alertBox"></div>
 
         <div class="step active" id="step1">
-          <h1>Admin girişi</h1>
-          <p class="lede">İdarəetmə panelinə daxil olmaq üçün hesab məlumatlarınızı daxil edin.</p>
+          <span class="admin-eyebrow"><i class="bi bi-shield-lock-fill"></i> Admin girişi</span>
+          <h1>İdarəetmə paneli</h1>
+          <p class="lede">Daxil olmaq üçün hesab məlumatlarınızı daxil edin.</p>
 
           <form id="adminLoginForm" novalidate>
             <div class="field">
@@ -83,6 +81,21 @@
           <p class="foot-line"><a href="#" id="backToStep1"><i class="bi bi-arrow-left"></i> Geri qayıt</a></p>
         </div>
       </div>
+    </div>
+
+    <div class="auth-visual-col admin">
+      <div class="auth-orb auth-orb-a" style="background:var(--amber-500);"></div>
+      <div class="auth-orb auth-orb-b"></div>
+      <div class="auth-visual-top">
+        <div class="mark"><i class="bi bi-calendar-check"></i></div>
+        <span class="word">MeetHub</span>
+      </div>
+      <div class="auth-visual-mid">
+        <span class="tag"><i class="bi bi-shield-lock-fill"></i> Admin girişi ayrıdır</span>
+        <h2>İdarəetmə panelinə xoş gəlmisiniz</h2>
+        <p>Bina, otaq, istifadəçi və rezervasiyaları buradan idarə edin. Əlavə təhlükəsizlik üçün 2FA tələb olunur.</p>
+      </div>
+      <div class="auth-visual-bottom">© 2026 MeetHub</div>
     </div>
   </div>
 

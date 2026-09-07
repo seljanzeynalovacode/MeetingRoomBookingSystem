@@ -36,7 +36,7 @@ function cssVar(name) {
 }
 
 const CHART_COLORS = {
-  violetLight: cssVar("--violet-100"),
+  violetLight: cssVar("--violet-300"),
   violet: cssVar("--violet-500"),
   violetPeak: cssVar("--violet-600"),
   violetDeep: cssVar("--violet-900"),

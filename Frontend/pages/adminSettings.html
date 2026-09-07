@@ -57,7 +57,7 @@
       </div>
     </aside>
 
-    <main class="admin-main" style="max-width:900px;">
+    <main class="admin-main" style="max-width:1150px;">
       <div class="admin-topbar">
         <div>
           <h1>Ayarlar</h1>
@@ -67,17 +67,20 @@
 
       <div id="alertBox"></div>
 
-      <div class="settings-info-banner">
-        <i class="bi bi-info-circle"></i>
-        <span>Bu dəyişikliklər bütün binalar və istifadəçilər üçün ümumidir (bina-spesifik deyil — "İş saatları" ayrıca səhifədən idarə olunur).</span>
+      <div class="settings-top-row">
+        <div class="settings-info-banner">
+          <i class="bi bi-info-circle"></i>
+          <span>Bu dəyişikliklər bütün binalar və istifadəçilər üçün ümumidir</span>
+        </div>
+        <button type="button" class="btn btn-primary" id="saveBtn"><i class="bi bi-check-lg"></i>Yadda saxla</button>
       </div>
 
       <div class="settings-grid">
 
         <div class="card settings-card">
           <div class="settings-card-head">
-            <h3><i class="bi bi-hourglass-split"></i>Rezervasiya müddəti</h3>
-            <p>Bir rezervasiyanın minimum/maksimum uzunluğu və ardıcıl bronlar arası fasilə</p>
+            <span class="settings-card-ic"><i class="bi bi-hourglass-split"></i></span>
+            <div><h3>Rezervasiya müddəti</h3><p>Minimum/maksimum uzunluq və fasilə</p></div>
           </div>
 
           <div class="settings-row">
@@ -107,8 +110,8 @@
 
         <div class="card settings-card">
           <div class="settings-card-head">
-            <h3><i class="bi bi-calendar-range"></i>Rezervasiya hüdudları</h3>
-            <p>İstifadəçilərin nə qədər irəliyə və nə qədər çox rezerv edə bilməsi</p>
+            <span class="settings-card-ic"><i class="bi bi-calendar-range"></i></span>
+            <div><h3>Rezervasiya hüdudları</h3><p>Nə qədər irəliyə rezerv edilə bilər</p></div>
           </div>
 
           <div class="settings-row">
@@ -131,10 +134,10 @@
           </div>
         </div>
 
-        <div class="card settings-card">
+        <div class="card settings-card wide">
           <div class="settings-card-head">
-            <h3><i class="bi bi-speedometer2"></i>Performans limitləri</h3>
-            <p>Sistemin daxili sorğu məhdudiyyətləri</p>
+            <span class="settings-card-ic"><i class="bi bi-speedometer2"></i></span>
+            <div><h3>Performans limitləri</h3><p>Sistemin daxili sorğu məhdudiyyətləri</p></div>
           </div>
 
           <div class="settings-row">
@@ -146,10 +149,6 @@
           </div>
         </div>
 
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; margin-top: 0.5rem;">
-        <button type="button" class="btn btn-primary" id="saveBtn"><i class="bi bi-check-lg"></i>Bütün ayarları yadda saxla</button>
       </div>
     </main>
   </div>
