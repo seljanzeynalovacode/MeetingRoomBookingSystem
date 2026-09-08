@@ -1,5 +1,8 @@
 import { userLogin } from "../api/authApi.js";
 import { showAlert, clearAlert, showFieldErrors, clearFieldErrors } from "../components/alert.js";
+import { initThemeToggle } from "../components/theme.js";
+
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 const form = document.getElementById("loginForm");
 const alertBox = document.getElementById("alertBox");

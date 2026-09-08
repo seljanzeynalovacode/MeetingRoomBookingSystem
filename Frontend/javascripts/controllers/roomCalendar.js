@@ -9,6 +9,7 @@ import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { initThemeToggle } from "../components/theme.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
@@ -18,6 +19,7 @@ if (!isLoggedIn()) {
 
 initNotificationBell();
 initChatWidget();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 initMobileNav();
 
 let GRID_START_HOUR = 7;

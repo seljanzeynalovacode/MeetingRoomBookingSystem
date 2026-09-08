@@ -14,9 +14,11 @@ import {
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { initThemeToggle } from "../components/theme.js";
 
 requireAdmin();
 initAdminMobileNav();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 initAdminAccountMenu();
 
 {

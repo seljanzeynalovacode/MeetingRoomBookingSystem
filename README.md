@@ -30,7 +30,7 @@ Built iteratively through multiple rounds of self-driven security/architecture a
 
 ## Features
 
-**Users** — email-confirmed registration & login, room search/booking with guest participants, edit/cancel, per-room calendar with blackout periods, "My Bookings", in-app notification bell, AI chat, forgot/reset password, optional "remember me" persistence.
+**Users** — email-confirmed registration & login, room search/booking with guest participants, edit/cancel, per-room calendar with blackout periods, "My Bookings", in-app notification bell, AI chat, forgot/reset password, optional "remember me" persistence, dark/light theme toggle (persisted per browser).
 
 **Admins** — fully isolated admin login (2FA), CRUD for buildings/floors/rooms/equipment, room blackouts with conflict checking, per-building working hours, **global + per-building system settings with reset-to-global**, user/role management, org-wide reservation oversight, dashboard analytics.
 

@@ -4,6 +4,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initNotificationBell } from "../components/notificationBell.js";
 import { clearChatState } from "../components/chatWidget.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { initThemeToggle } from "../components/theme.js";
 
 if (!isLoggedIn()) {
   window.location.href = "landing.html";
@@ -12,6 +13,7 @@ if (!isLoggedIn()) {
 
 initNotificationBell();
 initMobileNav();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 const alertBox = document.getElementById("alertBox");
 

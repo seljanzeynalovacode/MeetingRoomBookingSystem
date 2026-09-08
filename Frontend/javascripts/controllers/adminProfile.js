@@ -3,10 +3,12 @@ import { initAdminMobileNav, initAdminAccountMenu } from "../components/mobileNa
 import { getAccessToken, refreshAccessToken } from "../api/apiClient.js";
 import { updateProfile, changePassword, logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { initThemeToggle } from "../components/theme.js";
 
 requireAdmin();
 initAdminMobileNav();
 initAdminAccountMenu();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 const alertBox = document.getElementById("alertBox");
 

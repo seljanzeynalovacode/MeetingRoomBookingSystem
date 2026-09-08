@@ -1,5 +1,8 @@
 import { adminLogin, verifyAdmin2FA } from "../api/authApi.js";
 import { showAlert, clearAlert, showFieldErrors, clearFieldErrors } from "../components/alert.js";
+import { initThemeToggle } from "../components/theme.js";
+
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 const alertBox = document.getElementById("alertBox");
 

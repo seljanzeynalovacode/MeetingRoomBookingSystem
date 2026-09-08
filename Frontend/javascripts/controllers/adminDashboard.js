@@ -1,5 +1,6 @@
 import { requireAdmin, getDisplayIdentity } from "../components/adminGuard.js";
 import { initAdminMobileNav, initAdminAccountMenu } from "../components/mobileNav.js";
+import { initThemeToggle } from "../components/theme.js";
 import { logout } from "../api/authApi.js";
 import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
 import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
@@ -10,6 +11,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 requireAdmin();
 initAdminMobileNav();
 initAdminAccountMenu();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 {
   const { initials, name } = getDisplayIdentity();

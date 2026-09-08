@@ -5,10 +5,12 @@ import { getAllBuildings } from "../api/roomsApi.js";
 import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
+import { initThemeToggle } from "../components/theme.js";
 
 requireAdmin();
 initAdminMobileNav();
 initAdminAccountMenu();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 {
   const { initials, name } = getDisplayIdentity();

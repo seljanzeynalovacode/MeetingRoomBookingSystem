@@ -49,4 +49,46 @@
   --glow-primary: 0 10px 22px -6px rgba(29,78,216,0.45);
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --wash: oklch(96% 0.004 255);
+}
+
+/* ===== Dark theme — toggled via [data-theme="dark"] on <html>, see theme.js =====
+   --violet-500/600/900, --accent-purple, --amber-500/600, --green-500, --red-500 are
+   deliberately NOT overridden here: they're used as button/badge/dot "action" colors
+   or as fixed brand-navy (admin sidebar, auth visual panel, logo) that must stay the
+   same regardless of theme. Only the neutrals and the tint/text pairs that read
+   against them (…-50/…-100 fills, …-700 text) get dark-appropriate values. */
+[data-theme="dark"] {
+  --bg: #0B1626;
+  --surface: #142845;
+  --surface-raised: #1B3355;
+  --text-primary: #F1F5FB;
+  --text-secondary: #B8C6DE;
+  --text-muted: #8DA0C0;
+  --border: #30507E;
+  --border-strong: #43689A;
+
+  --violet-50: rgba(91, 141, 246, 0.12);
+  --violet-100: rgba(91, 141, 246, 0.2);
+  --violet-700: #C7D9FC;
+
+  --amber-50: rgba(240, 178, 66, 0.12);
+  --amber-100: rgba(240, 178, 66, 0.2);
+  --amber-700: #F8DFAE;
+
+  --green-100: rgba(46, 191, 128, 0.18);
+  --green-700: #A8F2D0;
+
+  --red-100: rgba(240, 90, 80, 0.18);
+  --red-700: #FCC0BA;
+
+  --wash: rgba(255, 255, 255, 0.07);
+
+  --shadow-sm: 0 1px 2px rgba(2, 6, 14, 0.45);
+  --shadow-md: 0 16px 34px -12px rgba(2, 6, 14, 0.6), 0 6px 14px -6px rgba(2, 6, 14, 0.4);
+  --shadow-lg: 0 36px 80px -24px rgba(2, 6, 14, 0.7), 0 14px 30px -10px rgba(2, 6, 14, 0.5);
+  --glow-violet: 0 0 0 4px rgba(91, 141, 246, 0.25);
+  --glow-amber: 0 0 0 4px rgba(240, 178, 66, 0.3);
+  --glow-primary: 0 10px 26px -6px rgba(91, 141, 246, 0.5);
 }

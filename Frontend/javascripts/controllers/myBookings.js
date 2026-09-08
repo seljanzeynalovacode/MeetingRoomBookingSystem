@@ -7,6 +7,7 @@ import { initNotificationBell } from "../components/notificationBell.js";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
+import { initThemeToggle } from "../components/theme.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
@@ -17,6 +18,7 @@ if (!isLoggedIn()) {
 initNotificationBell();
 initChatWidget();
 initMobileNav();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 const alertBox = document.getElementById("alertBox");
 const toastEl = document.getElementById("toast");

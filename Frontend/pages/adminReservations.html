@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <title>Rezervasiyalar — Admin — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
@@ -10,9 +11,12 @@
 <body class="admin-body">
   <div class="admin-shell">
     <aside class="admin-sidebar">
-      <div class="brand-mark">
-        <i class="bi bi-calendar-check logo"></i>
-        <span class="wordmark">MeetHub</span>
+      <div class="admin-sidebar-head">
+        <div class="brand-mark">
+          <i class="bi bi-calendar-check logo"></i>
+          <span class="wordmark">MeetHub</span>
+        </div>
+        <button type="button" class="sidebar-icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
       </div>
       <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
       <button type="button" class="admin-nav-toggle" id="adminNavToggle" aria-label="Menyunu aç/bağla"><i class="bi bi-list"></i></button>

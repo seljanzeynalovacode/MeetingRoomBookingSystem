@@ -6,10 +6,12 @@ import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { initThemeToggle } from "../components/theme.js";
 
 requireAdmin();
 initAdminMobileNav();
 initAdminAccountMenu();
+initThemeToggle(document.getElementById("themeToggleBtn"));
 
 {
   const { initials, name } = getDisplayIdentity();
@@ -23,6 +25,7 @@ const alertBox = document.getElementById("alertBox");
 const logoutBtn = document.getElementById("logoutBtn");
 const roomsContainer = document.getElementById("roomsContainer");
 const addRoomBtn = document.getElementById("addRoomBtn");
+const resetFiltersBtn = document.getElementById("resetFiltersBtn");
 
 const modal = document.getElementById("roomModal");
 const modalTitle = document.getElementById("roomModalTitle");
@@ -210,6 +213,14 @@ modal.addEventListener("click", (e) => {
 });
 
 addRoomBtn.addEventListener("click", () => openModal(null));
+
+resetFiltersBtn.addEventListener("click", () => {
+  filterBuildingDropdown.setValue("");
+  populateFilterFloorOptions("");
+  filterFloorDropdown.setValue("");
+  filterStatusDropdown.setValue("");
+  renderRooms();
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
