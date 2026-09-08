@@ -90,8 +90,10 @@ export async function refreshAccessToken() {
 }
 
 function redirectToLogin() {
-  if (!window.location.pathname.endsWith("login.html")) {
-    window.location.href = "login.html";
+  const filename = window.location.pathname.split("/").pop();
+  const loginPage = filename.startsWith("admin") ? "adminLogin.html" : "login.html";
+  if (filename !== loginPage) {
+    window.location.href = loginPage;
   }
 }
 

@@ -6,7 +6,7 @@ import { clearChatState } from "../components/chatWidget.js";
 import { initMobileNav } from "../components/mobileNav.js";
 
 if (!isLoggedIn()) {
-  window.location.href = "login.html";
+  window.location.href = "landing.html";
   throw new Error("Not authenticated");
 }
 

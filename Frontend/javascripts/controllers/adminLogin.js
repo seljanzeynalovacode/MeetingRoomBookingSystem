@@ -20,6 +20,11 @@ const backToStep1 = document.getElementById("backToStep1");
 let pendingEmail = "";
 let pendingRememberMe = false;
 
+const params = new URLSearchParams(window.location.search);
+if (params.get("reset") === "1") {
+  showAlert(alertBox, "Şifrəniz yeniləndi. İndi daxil ola bilərsiniz.", "success");
+}
+
 toggleEye.addEventListener("click", () => {
   const isPassword = passwordInput.type === "password";
   passwordInput.type = isPassword ? "text" : "password";

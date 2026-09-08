@@ -11,7 +11,7 @@ import { initMobileNav } from "../components/mobileNav.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 
 if (!isLoggedIn()) {
-  window.location.href = "login.html";
+  window.location.href = "landing.html";
   throw new Error("Not authenticated");
 }
 
