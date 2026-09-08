@@ -47,7 +47,7 @@ public class ExceptionMiddleware
         if (statusCode == HttpStatusCode.InternalServerError)
             _logger.LogError(exception, "Unhandled exception occurred");
         else
-            _logger.LogWarning("{StatusCode}: {Message}", (int)statusCode, message);
+            _logger.LogWarning("{StatusCode}: {ExceptionType}", (int)statusCode, exception.GetType().Name);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;

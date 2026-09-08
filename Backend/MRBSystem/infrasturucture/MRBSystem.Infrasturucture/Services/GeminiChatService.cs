@@ -141,7 +141,7 @@ public class GeminiChatService : IChatService
             });
         }
 
-        _logger.LogWarning("Gemini {MaxRounds} dövr ərzində son cavab vermədi.", MaxToolRounds);
+        _logger.LogWarning("Gemini did not return a final response within {MaxRounds} rounds.", MaxToolRounds);
         return new ChatResponseDto
         {
             Reply = "Üzr istəyirəm, sorğunuzu emal edərkən problem yarandı. Zəhmət olmasa sualı fərqli şəkildə yenidən yazın.",
@@ -210,7 +210,7 @@ public class GeminiChatService : IChatService
 
     private object LogAndBuildUnknownFunctionError(string? functionName)
     {
-        _logger.LogWarning("Gemini naməlum function çağırdı: {FunctionName}", functionName);
+        _logger.LogWarning("Gemini called an unknown function: {FunctionName}", functionName);
         return new { error = "Bu əməliyyat dəstəklənmir." };
     }
 
@@ -294,7 +294,7 @@ public class GeminiChatService : IChatService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Otaq axtarışı zamanı xəta baş verdi.");
+            _logger.LogWarning(ex, "An error occurred during room search.");
             return new { error = "Otaq axtarışı zamanı xəta baş verdi." };
         }
     }

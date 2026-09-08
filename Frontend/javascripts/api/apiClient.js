@@ -4,26 +4,40 @@ const STORAGE_KEYS = {
   accessToken: "mrb_access_token",
   refreshToken: "mrb_refresh_token",
   expiresAt: "mrb_token_expires_at",
+  rememberMe: "mrb_remember_me",
 };
 
+function getActiveStore() {
+  return localStorage.getItem(STORAGE_KEYS.rememberMe) === "1" ? localStorage : sessionStorage;
+}
+
 export function getAccessToken() {
-  return sessionStorage.getItem(STORAGE_KEYS.accessToken);
+  return getActiveStore().getItem(STORAGE_KEYS.accessToken);
 }
 
 export function getRefreshToken() {
-  return sessionStorage.getItem(STORAGE_KEYS.refreshToken);
+  return getActiveStore().getItem(STORAGE_KEYS.refreshToken);
 }
 
-export function setTokens(tokenResponse) {
-  sessionStorage.setItem(STORAGE_KEYS.accessToken, tokenResponse.accessToken);
-  sessionStorage.setItem(STORAGE_KEYS.refreshToken, tokenResponse.refreshToken);
-  sessionStorage.setItem(STORAGE_KEYS.expiresAt, tokenResponse.expiresAt);
+export function setTokens(tokenResponse, rememberMe) {
+  if (rememberMe !== undefined) {
+    if (rememberMe) localStorage.setItem(STORAGE_KEYS.rememberMe, "1");
+    else localStorage.removeItem(STORAGE_KEYS.rememberMe);
+  }
+
+  const store = getActiveStore();
+  store.setItem(STORAGE_KEYS.accessToken, tokenResponse.accessToken);
+  store.setItem(STORAGE_KEYS.refreshToken, tokenResponse.refreshToken);
+  store.setItem(STORAGE_KEYS.expiresAt, tokenResponse.expiresAt);
 }
 
 export function clearTokens() {
-  sessionStorage.removeItem(STORAGE_KEYS.accessToken);
-  sessionStorage.removeItem(STORAGE_KEYS.refreshToken);
-  sessionStorage.removeItem(STORAGE_KEYS.expiresAt);
+  [localStorage, sessionStorage].forEach((store) => {
+    store.removeItem(STORAGE_KEYS.accessToken);
+    store.removeItem(STORAGE_KEYS.refreshToken);
+    store.removeItem(STORAGE_KEYS.expiresAt);
+  });
+  localStorage.removeItem(STORAGE_KEYS.rememberMe);
 }
 
 export function isLoggedIn() {

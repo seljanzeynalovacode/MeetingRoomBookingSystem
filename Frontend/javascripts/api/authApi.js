@@ -14,7 +14,7 @@ export function resendConfirmationEmail(dto) {
 
 export async function userLogin(dto) {
   const tokens = await apiFetch("/auths/user/login", { method: "POST", body: dto });
-  setTokens(tokens);
+  setTokens(tokens, dto.RememberMe);
   return tokens;
 }
 
@@ -24,7 +24,7 @@ export function adminLogin(dto) {
 
 export async function verifyAdmin2FA(dto) {
   const tokens = await apiFetch("/auths/admin/login-2fa", { method: "POST", body: dto });
-  setTokens(tokens);
+  setTokens(tokens, dto.RememberMe);
   return tokens;
 }
 
