@@ -6,12 +6,12 @@ A full-stack meeting room booking platform. Employees search, book, and manage m
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-5C2D91?logo=dotnet&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?logo=microsoftsqlserver&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?logo=jsonwebtokens&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 ![xUnit](https://img.shields.io/badge/xUnit-5C2D91?logo=dotnet&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?logo=jsonwebtokens&logoColor=white)
 
 Also: **Entity Framework Core** · **AutoMapper** · **SignalR** · **Serilog** · **Moq / FluentAssertions** · **Google Gemini API**
 
@@ -30,7 +30,7 @@ Built iteratively through multiple rounds of self-driven security/architecture a
 
 ## Features
 
-**Users** — email-confirmed registration & login, room search/booking with guest participants, edit/cancel, per-room calendar with blackout periods, "My Bookings", in-app notification bell, AI chat, forgot/reset password, optional "remember me" persistence, dark/light theme toggle (persisted per browser).
+**Users** — email-confirmed registration & login, room search/booking with guest participants, edit/cancel, per-room calendar with blackout periods, "My Bookings", in-app notification bell, AI chat, forgot/reset password, optional "remember me" persistence, dark/light theme toggle (persisted per browser), Azerbaijani/English UI language toggle (applies app-wide, including the admin panel).
 
 **Admins** — fully isolated admin login (2FA), CRUD for buildings/floors/rooms/equipment, room blackouts with conflict checking, per-building working hours, **global + per-building system settings with reset-to-global**, user/role management, org-wide reservation oversight, dashboard analytics.
 
@@ -172,3 +172,7 @@ Secrets via **.NET User Secrets** (never committed):
 ## API Documentation (Swagger)
 
 `https://localhost:7114/swagger` (Development only) — includes a Bearer auth scheme; click "Authorize" and paste `Bearer {token}`.
+
+---
+
+Every feature above was built, run, and re-checked against a live backend and browser before being called done — not just written once and assumed to work.
