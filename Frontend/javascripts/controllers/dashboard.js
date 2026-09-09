@@ -4,7 +4,7 @@ import { getAllRoomEquipment } from "../api/roomEquipmentApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
-import { initNotificationBell } from "../components/notificationBell.js";
+import { initNotificationBell } from "../components/notificationBell.js?v=2";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";

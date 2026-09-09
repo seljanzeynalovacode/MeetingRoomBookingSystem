@@ -7,7 +7,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
-import { t } from "../components/i18n.js";
+import { t, getLang } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -33,14 +33,40 @@ const modalAlert = document.getElementById("blackoutModalAlert");
 const modalClose = document.getElementById("blackoutModalClose");
 const modalCancelBtn = document.getElementById("blackoutModalCancelBtn");
 const form = document.getElementById("blackoutForm");
-const dateInput = document.getElementById("blackoutDate");
-const startInput = document.getElementById("blackoutStart");
-const endInput = document.getElementById("blackoutEnd");
+const startDateInput = document.getElementById("blackoutStartDate");
+const startTimeInput = document.getElementById("blackoutStartTime");
+const endDateInput = document.getElementById("blackoutEndDate");
+const endTimeInput = document.getElementById("blackoutEndTime");
 const reasonInput = document.getElementById("blackoutReason");
 const submitBtn = document.getElementById("blackoutModalSubmitBtn");
 
 const filterDate = document.getElementById("filterDate");
 const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+
+function populateModalRoomOptions(buildingId) {
+  if (!buildingId) {
+    roomDropdown.setOptions([], "");
+    roomDropdown.setPlaceholder(t("dashboard.select_building_first"));
+    roomDropdown.setDisabled(true);
+    return [];
+  }
+  roomDropdown.setDisabled(false);
+  roomDropdown.setPlaceholder(t("common.select"));
+  const filtered = rooms.filter((r) => r.buildingId === buildingId);
+  roomDropdown.setOptions(
+    filtered.map((r) => ({ value: r.id, label: r.name })),
+    ""
+  );
+  return filtered;
+}
+
+const modalBuildingDropdown = initDropdown({
+  btn: document.getElementById("blackoutBuildingBtn"),
+  panel: document.getElementById("blackoutBuildingPanel"),
+  options: [],
+  placeholder: t("common.select"),
+  onChange: (value) => populateModalRoomOptions(value),
+});
 
 const roomDropdown = initDropdown({
   btn: document.getElementById("blackoutRoomBtn"),
@@ -99,20 +125,30 @@ function openModal(blackout) {
   submitBtn.textContent = blackout ? t("profile.save") : t("common.create");
 
   if (blackout) {
+    const room = rooms.find((r) => r.id === blackout.roomId);
+    modalBuildingDropdown.setValue(room ? room.buildingId : "");
+    modalBuildingDropdown.setDisabled(true);
+    populateModalRoomOptions(room ? room.buildingId : "");
     roomDropdown.setValue(blackout.roomId);
     roomDropdown.setDisabled(true);
+
     const start = new Date(blackout.startDate);
     const end = new Date(blackout.endDate);
-    dateInput.value = toDateOnlyString(start);
-    startInput.value = start.toTimeString().slice(0, 5);
-    endInput.value = end.toTimeString().slice(0, 5);
+    startDateInput.value = toDateOnlyString(start);
+    startTimeInput.value = start.toTimeString().slice(0, 5);
+    endDateInput.value = toDateOnlyString(end);
+    endTimeInput.value = end.toTimeString().slice(0, 5);
     reasonInput.value = blackout.reason;
   } else {
-    roomDropdown.setDisabled(false);
-    roomDropdown.setValue(rooms[0]?.id || "");
-    dateInput.value = toDateOnlyString(new Date());
-    startInput.value = "09:00";
-    endInput.value = "10:00";
+    modalBuildingDropdown.setDisabled(false);
+    modalBuildingDropdown.setValue("");
+    populateModalRoomOptions("");
+
+    const today = toDateOnlyString(new Date());
+    startDateInput.value = today;
+    endDateInput.value = today;
+    startTimeInput.value = "09:00";
+    endTimeInput.value = "10:00";
     reasonInput.value = "";
   }
 
@@ -136,26 +172,27 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   modalAlert.innerHTML = "";
 
-  const date = dateInput.value;
-  const start = startInput.value;
-  const end = endInput.value;
+  const startDateVal = startDateInput.value;
+  const startTimeVal = startTimeInput.value;
+  const endDateVal = endDateInput.value;
+  const endTimeVal = endTimeInput.value;
   const reason = reasonInput.value.trim();
 
-  if (!date || !start || !end || !reason) {
-    showAlert(modalAlert, "Bütün sahələri doldurun.", "warning");
+  if (!startDateVal || !startTimeVal || !endDateVal || !endTimeVal || !reason || !roomDropdown.getValue()) {
+    showAlert(modalAlert, t("adminblackouts.fill_all_fields"), "warning");
     return;
   }
 
-  const startDate = new Date(`${date}T${start}`);
-  const endDate = new Date(`${date}T${end}`);
+  const startDate = new Date(`${startDateVal}T${startTimeVal}`);
+  const endDate = new Date(`${endDateVal}T${endTimeVal}`);
 
   if (startDate >= endDate) {
-    showAlert(modalAlert, "Bitmə vaxtı başlanğıcdan sonra olmalıdır.", "warning");
+    showAlert(modalAlert, t("adminblackouts.end_after_start"), "warning");
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Yadda saxlanılır...";
+  submitBtn.textContent = t("common.saving");
 
   try {
     if (editingId) {
@@ -178,7 +215,7 @@ form.addEventListener("submit", async (e) => {
     showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";
+    submitBtn.textContent = editingId ? t("profile.save") : t("common.create");
   }
 });
 
@@ -186,9 +223,13 @@ function createBlackoutCardHtml(b) {
   const status = getBlackoutStatus(b.startDate, b.endDate);
   const start = new Date(b.startDate);
   const end = new Date(b.endDate);
-  const monthAbbr = start.toLocaleDateString("az-AZ", { month: "short" });
-  const dayNum = start.toLocaleDateString("az-AZ", { day: "2-digit" });
-  const timeRange = `${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
+  const locale = getLang() === "en" ? "en-US" : "az-AZ";
+  const monthAbbr = start.toLocaleDateString(locale, { month: "short" });
+  const dayNum = start.toLocaleDateString(locale, { day: "2-digit" });
+  const isMultiDay = toDateOnlyString(start) !== toDateOnlyString(end);
+  const timeRange = isMultiDay
+    ? `${start.toLocaleDateString(locale, { day: "2-digit", month: "short" })} ${start.toTimeString().slice(0, 5)} – ${end.toLocaleDateString(locale, { day: "2-digit", month: "short" })} ${end.toTimeString().slice(0, 5)}`
+    : `${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
 
   return `
     <div class="card blackout-card">
@@ -238,7 +279,8 @@ function applyFilters(rows) {
       const dayEnd = new Date(filterDate.value);
       dayEnd.setHours(23, 59, 59, 999);
       const rowStart = new Date(row.startDate);
-      if (rowStart < dayStart || rowStart > dayEnd) return false;
+      const rowEnd = new Date(row.endDate);
+      if (rowEnd < dayStart || rowStart > dayEnd) return false;
     }
     return true;
   });
@@ -248,7 +290,7 @@ function renderBlackouts() {
   const rows = applyFilters(allRows);
 
   if (!rows.length) {
-    blackoutsList.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>Bloklama tapılmadı.</div>`;
+    blackoutsList.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>${t("adminblackouts.no_blackouts")}</div>`;
     return;
   }
 
@@ -263,7 +305,7 @@ function renderBlackouts() {
 
   blackoutsList.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Bu bloklamanı silmək istədiyinizə əminsiniz?")) return;
+      if (!confirm(t("adminblackouts.confirm_delete"))) return;
       clearAlert(alertBox);
       try {
         await deleteRoomBlackout(btn.dataset.id);
@@ -284,7 +326,8 @@ async function loadData() {
     buildings = buildingList;
     allRows = buildRows();
 
-    roomDropdown.setOptions(rooms.map((r) => ({ value: r.id, label: `${r.name} — ${r.buildingName}` })));
+    modalBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), "");
+    populateModalRoomOptions("");
 
     filterBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.name, label: b.name })), "");
     populateRoomFilterOptions("");

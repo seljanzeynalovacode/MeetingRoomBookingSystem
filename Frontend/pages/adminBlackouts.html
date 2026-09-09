@@ -111,27 +111,42 @@
       <div id="blackoutModalAlert"></div>
 
       <form id="blackoutForm" novalidate>
-        <div class="field">
-          <label class="field-label" for="blackoutRoomBtn" data-i18n="calendar.room">Otaq</label>
-          <div class="dd-wrap">
-            <button type="button" class="dd-btn" id="blackoutRoomBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
-            <div class="dd-panel" id="blackoutRoomPanel"></div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" for="blackoutBuildingBtn" data-i18n="filters.building">Bina</label>
+            <div class="dd-wrap">
+              <button type="button" class="dd-btn" id="blackoutBuildingBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+              <div class="dd-panel" id="blackoutBuildingPanel"></div>
+            </div>
           </div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="blackoutDate" data-i18n="filters.date">Tarix</label>
-          <input type="date" class="input" id="blackoutDate" required />
+          <div class="field">
+            <label class="field-label" for="blackoutRoomBtn" data-i18n="calendar.room">Otaq</label>
+            <div class="dd-wrap">
+              <button type="button" class="dd-btn" id="blackoutRoomBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+              <div class="dd-panel" id="blackoutRoomPanel"></div>
+            </div>
+          </div>
         </div>
 
         <div class="grid-2">
           <div class="field">
-            <label class="field-label" for="blackoutStart" data-i18n="adminblackouts.start">Başlama</label>
-            <input type="time" class="input" id="blackoutStart" required />
+            <label class="field-label" for="blackoutStartDate" data-i18n="adminblackouts.start_date">Başlama tarixi</label>
+            <input type="date" class="input" id="blackoutStartDate" required />
           </div>
           <div class="field">
-            <label class="field-label" for="blackoutEnd" data-i18n="adminblackouts.end">Bitmə</label>
-            <input type="time" class="input" id="blackoutEnd" required />
+            <label class="field-label" for="blackoutStartTime" data-i18n="adminblackouts.start_time">Başlama saatı</label>
+            <input type="time" class="input" id="blackoutStartTime" required />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" for="blackoutEndDate" data-i18n="adminblackouts.end_date">Bitmə tarixi</label>
+            <input type="date" class="input" id="blackoutEndDate" required />
+          </div>
+          <div class="field">
+            <label class="field-label" for="blackoutEndTime" data-i18n="adminblackouts.end_time">Bitmə saatı</label>
+            <input type="time" class="input" id="blackoutEndTime" required />
           </div>
         </div>
 

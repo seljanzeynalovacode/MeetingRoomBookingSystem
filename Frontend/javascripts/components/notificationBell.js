@@ -22,7 +22,7 @@ export function initNotificationBell() {
 
   if (!btn || !panel || !badge || !list || !head) return;
 
-  head.innerHTML = `<span>Bildirişlər</span><span class="notification-mark-all" id="notificationMarkAll">Hamısını oxunmuş et</span>`;
+  head.innerHTML = `<span>Bildirişlər</span><button type="button" class="notification-mark-all" id="notificationMarkAll" title="Hamısını oxunmuş et" aria-label="Hamısını oxunmuş et"><i class="bi bi-check2-all"></i>Hamısı</button>`;
   const markAllBtn = document.getElementById("notificationMarkAll");
 
   let notifications = [];

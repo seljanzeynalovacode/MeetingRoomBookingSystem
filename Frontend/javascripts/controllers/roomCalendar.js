@@ -5,7 +5,7 @@ import { getWorkingHours } from "../api/workingHoursApi.js";
 import { logout } from "../api/authApi.js";
 import { openBookingModal } from "../components/bookingModal.js";
 import { showAlert, clearAlert } from "../components/alert.js";
-import { initNotificationBell } from "../components/notificationBell.js";
+import { initNotificationBell } from "../components/notificationBell.js?v=2";
 import { initChatWidget, clearChatState } from "../components/chatWidget.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
@@ -204,15 +204,60 @@ function clampHour(h) {
   return Math.min(Math.max(h, GRID_START_HOUR), GRID_END_HOUR);
 }
 
-function computeBlockPosition(startIso, endIso) {
-  const start = new Date(startIso);
-  const end = new Date(endIso);
+function isMultiDayItem(item) {
+  return toDateOnlyString(new Date(item.start)) !== toDateOnlyString(new Date(item.end));
+}
+
+function getEventLayout(item) {
+  const start = new Date(item.start);
+  const end = new Date(item.end);
   const totalHours = GRID_END_HOUR - GRID_START_HOUR;
   const startHourFloat = clampHour(start.getHours() + start.getMinutes() / 60);
   const endHourFloat = clampHour(end.getHours() + end.getMinutes() / 60);
   const top = ((startHourFloat - GRID_START_HOUR) / totalHours) * 100;
   const height = Math.max(((endHourFloat - startHourFloat) / totalHours) * 100, 2.5);
-  return { top: `${top}%`, height: `${height}%` };
+
+  const startLabel = start.toTimeString().slice(0, 5);
+  const endLabel = end.toTimeString().slice(0, 5);
+
+  return { top: `${top}%`, height: `${height}%`, startLabel, timeLabel: `${startLabel}–${endLabel}` };
+}
+
+function applyBlockedRows(container, blackoutItems, dayDateStr) {
+  const rows = Array.from(container.querySelectorAll(".grid-hour-row"));
+  const dayStart = new Date(dayDateStr);
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+
+  blackoutItems.forEach((item) => {
+    const start = new Date(item.start);
+    const end = new Date(item.end);
+    const startHour = start < dayStart ? GRID_START_HOUR : Math.floor(start.getHours() + start.getMinutes() / 60);
+    const endHour = end > dayEnd ? GRID_END_HOUR : Math.ceil(end.getHours() + end.getMinutes() / 60);
+
+    const blockedRows = rows.filter((row) => {
+      const h = Number(row.dataset.hour);
+      return h >= startHour && h < endHour;
+    });
+
+    blockedRows.forEach((row, idx) => {
+      row.classList.add("blocked");
+      row.title = item.title;
+      row.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showEventPopover(item, row);
+      });
+      if (idx === blockedRows.length - 1) row.classList.add("blocked-last");
+      if (idx === 0) {
+        row.classList.add("blocked-first");
+        const tag = document.createElement("span");
+        tag.className = "blocked-tag";
+        tag.innerHTML = `<i class="bi bi-slash-circle"></i>${escapeHtml(item.title)}`;
+        row.appendChild(tag);
+      }
+    });
+  });
 }
 
 let popoverOutsideHandler = null;
@@ -237,7 +282,11 @@ function showEventPopover(item, anchorEl) {
   const endDateObj = new Date(item.end);
   const start = startDateObj.toTimeString().slice(0, 5);
   const end = endDateObj.toTimeString().slice(0, 5);
-  const dateStr = startDateObj.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short", year: "numeric" });
+  const locale = getLang() === "en" ? "en-US" : "az-AZ";
+  const sameDay = toDateOnlyString(startDateObj) === toDateOnlyString(endDateObj);
+  const dateStr = sameDay
+    ? startDateObj.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" })
+    : `${startDateObj.toLocaleDateString(locale, { day: "2-digit", month: "short" })} – ${endDateObj.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" })}`;
 
   const currentRoom = rooms.find((r) => r.id === selectedRoomId);
   const buildingName = currentRoom ? currentRoom.buildingName : "";
@@ -293,7 +342,9 @@ function openSlotBooking(dateStr, hour) {
 function renderDayView(calendarDays) {
   const dayEntry = calendarDays[0];
   const dateStr = dayEntry.date.slice(0, 10);
-  const items = buildTimelineItems(dayEntry);
+  const allItems = buildTimelineItems(dayEntry);
+  const multiDayBlackouts = allItems.filter((item) => item.type === "blackout" && isMultiDayItem(item));
+  const overlayItems = allItems.filter((item) => !(item.type === "blackout" && isMultiDayItem(item)));
 
   const labelsHtml = HOURS.map((h) => `<div class="hour-label">${String(h).padStart(2, "0")}:00</div>`).join("");
   const rowsHtml = HOURS.map((h) => `<div class="grid-hour-row" data-hour="${h}" data-date="${dateStr}"></div>`).join("");
@@ -307,16 +358,17 @@ function renderDayView(calendarDays) {
       </div>
     </div>`;
 
+  const dayGridCol = document.getElementById("dayGridCol");
+  applyBlockedRows(dayGridCol, multiDayBlackouts, dateStr);
+
   const layer = document.getElementById("dayEventsLayer");
-  items.forEach((item) => {
-    const { top, height } = computeBlockPosition(item.start, item.end);
+  overlayItems.forEach((item) => {
+    const { top, height, timeLabel } = getEventLayout(item);
     const block = document.createElement("div");
     block.className = item.type === "blackout" ? "grid-event-block blackout" : "grid-event-block";
     block.style.top = top;
     block.style.height = height;
-    const start = new Date(item.start).toTimeString().slice(0, 5);
-    const end = new Date(item.end).toTimeString().slice(0, 5);
-    block.innerHTML = `${escapeHtml(item.title)}<span class="ge-time">${start}–${end}</span>`;
+    block.innerHTML = `${escapeHtml(item.title)}<span class="ge-time">${timeLabel}</span>`;
     block.addEventListener("click", (e) => {
       e.stopPropagation();
       showEventPopover(item, block);
@@ -324,7 +376,7 @@ function renderDayView(calendarDays) {
     layer.appendChild(block);
   });
 
-  document.getElementById("dayGridCol").querySelectorAll(".grid-hour-row").forEach((row) => {
+  dayGridCol.querySelectorAll(".grid-hour-row:not(.blocked)").forEach((row) => {
     row.addEventListener("click", () => {
       openSlotBooking(row.dataset.date, Number(row.dataset.hour));
     });
@@ -360,16 +412,22 @@ function renderWeekView(calendarDays) {
     </div>`;
 
   calendarDays.forEach((dayEntry, colIdx) => {
-    const items = buildTimelineItems(dayEntry);
+    const dateStr = dayEntry.date.slice(0, 10);
+    const allItems = buildTimelineItems(dayEntry);
+    const multiDayBlackouts = allItems.filter((item) => item.type === "blackout" && isMultiDayItem(item));
+    const overlayItems = allItems.filter((item) => !(item.type === "blackout" && isMultiDayItem(item)));
+
+    const dayBody = contentEl.querySelector(`.week-day-body[data-col="${colIdx}"]`);
+    applyBlockedRows(dayBody, multiDayBlackouts, dateStr);
+
     const layer = contentEl.querySelector(`.grid-events-layer[data-layer-col="${colIdx}"]`);
-    items.forEach((item) => {
-      const { top, height } = computeBlockPosition(item.start, item.end);
+    overlayItems.forEach((item) => {
+      const { top, height, startLabel } = getEventLayout(item);
       const block = document.createElement("div");
       block.className = item.type === "blackout" ? "grid-event-block blackout week-block" : "grid-event-block week-block";
       block.style.top = top;
       block.style.height = height;
-      const start = new Date(item.start).toTimeString().slice(0, 5);
-      block.innerHTML = `<span class="ge-time-only">${start}</span>${escapeHtml(item.title)}`;
+      block.innerHTML = `<span class="ge-time-only">${startLabel}</span>${escapeHtml(item.title)}`;
       block.addEventListener("click", (e) => {
         e.stopPropagation();
         showEventPopover(item, block);
@@ -378,7 +436,7 @@ function renderWeekView(calendarDays) {
     });
   });
 
-  contentEl.querySelectorAll(".grid-hour-row").forEach((row) => {
+  contentEl.querySelectorAll(".grid-hour-row:not(.blocked)").forEach((row) => {
     row.addEventListener("click", () => {
       openSlotBooking(row.dataset.date, Number(row.dataset.hour));
     });
@@ -497,6 +555,24 @@ function getRoomsForBuilding(buildingId) {
   });
 }
 
+const LAST_ROOM_KEY = "mrb_last_room_id";
+function saveLastRoom(roomId) {
+  try {
+    localStorage.setItem(LAST_ROOM_KEY, roomId);
+  } catch {}
+}
+function getLastRoomId() {
+  try {
+    return localStorage.getItem(LAST_ROOM_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+function findBuildingIdForRoom(room) {
+  const floor = floors.find((f) => f.id === room.floorId);
+  return floor ? floor.buildingId : "";
+}
+
 function populateRoomOptions(buildingId) {
   const filtered = getRoomsForBuilding(buildingId);
   roomDropdown.setOptions(
@@ -526,6 +602,7 @@ const buildingDropdown = initDropdown({
     }
     selectedRoomId = filtered[0].id;
     selectedRoomName = filtered[0].name;
+    saveLastRoom(selectedRoomId);
     fetchAndRender();
   },
 });
@@ -539,6 +616,7 @@ const roomDropdown = initDropdown({
     selectedRoomId = value;
     const room = rooms.find((r) => r.id === selectedRoomId);
     selectedRoomName = room ? room.name : "";
+    saveLastRoom(selectedRoomId);
     fetchAndRender();
   },
 });
@@ -581,12 +659,22 @@ async function init() {
       return;
     }
 
-    buildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), "");
+    const lastRoomId = getLastRoomId();
+    const lastRoom = lastRoomId ? rooms.find((r) => r.id === lastRoomId) : null;
+    const initialBuildingId = lastRoom ? findBuildingIdForRoom(lastRoom) : buildings[0]?.id || "";
 
-    populateRoomOptions("");
-    selectedRoomId = rooms[0].id;
-    selectedRoomName = rooms[0].name;
-    fetchAndRender();
+    buildingDropdown.setOptions(buildings.map((b) => ({ value: b.id, label: b.name })), initialBuildingId);
+
+    const filtered = populateRoomOptions(initialBuildingId);
+    const initialRoom = (lastRoom && filtered.find((r) => r.id === lastRoom.id)) || filtered[0];
+    if (initialRoom) {
+      roomDropdown.setValue(initialRoom.id);
+      selectedRoomId = initialRoom.id;
+      selectedRoomName = initialRoom.name;
+      fetchAndRender();
+    } else {
+      contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>${t("roomCalendar.no_rooms_in_building")}</div>`;
+    }
   } catch (err) {
     showAlert(alertBox, err.message);
   }

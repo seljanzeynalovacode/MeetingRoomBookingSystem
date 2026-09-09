@@ -1,7 +1,7 @@
 import { isLoggedIn, getAccessToken, refreshAccessToken } from "../api/apiClient.js";
 import { updateProfile, changePassword, logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
-import { initNotificationBell } from "../components/notificationBell.js";
+import { initNotificationBell } from "../components/notificationBell.js?v=2";
 import { clearChatState } from "../components/chatWidget.js";
 import { initMobileNav } from "../components/mobileNav.js";
 import { initThemeToggle } from "../components/theme.js";
