@@ -6,6 +6,7 @@ import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -50,7 +51,7 @@ let selectedBuildingId = "";
 const buildingDropdown = initDropdown({
   btn: buildingSelectBtn,
   panel: buildingSelectPanel,
-  options: [{ value: "", label: "Qlobal ayarlar" }],
+  options: [{ value: "", label: t("adminsettings.global") }],
   value: "",
   onChange: (id) => {
     selectedBuildingId = id;
@@ -71,7 +72,7 @@ function applyValues(s) {
 
 async function loadSettings() {
   saveBtn.disabled = true;
-  saveBtn.textContent = "Yüklənir...";
+  saveBtn.textContent = t("common.loading");
   resetToGlobalBtn.hidden = true;
 
   try {
@@ -80,20 +81,20 @@ async function loadSettings() {
 
     if (!selectedBuildingId) {
       settingsInfoBanner.classList.remove("is-fallback");
-      settingsInfoText.textContent = "Bu dəyişikliklər, fərdi ayarı olmayan bütün binalar üçün standart sayılır.";
+      settingsInfoText.textContent = t("adminsettings.info_global");
     } else if (s.buildingId === selectedBuildingId) {
       settingsInfoBanner.classList.remove("is-fallback");
-      settingsInfoText.textContent = "Bu bina üçün fərdi ayarlar mövcuddur və qlobal ayarları əvəz edir.";
+      settingsInfoText.textContent = t("adminsettings.info_custom");
       resetToGlobalBtn.hidden = false;
     } else {
       settingsInfoBanner.classList.add("is-fallback");
-      settingsInfoText.textContent = "Bu bina hazırda qlobal ayarlardan istifadə edir. Dəyişib saxlasanız, bu bina üçün fərdi ayar yaradılacaq.";
+      settingsInfoText.textContent = t("adminsettings.info_fallback");
     }
   } catch (err) {
     showAlert(alertBox, err.message);
   } finally {
     saveBtn.disabled = false;
-    saveBtn.innerHTML = '<i class="bi bi-check-lg"></i>Bütün ayarları yadda saxla';
+    saveBtn.innerHTML = `<i class="bi bi-check-lg"></i>${t("adminsettings.save_all")}`;
   }
 }
 
@@ -102,7 +103,7 @@ resetToGlobalBtn.addEventListener("click", async () => {
   resetToGlobalBtn.disabled = true;
   try {
     await resetSystemSettingsToGlobal(selectedBuildingId);
-    showAlert(alertBox, "Bu bina qlobal ayarlara qaytarıldı.", "success");
+    showAlert(alertBox, t("adminsettings.reset_success"), "success");
     await loadSettings();
   } catch (err) {
     showAlert(alertBox, err.message);
@@ -129,7 +130,7 @@ saveBtn.addEventListener("click", async () => {
   }
 
   saveBtn.disabled = true;
-  saveBtn.textContent = "Yadda saxlanılır...";
+  saveBtn.textContent = t("common.saving");
 
   const dto = {
     MinReservationMinutes: Number(minMinutesInput.value),
@@ -143,13 +144,13 @@ saveBtn.addEventListener("click", async () => {
 
   try {
     await updateSystemSettings(selectedBuildingId || undefined, dto);
-    showAlert(alertBox, "Ayarlar yadda saxlanıldı.", "success");
+    showAlert(alertBox, t("adminsettings.save_success"), "success");
     await loadSettings();
   } catch (err) {
     showAlert(alertBox, err.message);
   } finally {
     saveBtn.disabled = false;
-    saveBtn.innerHTML = '<i class="bi bi-check-lg"></i>Bütün ayarları yadda saxla';
+    saveBtn.innerHTML = `<i class="bi bi-check-lg"></i>${t("adminsettings.save_all")}`;
   }
 });
 
@@ -162,7 +163,7 @@ async function init() {
   try {
     const buildings = await getAllBuildings();
     buildingDropdown.setOptions(
-      [{ value: "", label: "Qlobal ayarlar" }, ...buildings.map((b) => ({ value: b.id, label: b.name }))],
+      [{ value: "", label: t("adminsettings.global") }, ...buildings.map((b) => ({ value: b.id, label: b.name }))],
       ""
     );
   } catch (err) {

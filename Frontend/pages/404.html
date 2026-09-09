@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Səhifə tapılmadı — MeetHub</title>
+<title data-i18n="meta.title.404">Səhifə tapılmadı — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 </head>
 <body>
   <button type="button" class="floating-theme-toggle" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+  <button type="button" class="floating-theme-toggle floating-lang-toggle" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
   <div class="auth-form-col" style="min-height:100vh;">
     <div class="auth-card text-center">
       <div class="brand-mark">
@@ -18,17 +19,19 @@
       </div>
 
       <div class="error-code">404</div>
-      <h1>Səhifə tapılmadı</h1>
-      <p class="lede">Axtardığınız səhifə mövcud deyil, silinib və ya ünvan yanlış yazılıb.</p>
+      <h1 data-i18n="notfound.heading">Səhifə tapılmadı</h1>
+      <p class="lede" data-i18n="notfound.lede">Axtardığınız səhifə mövcud deyil, silinib və ya ünvan yanlış yazılıb.</p>
 
       <a href="landing.html" class="btn btn-primary btn-block btn-lg">
-        <i class="bi bi-house"></i> Ana səhifəyə qayıt
+        <i class="bi bi-house"></i> <span data-i18n="notfound.back">Ana səhifəyə qayıt</span>
       </a>
     </div>
   </div>
   <script type="module">
     import { initThemeToggle } from "../javascripts/components/theme.js";
+    import { initLangToggle } from "../javascripts/components/i18n.js";
     initThemeToggle(document.getElementById("themeToggleBtn"));
+    initLangToggle(document.getElementById("langToggleBtn"));
   </script>
 </body>
 </html>

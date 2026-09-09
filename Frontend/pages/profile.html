@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Profil — MeetHub</title>
+<title data-i18n="meta.title.profile">Profil — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
@@ -18,22 +18,23 @@
     </a>
 
     <div class="nav-links">
-      <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i>Otaqlar</a>
-      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
-      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm"><i class="bi bi-door-open"></i><span data-i18n="nav.rooms">Otaqlar</span></a>
+      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i><span data-i18n="nav.calendar">Təqvim</span></a>
+      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i><span data-i18n="nav.myBookings">Rezervasiyalarım</span></a>
     </div>
 
     <div class="nav-right">
       <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menyu"><i class="bi bi-list"></i></button>
-      <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
+      <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i><span data-i18n="nav.adminPanel">Admin panel</span></a>
       <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+      <button type="button" class="icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
       <div class="notification-wrap">
         <button class="icon-btn" id="notificationBtn" aria-label="Bildirişlər">
           <i class="bi bi-bell"></i>
           <span class="notification-badge" id="notificationBadge" style="display:none;"></span>
         </button>
         <div class="notification-panel" id="notificationPanel">
-          <div class="notification-panel-head">Bildirişlər</div>
+          <div class="notification-panel-head" data-i18n="notifications.title">Bildirişlər</div>
           <div class="notification-list" id="notificationList"></div>
         </div>
       </div>
@@ -42,8 +43,8 @@
         <span class="name" id="avatarName">İstifadəçi</span>
         <i class="bi bi-chevron-down"></i>
         <div class="avatar-menu" id="avatarMenu">
-          <a href="profile.html" class="active"><i class="bi bi-person"></i>Profil</a>
-          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+          <a href="profile.html" class="active"><i class="bi bi-person"></i><span data-i18n="user.profile">Profil</span></a>
+          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i><span data-i18n="user.logout">Çıxış</span></button>
         </div>
       </div>
     </div>
@@ -54,8 +55,8 @@
   <div class="reservations-layout">
     <div class="content-head">
       <div>
-        <h2 class="profile-title"><i class="bi bi-person-fill profile-head-icon"></i>Profil</h2>
-        <p class="profile-subtitle">Hesab məlumatlarınızı idarə edin.</p>
+        <h2 class="profile-title"><i class="bi bi-person-fill profile-head-icon"></i><span data-i18n="user.profile">Profil</span></h2>
+        <p class="profile-subtitle" data-i18n="profile.subtitle">Hesab məlumatlarınızı idarə edin.</p>
       </div>
     </div>
 
@@ -70,31 +71,31 @@
     <div class="profile-columns">
       <div class="card profile-column">
         <div class="profile-card-body">
-          <h3 class="profile-card-title"><i class="bi bi-person-vcard"></i>Profil məlumatları</h3>
+          <h3 class="profile-card-title"><i class="bi bi-person-vcard"></i><span data-i18n="profile.info_title">Profil məlumatları</span></h3>
           <form id="profileForm" novalidate>
             <div class="field">
-              <label class="field-label" for="firstNameInput">Ad</label>
+              <label class="field-label" for="firstNameInput" data-i18n="form.firstName">Ad</label>
               <div class="input-wrap">
                 <i class="bi bi-person leading-icon"></i>
                 <input type="text" class="input has-icon" id="firstNameInput" required minlength="2" maxlength="100" />
               </div>
             </div>
             <div class="field">
-              <label class="field-label" for="lastNameInput">Soyad</label>
+              <label class="field-label" for="lastNameInput" data-i18n="form.lastName">Soyad</label>
               <div class="input-wrap">
                 <i class="bi bi-person leading-icon"></i>
                 <input type="text" class="input has-icon" id="lastNameInput" required minlength="2" maxlength="100" />
               </div>
             </div>
             <div class="field field-tight">
-              <label class="field-label" for="userNameInput">İstifadəçi adı</label>
+              <label class="field-label" for="userNameInput" data-i18n="form.username">İstifadəçi adı</label>
               <div class="input-wrap">
                 <i class="bi bi-at leading-icon"></i>
                 <input type="text" class="input has-icon" id="userNameInput" required minlength="3" maxlength="256" />
               </div>
             </div>
             <div class="profile-form-actions">
-              <button type="submit" class="btn btn-primary" id="profileSubmitBtn">Yadda saxla</button>
+              <button type="submit" class="btn btn-primary" id="profileSubmitBtn" data-i18n="profile.save">Yadda saxla</button>
             </div>
           </form>
         </div>
@@ -102,31 +103,31 @@
 
       <div class="card profile-column">
         <div class="profile-card-body">
-          <h3 class="profile-card-title"><i class="bi bi-shield-lock"></i>Şifrəni dəyiş</h3>
+          <h3 class="profile-card-title"><i class="bi bi-shield-lock"></i><span data-i18n="profile.password_title">Şifrəni dəyiş</span></h3>
           <form id="passwordForm" novalidate>
             <div class="field">
-              <label class="field-label" for="currentPasswordInput">Mövcud şifrə</label>
+              <label class="field-label" for="currentPasswordInput" data-i18n="form.currentPassword">Mövcud şifrə</label>
               <div class="input-wrap">
                 <i class="bi bi-lock leading-icon"></i>
                 <input type="password" class="input has-icon" id="currentPasswordInput" required />
               </div>
             </div>
             <div class="field">
-              <label class="field-label" for="newPasswordInput">Yeni şifrə</label>
+              <label class="field-label" for="newPasswordInput" data-i18n="form.newPassword">Yeni şifrə</label>
               <div class="input-wrap">
                 <i class="bi bi-lock leading-icon"></i>
                 <input type="password" class="input has-icon" id="newPasswordInput" required minlength="6" maxlength="100" />
               </div>
             </div>
             <div class="field field-tight">
-              <label class="field-label" for="confirmNewPasswordInput">Yeni şifrəni təsdiqlə</label>
+              <label class="field-label" for="confirmNewPasswordInput" data-i18n="form.confirmNewPassword">Yeni şifrəni təsdiqlə</label>
               <div class="input-wrap">
                 <i class="bi bi-lock leading-icon"></i>
                 <input type="password" class="input has-icon" id="confirmNewPasswordInput" required minlength="6" maxlength="100" />
               </div>
             </div>
             <div class="profile-form-actions">
-              <button type="submit" class="btn btn-primary" id="passwordSubmitBtn">Şifrəni dəyiş</button>
+              <button type="submit" class="btn btn-primary" id="passwordSubmitBtn" data-i18n="profile.password_title">Şifrəni dəyiş</button>
             </div>
           </form>
         </div>
@@ -135,5 +136,9 @@
   </div>
 
   <script type="module" src="../javascripts/controllers/profile.js"></script>
+  <script type="module">
+    import { initLangToggle } from "../javascripts/components/i18n.js";
+    initLangToggle(document.getElementById("langToggleBtn"));
+  </script>
 </body>
 </html>

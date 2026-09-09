@@ -7,6 +7,9 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
+import { floorLabel } from "../utils/floorLabel.js";
+import { translateEquipmentName } from "../utils/equipmentTranslate.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -50,19 +53,19 @@ let pendingEquipment = [];
 let editingId = null;
 function populateFilterFloorOptions(buildingId) {
   const filtered = buildingId ? floors.filter((f) => f.buildingId === buildingId) : floors;
-  filterFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: f.name })), "");
+  filterFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: floorLabel(f.levelNumber) })), "");
 }
 
 function populateModalFloorOptions(buildingId) {
   const filtered = buildingId ? floors.filter((f) => f.buildingId === buildingId) : floors;
-  modalFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: f.name })));
+  modalFloorDropdown.setOptions(filtered.map((f) => ({ value: f.id, label: floorLabel(f.levelNumber) })));
 }
 
 const filterBuildingDropdown = initDropdown({
   btn: document.getElementById("filterBuildingBtn"),
   panel: document.getElementById("filterBuildingPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: (value) => {
     populateFilterFloorOptions(value);
     renderRooms();
@@ -73,7 +76,7 @@ const filterFloorDropdown = initDropdown({
   btn: document.getElementById("filterFloorBtn"),
   panel: document.getElementById("filterFloorPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: () => renderRooms(),
 });
 
@@ -81,12 +84,12 @@ const filterStatusDropdown = initDropdown({
   btn: document.getElementById("filterStatusBtn"),
   panel: document.getElementById("filterStatusPanel"),
   options: [
-    { value: "", label: "Hamısı" },
-    { value: "active", label: "Aktiv" },
-    { value: "inactive", label: "Deaktiv" },
+    { value: "", label: t("common.all") },
+    { value: "active", label: t("room.status.active") },
+    { value: "inactive", label: t("room.status.inactive") },
   ],
   value: "",
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: () => renderRooms(),
 });
 
@@ -94,7 +97,7 @@ const modalBuildingDropdown = initDropdown({
   btn: document.getElementById("roomModalBuildingBtn"),
   panel: document.getElementById("roomModalBuildingPanel"),
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: (value) => populateModalFloorOptions(value),
 });
 
@@ -102,7 +105,7 @@ const modalFloorDropdown = initDropdown({
   btn: document.getElementById("roomModalFloorBtn"),
   panel: document.getElementById("roomModalFloorPanel"),
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: () => {},
 });
 
@@ -114,7 +117,7 @@ function renderRoomEquipmentChips() {
     const chip = document.createElement("span");
     chip.className = assignment ? "chip-toggle active" : "chip-toggle";
     chip.innerHTML = `
-      <span class="chip-toggle-label"><i class="bi bi-check2"></i>${escapeHtml(eq.name)}</span>
+      <span class="chip-toggle-label"><i class="bi bi-check2"></i>${escapeHtml(translateEquipmentName(eq.name))}</span>
       <input type="number" class="chip-qty" min="1" max="1000" value="${assignment ? assignment.quantity : 1}" />
     `;
     chip.querySelector(".chip-toggle-label").addEventListener("click", () => toggleRoomEquipment(eq.id));
@@ -172,8 +175,8 @@ async function updateRoomEquipmentQuantity(equipmentId, quantity) {
 
 function openModal(room) {
   editingId = room ? room.id : null;
-  modalTitle.textContent = room ? "Otağı redaktə et" : "Yeni otaq";
-  submitBtn.textContent = room ? "Yadda saxla" : "Yarat";
+  modalTitle.textContent = room ? t("adminrooms.edit_room") : t("adminrooms.add_room");
+  submitBtn.textContent = room ? t("profile.save") : t("common.create");
   nameInput.value = room ? room.name : "";
   capacityInput.value = room ? room.capacity : 1;
   isActiveInput.checked = room ? room.isActive : true;
@@ -234,7 +237,7 @@ form.addEventListener("submit", async (e) => {
   };
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Yadda saxlanılır...";
+  submitBtn.textContent = t("common.saving");
 
   try {
     if (editingId) {
@@ -255,7 +258,7 @@ form.addEventListener("submit", async (e) => {
     showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";
+    submitBtn.textContent = editingId ? t("profile.save") : t("common.create");
   }
 });
 
@@ -297,12 +300,12 @@ function showEquipmentPopover(roomId, anchorEl) {
   pop.id = "equipmentPopover";
 
   const bodyHtml = items.length
-    ? items.map((re) => `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(re.equipmentName)} × ${re.quantity}</div>`).join("")
-    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>Avadanlıq təyin edilməyib</div>`;
+    ? items.map((re) => `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(translateEquipmentName(re.equipmentName))} × ${re.quantity}</div>`).join("")
+    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>${t("adminrooms.no_equipment")}</div>`;
 
   pop.innerHTML = `
     <div class="ep-head">
-      <strong>Avadanlıqlar</strong>
+      <strong>${t("filters.equipment")}</strong>
       <button type="button" class="ep-close" aria-label="Bağla"><i class="bi bi-x"></i></button>
     </div>
     ${bodyHtml}
@@ -325,25 +328,27 @@ function showEquipmentPopover(roomId, anchorEl) {
 
 function createRoomMiniCardHtml(r) {
   const badge = r.isActive
-    ? `<span class="badge badge-neutral"><span class="badge-dot"></span>Aktiv</span>`
-    : `<span class="badge badge-inactive"><span class="badge-dot"></span>Deaktiv</span>`;
+    ? `<span class="badge badge-neutral"><span class="badge-dot"></span>${t("room.status.active")}</span>`
+    : `<span class="badge badge-inactive"><span class="badge-dot"></span>${t("room.status.inactive")}</span>`;
+  const floor = floors.find((f) => f.id === r.floorId);
+  const floorText = floor ? floorLabel(floor.levelNumber) : r.floorName;
 
   return `
     <div class="room-mini-card">
       <div class="room-mini-top">
         <div>
           <h4>${escapeHtml(r.name)}</h4>
-          <p>${escapeHtml(r.floorName)}</p>
+          <p>${escapeHtml(floorText)}</p>
         </div>
         ${badge}
       </div>
       <div class="room-mini-meta" style="display:flex; align-items:center; justify-content:space-between;">
         <span><i class="bi bi-people"></i>${r.capacity}</span>
-        <button type="button" class="room-mini-equipment-link" data-room-id="${r.id}"><i class="bi bi-projector"></i>Avadanlıqlar</button>
+        <button type="button" class="room-mini-equipment-link" data-room-id="${r.id}"><i class="bi bi-projector"></i>${t("filters.equipment")}</button>
       </div>
       <div class="room-mini-actions">
-        <button class="icon-action-btn edit-room-btn" data-id="${r.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-        <button class="icon-action-btn delete-room-btn" data-id="${r.id}" title="Sil"><i class="bi bi-trash"></i></button>
+        <button class="icon-action-btn edit-room-btn" data-id="${r.id}" title="${t("common.edit")}"><i class="bi bi-pencil"></i></button>
+        <button class="icon-action-btn delete-room-btn" data-id="${r.id}" title="${t("common.delete")}"><i class="bi bi-trash"></i></button>
       </div>
     </div>`;
 }

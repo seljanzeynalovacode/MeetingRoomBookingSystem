@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Binalar — Admin — MeetHub</title>
+<title data-i18n="meta.title.adminBuildings">Binalar — Admin — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
@@ -17,34 +17,35 @@
           <span class="wordmark">MeetHub</span>
         </div>
         <button type="button" class="sidebar-icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+        <button type="button" class="sidebar-icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
       </div>
-      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i><span data-i18n="admin.badge">Admin</span></span>
       <button type="button" class="admin-nav-toggle" id="adminNavToggle" aria-label="Menyunu aç/bağla"><i class="bi bi-list"></i></button>
 
             <div class="admin-nav-groups">
-        <div class="nav-section-label">Ümumi</div>
+        <div class="nav-section-label" data-i18n="admin.nav.general">Ümumi</div>
         <nav class="admin-nav">
-          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
-          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
-          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i><span data-i18n="admin.nav.dashboard">Ana səhifə</span></a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i><span data-i18n="admin.nav.users">İstifadəçilər</span></a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i><span data-i18n="admin.nav.reservations">Rezervasiyalar</span></a>
         </nav>
 
-        <div class="nav-section-label">Struktur</div>
+        <div class="nav-section-label" data-i18n="admin.nav.structure">Struktur</div>
         <nav class="admin-nav">
-          <a href="adminBuildings.html" class="active"><i class="bi bi-building"></i>Binalar</a>
-          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
-          <a href="adminEquipment.html"><i class="bi bi-projector"></i>Avadanlıq</a>
+          <a href="adminBuildings.html" class="active"><i class="bi bi-building"></i><span data-i18n="admin.nav.buildings">Binalar</span></a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i><span data-i18n="nav.rooms">Otaqlar</span></a>
+          <a href="adminEquipment.html"><i class="bi bi-projector"></i><span data-i18n="filters.equipment">Avadanlıq</span></a>
         </nav>
 
-        <div class="nav-section-label">Fəaliyyət</div>
+        <div class="nav-section-label" data-i18n="admin.nav.activity">Fəaliyyət</div>
         <nav class="admin-nav">
-          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
-          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i>İş saatları</a>
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i><span data-i18n="admin.nav.blackouts">Bloklamalar</span></a>
+          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i><span data-i18n="admin.nav.workingHours">İş saatları</span></a>
         </nav>
 
-        <div class="nav-section-label">Sistem</div>
+        <div class="nav-section-label" data-i18n="admin.nav.system">Sistem</div>
         <nav class="admin-nav">
-          <a href="adminSettings.html"><i class="bi bi-gear"></i>Ayarlar</a>
+          <a href="adminSettings.html"><i class="bi bi-gear"></i><span data-i18n="admin.nav.settings">Ayarlar</span></a>
         </nav>
       </div>
 
@@ -54,8 +55,8 @@
           <span class="admin-account-name" id="adminAccountName">Admin</span>
           <i class="bi bi-chevron-down"></i>
           <div class="admin-account-menu" id="adminAccountMenu">
-            <a href="adminProfile.html"><i class="bi bi-person"></i>Profil</a>
-            <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+            <a href="adminProfile.html"><i class="bi bi-person"></i><span data-i18n="user.profile">Profil</span></a>
+            <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i><span data-i18n="user.logout">Çıxış</span></button>
           </div>
         </div>
       </div>
@@ -64,12 +65,12 @@
     <main class="admin-main">
       <div class="admin-topbar">
         <div>
-          <h1>Binalar</h1>
-          <p>Binaları və mərtəbələrini idarə edin.</p>
+          <h1 data-i18n="admin.nav.buildings">Binalar</h1>
+          <p data-i18n="adminbuildings.subtitle">Binaları və mərtəbələrini idarə edin.</p>
         </div>
         <div style="display:flex; gap:10px;">
-          <button type="button" class="btn btn-outline" id="addFloorBtn"><i class="bi bi-plus-lg"></i>Yeni mərtəbə</button>
-          <button type="button" class="btn btn-primary" id="addBuildingBtn"><i class="bi bi-plus-lg"></i>Yeni bina</button>
+          <button type="button" class="btn btn-outline" id="addFloorBtn"><i class="bi bi-plus-lg"></i><span data-i18n="adminbuildings.add_floor">Yeni mərtəbə</span></button>
+          <button type="button" class="btn btn-primary" id="addBuildingBtn"><i class="bi bi-plus-lg"></i><span data-i18n="adminbuildings.add_building">Yeni bina</span></button>
         </div>
       </div>
             <div id="alertBox"></div>
@@ -77,9 +78,9 @@
             <div class="search-toolbar">
         <div class="search-box">
           <i class="bi bi-search"></i>
-          <input type="text" id="buildingSearchInput" placeholder="Bina adı və ya ünvana görə axtar..." />
+          <input type="text" id="buildingSearchInput" placeholder="Bina adı və ya ünvana görə axtar..." data-i18n-placeholder="adminbuildings.search_placeholder" />
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" id="resetSearchBtn"><i class="bi bi-arrow-counterclockwise"></i>Yenilə</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="resetSearchBtn"><i class="bi bi-arrow-counterclockwise"></i><span data-i18n="adminusers.refresh">Yenilə</span></button>
       </div>
 
       <div class="buildings-grid" id="buildingsGrid"></div>
@@ -97,7 +98,7 @@
 
       <form id="buildingForm" novalidate>
         <div class="field">
-          <label class="field-label" for="buildingName">Ad</label>
+          <label class="field-label" for="buildingName" data-i18n="form.name">Ad</label>
           <div class="input-wrap">
             <i class="bi bi-building leading-icon"></i>
             <input type="text" class="input has-icon" id="buildingName" required minlength="2" maxlength="200" placeholder="Baş Ofis" />
@@ -105,7 +106,7 @@
         </div>
 
         <div class="field" style="margin-bottom:0;">
-          <label class="field-label" for="buildingAddress">Ünvan</label>
+          <label class="field-label" for="buildingAddress" data-i18n="adminbuildings.address">Ünvan</label>
           <div class="input-wrap">
             <i class="bi bi-geo-alt leading-icon"></i>
             <input type="text" class="input has-icon" id="buildingAddress" required minlength="3" maxlength="300" placeholder="Bakı, Nərimanov r." />
@@ -113,8 +114,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="buildingModalCancelBtn">İmtina</button>
-          <button type="submit" class="btn btn-primary" id="buildingModalSubmitBtn">Yarat</button>
+          <button type="button" class="btn btn-outline" id="buildingModalCancelBtn" data-i18n="common.cancel">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="buildingModalSubmitBtn" data-i18n="common.create">Yarat</button>
         </div>
       </form>
     </div>
@@ -131,34 +132,34 @@
 
       <form id="floorForm" novalidate>
         <div class="field">
-          <label class="field-label" for="floorBuildingBtn">Bina</label>
+          <label class="field-label" for="floorBuildingBtn" data-i18n="filters.building">Bina</label>
           <div class="dd-wrap">
             <button type="button" class="dd-btn" id="floorBuildingBtn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
             <div class="dd-panel" id="floorBuildingPanel"></div>
           </div>
         </div>
 
-        <div class="field">
-          <label class="field-label" for="floorName">Ad</label>
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label" for="floorLevel" data-i18n="adminbuildings.floor_level">Səviyyə nömrəsi</label>
           <div class="input-wrap">
             <i class="bi bi-layers leading-icon"></i>
-            <input type="text" class="input has-icon" id="floorName" required minlength="1" maxlength="150" placeholder="3-cü mərtəbə" />
+            <input type="number" class="input has-icon" id="floorLevel" required min="-5" max="500" placeholder="3" />
           </div>
-        </div>
-
-        <div class="field" style="margin-bottom:0;">
-          <label class="field-label" for="floorLevel">Səviyyə nömrəsi</label>
-          <input type="number" class="input" id="floorLevel" required min="-5" max="500" placeholder="3" />
+          <p class="field-hint" id="floorNamePreview" style="margin: 0.5rem 0 0; font-size: 12.5px; color: var(--text-secondary);"></p>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="floorModalCancelBtn">İmtina</button>
-          <button type="submit" class="btn btn-primary" id="floorModalSubmitBtn">Yarat</button>
+          <button type="button" class="btn btn-outline" id="floorModalCancelBtn" data-i18n="common.cancel">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="floorModalSubmitBtn" data-i18n="common.create">Yarat</button>
         </div>
       </form>
     </div>
   </div>
 
   <script type="module" src="../javascripts/controllers/adminBuildings.js"></script>
+  <script type="module">
+    import { initLangToggle } from "../javascripts/components/i18n.js";
+    initLangToggle(document.getElementById("langToggleBtn"));
+  </script>
 </body>
 </html>

@@ -11,6 +11,8 @@ import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
 import { initThemeToggle } from "../components/theme.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { t, getLang } from "../components/i18n.js";
+import { floorLabel } from "../utils/floorLabel.js";
 
 if (!isLoggedIn()) {
   window.location.href = "landing.html";
@@ -235,7 +237,7 @@ function showEventPopover(item, anchorEl) {
   const endDateObj = new Date(item.end);
   const start = startDateObj.toTimeString().slice(0, 5);
   const end = endDateObj.toTimeString().slice(0, 5);
-  const dateStr = startDateObj.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" });
+  const dateStr = startDateObj.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short", year: "numeric" });
 
   const currentRoom = rooms.find((r) => r.id === selectedRoomId);
   const buildingName = currentRoom ? currentRoom.buildingName : "";
@@ -335,8 +337,8 @@ function renderWeekView(calendarDays) {
   const columnsHtml = calendarDays
     .map((dayEntry, colIdx) => {
       const date = new Date(dayEntry.date);
-      const dayName = capitalize(date.toLocaleDateString("az-AZ", { weekday: "short" }));
-      const dateLabel = date.toLocaleDateString("az-AZ", { day: "2-digit", month: "short" });
+      const dayName = capitalize(date.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { weekday: "short" }));
+      const dateLabel = date.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short" });
       const dateStr = dayEntry.date.slice(0, 10);
       const rowsHtml = HOURS.map((h) => `<div class="grid-hour-row" data-hour="${h}" data-date="${dateStr}"></div>`).join("");
 
@@ -386,7 +388,7 @@ function renderWeekView(calendarDays) {
 function updateHeaderLabels(startDate, endDate) {
   if (viewMode === "day") {
     const d = new Date(startDate);
-    dateLabelEl.textContent = d.toLocaleDateString("az-AZ", {
+    dateLabelEl.textContent = d.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), {
       day: "2-digit",
       month: "long",
       year: "numeric",
@@ -395,13 +397,15 @@ function updateHeaderLabels(startDate, endDate) {
   } else {
     const s = new Date(startDate);
     const e = new Date(endDate);
-    dateLabelEl.textContent = `${s.toLocaleDateString("az-AZ", { day: "2-digit", month: "short" })} – ${e.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" })}`;
+    dateLabelEl.textContent = `${s.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short" })} – ${e.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short", year: "numeric" })}`;
   }
 
   const room = rooms.find((r) => r.id === selectedRoomId);
   if (room) {
+    const floor = floors.find((f) => f.id === room.floorId);
+    const floorText = floor ? floorLabel(floor.levelNumber) : room.floorName;
     roomInfoName.textContent = room.name;
-    roomInfoLocation.textContent = `${room.buildingName}, ${room.floorName} · ${room.capacity} nəfərlik`;
+    roomInfoLocation.textContent = `${room.buildingName}, ${floorText} · ${room.capacity} ${t("roomCalendar.capacity_suffix")}`;
   } else {
     roomInfoName.textContent = "";
     roomInfoLocation.textContent = "";
@@ -509,7 +513,7 @@ const buildingDropdown = initDropdown({
   btn: document.getElementById("buildingSelectBtn"),
   panel: document.getElementById("buildingSelectPanel"),
   options: [],
-  placeholder: "Bütün binalar",
+  placeholder: t("calendar.all_buildings"),
   onChange: (value) => {
     const filtered = populateRoomOptions(value);
     if (!filtered.length) {
@@ -517,7 +521,7 @@ const buildingDropdown = initDropdown({
       selectedRoomName = "";
       roomInfoName.textContent = "";
       roomInfoLocation.textContent = "";
-      contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>Bu binada otaq yoxdur.</div>`;
+      contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-door-closed"></i>${t("roomCalendar.no_rooms_in_building")}</div>`;
       return;
     }
     selectedRoomId = filtered[0].id;
@@ -530,7 +534,7 @@ const roomDropdown = initDropdown({
   btn: document.getElementById("roomSelectBtn"),
   panel: document.getElementById("roomSelectPanel"),
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: (value) => {
     selectedRoomId = value;
     const room = rooms.find((r) => r.id === selectedRoomId);

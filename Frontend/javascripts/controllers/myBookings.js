@@ -9,6 +9,7 @@ import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
 import { initThemeToggle } from "../components/theme.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { t, getLang } from "../components/i18n.js";
 
 if (!isLoggedIn()) {
   window.location.href = "landing.html";
@@ -34,13 +35,13 @@ const filterStatusDropdown = initDropdown({
   btn: document.getElementById("filterStatusBtn"),
   panel: document.getElementById("filterStatusPanel"),
   options: [
-    { value: "", label: "Hamısı" },
-    { value: "Confirmed", label: "Təsdiqlənib" },
-    { value: "Completed", label: "Tamamlanıb" },
-    { value: "Cancelled", label: "Ləğv edilib" },
+    { value: "", label: t("common.all") },
+    { value: "Confirmed", label: t("stats.confirmed") },
+    { value: "Completed", label: t("stats.completed") },
+    { value: "Cancelled", label: t("stats.cancelled") },
   ],
   value: "",
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: () => renderReservations(),
 });
 
@@ -101,7 +102,7 @@ function showToast(message) {
 function formatRange(startIso, endIso) {
   const start = new Date(startIso);
   const end = new Date(endIso);
-  const dateStr = start.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" });
+  const dateStr = start.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit", month: "short", year: "numeric" });
   const startTime = start.toTimeString().slice(0, 5);
   const endTime = end.toTimeString().slice(0, 5);
   return `${dateStr}, ${startTime}–${endTime}`;
@@ -124,21 +125,21 @@ function isCurrentlyOngoing(r) {
 function statusBadgeHtml(r) {
   const effective = getEffectiveStatus(r.status, r.endDate);
   if (effective === "Cancelled") {
-    return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
+    return `<span class="badge badge-booked"><span class="badge-dot"></span>${t("stats.cancelled")}</span>`;
   }
   if (effective === "Completed") {
-    return `<span class="badge badge-completed"><span class="badge-dot"></span>Tamamlanıb</span>`;
+    return `<span class="badge badge-completed"><span class="badge-dot"></span>${t("stats.completed")}</span>`;
   }
   if (isCurrentlyOngoing(r)) {
-    return `<span class="badge badge-live"><span class="badge-dot"></span>Davam edir</span>`;
+    return `<span class="badge badge-live"><span class="badge-dot"></span>${t("blackout.status.ongoing")}</span>`;
   }
-  return `<span class="badge badge-available"><span class="badge-dot"></span>Təsdiqlənib</span>`;
+  return `<span class="badge badge-available"><span class="badge-dot"></span>${t("stats.confirmed")}</span>`;
 }
 
 function dateBlockHtml(startIso) {
   const start = new Date(startIso);
-  const month = start.toLocaleDateString("az-AZ", { month: "short" });
-  const day = start.toLocaleDateString("az-AZ", { day: "2-digit" });
+  const month = start.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { month: "short" });
+  const day = start.toLocaleDateString((getLang() === "en" ? "en-US" : "az-AZ"), { day: "2-digit" });
   return `<div class="mb2-date"><span class="mb2-date-month">${escapeHtml(month)}</span><span class="mb2-date-day">${day}</span></div>`;
 }
 
@@ -156,9 +157,9 @@ function createReservationCardHtml(r) {
   const actionsHtml =
     effectiveStatus === "Confirmed"
       ? `<div class="mb2-actions">
-           <button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}"><i class="bi bi-pencil"></i>Redaktə et</button>
-           ${ongoing ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}"><i class="bi bi-stop-circle"></i>İndi bitir</button>` : ""}
-           <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}"><i class="bi bi-x-circle"></i>Ləğv et</button>
+           <button class="btn btn-secondary btn-sm edit-btn" data-id="${r.id}"><i class="bi bi-pencil"></i>${t("common.edit")}</button>
+           ${ongoing ? `<button class="btn btn-outline btn-sm end-now-btn" data-id="${r.id}"><i class="bi bi-stop-circle"></i>${t("mybookings.end_now")}</button>` : ""}
+           <button class="btn btn-outline btn-sm cancel-btn" data-id="${r.id}"><i class="bi bi-x-circle"></i>${t("adminreservations.cancel")}</button>
          </div>`
       : `<div class="mb2-quiet-actions"></div>`;
 
@@ -206,14 +207,14 @@ function sectionHtml(titleHtml, rows, extraClass = "") {
 
 function renderReservations() {
   if (!reservations.length) {
-    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>Hələ rezervasiyanız yoxdur.</div>`;
+    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-calendar-x"></i>${t("mybookings.no_reservations")}</div>`;
     return;
   }
 
   const filtered = applyFilters(reservations);
 
   if (!filtered.length) {
-    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-filter"></i>Filtrə uyğun rezervasiya tapılmadı.</div>`;
+    listEl.innerHTML = `<div class="empty-state"><i class="bi bi-filter"></i>${t("mybookings.no_filter_results")}</div>`;
     return;
   }
 
@@ -226,9 +227,9 @@ function renderReservations() {
     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
   listEl.innerHTML =
-    sectionHtml(`<i class="bi bi-broadcast"></i>Hazırda davam edir`, ongoing, "is-live") +
-    sectionHtml(`<i class="bi bi-calendar-event"></i>Gələcək rezervasiyalar`, upcoming) +
-    sectionHtml(`<i class="bi bi-clock-history"></i>Keçmiş`, past);
+    sectionHtml(`<i class="bi bi-broadcast"></i>${t("mybookings.section_ongoing")}`, ongoing, "is-live") +
+    sectionHtml(`<i class="bi bi-calendar-event"></i>${t("mybookings.section_upcoming")}`, upcoming) +
+    sectionHtml(`<i class="bi bi-clock-history"></i>${t("mybookings.section_past")}`, past);
 }
 
 function renderStats() {
@@ -272,7 +273,7 @@ listEl.addEventListener("click", (e) => {
   }
 
   if (cancelBtn) {
-    if (!confirm("Bu rezervasiyanı ləğv etmək istədiyinizə əminsiniz?")) return;
+    if (!confirm(t("adminreservations.confirm_cancel"))) return;
     clearAlert(alertBox);
     cancelReservation(cancelBtn.dataset.id)
       .then(() => {
@@ -285,7 +286,7 @@ listEl.addEventListener("click", (e) => {
   if (endNowBtn) {
     const r = reservations.find((x) => x.id === endNowBtn.dataset.id);
     if (!r) return;
-    if (!confirm("İclası indi bitirmək istədiyinizə əminsiniz? Otaq dərhal boşalacaq.")) return;
+    if (!confirm(t("mybookings.confirm_end_now"))) return;
     clearAlert(alertBox);
     updateReservation(r.id, {
       Title: r.title,

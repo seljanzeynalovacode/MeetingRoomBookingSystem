@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Ana səhifə — MeetHub</title>
+<title data-i18n="meta.title.landing">Ana səhifə — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
@@ -16,13 +16,14 @@
     <span class="wordmark">MeetHub</span>
   </div>
   <nav class="landing-nav-links">
-    <a class="nav-link" href="#features">Xüsusiyyətlər</a>
-    <a class="nav-link" href="#how">Necə işləyir</a>
+    <a class="nav-link" href="#features" data-i18n="nav.features">Xüsusiyyətlər</a>
+    <a class="nav-link" href="#how" data-i18n="nav.how">Necə işləyir</a>
   </nav>
   <div class="nav-right">
     <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
-    <a class="btn btn-outline btn-sm" href="register.html">Qeydiyyat</a>
-    <a class="btn btn-primary btn-sm" href="login.html"><i class="bi bi-box-arrow-in-right"></i>Daxil ol</a>
+    <button type="button" class="icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
+    <a class="btn btn-outline btn-sm" href="register.html" data-i18n="nav.register">Qeydiyyat</a>
+    <a class="btn btn-primary btn-sm" href="login.html"><i class="bi bi-box-arrow-in-right"></i><span data-i18n="nav.login">Daxil ol</span></a>
   </div>
 </header>
 
@@ -31,18 +32,18 @@
   <div class="blob blob-amber"></div>
   <div class="hero-inner">
     <div>
-      <span class="eyebrow"><i class="bi bi-stars"></i> Görüş otağı idarəetməsi</span>
-      <h1>Otaq rezervasiyası <span>indi sadə</span> və sürətlidir</h1>
-      <p class="lede">MeetHub ilə şirkətinizin bütün görüş otaqlarını bir yerdən idarə edin — real-vaxt mövcudluq, ani rezervasiya və konfliktsiz planlaşdırma.</p>
+      <span class="eyebrow"><i class="bi bi-stars"></i> <span data-i18n="hero.eyebrow">Görüş otağı idarəetməsi</span></span>
+      <h1><span data-i18n="hero.title.pre">Otaq rezervasiyası</span> <span data-i18n="hero.title.highlight">indi sadə</span> <span data-i18n="hero.title.post">və sürətlidir</span></h1>
+      <p class="lede" data-i18n="hero.lede">MeetHub ilə şirkətinizin bütün görüş otaqlarını bir yerdən idarə edin — real-vaxt mövcudluq, ani rezervasiya və konfliktsiz planlaşdırma.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary btn-lg" href="login.html"><i class="bi bi-box-arrow-in-right"></i>Daxil ol</a>
-        <a class="btn btn-outline btn-lg" href="register.html">Qeydiyyatdan keç</a>
+        <a class="btn btn-primary btn-lg" href="login.html"><i class="bi bi-box-arrow-in-right"></i><span data-i18n="hero.cta.login">Daxil ol</span></a>
+        <a class="btn btn-outline btn-lg" href="register.html" data-i18n="hero.cta.register">Qeydiyyatdan keç</a>
       </div>
       <div class="hero-points">
-        <span class="pt"><i class="bi bi-check-circle-fill"></i>Konflikt olmadan rezervasiya təminatı</span>
-        <span class="pt"><i class="bi bi-check-circle-fill"></i>Vizual otaq təqvimi, gün/həftə görünüşü</span>
-        <span class="pt"><i class="bi bi-check-circle-fill"></i>Email bildirişləri</span>
-        <span class="pt"><i class="bi bi-check-circle-fill"></i>AI köməkçi ilə otaq axtarışı</span>
+        <span class="pt"><i class="bi bi-check-circle-fill"></i><span data-i18n="hero.point1">Konflikt olmadan rezervasiya təminatı</span></span>
+        <span class="pt"><i class="bi bi-check-circle-fill"></i><span data-i18n="hero.point2">Vizual otaq təqvimi, gün/həftə görünüşü</span></span>
+        <span class="pt"><i class="bi bi-check-circle-fill"></i><span data-i18n="hero.point3">Email bildirişləri</span></span>
+        <span class="pt"><i class="bi bi-check-circle-fill"></i><span data-i18n="hero.point4">AI köməkçi ilə otaq axtarışı</span></span>
       </div>
     </div>
 
@@ -51,29 +52,29 @@
         <div class="mock-art">
           <div class="shape a"></div>
           <div class="shape b"></div>
-          <span class="badge-float"><span class="dot"></span>Boşdur</span>
+          <span class="badge-float"><span class="dot"></span><span data-i18n="mock.badge.available">Boşdur</span></span>
         </div>
         <div class="mock-body">
-          <h4>Konfrans Zalı A</h4>
+          <h4 data-i18n="mock.room.name">Konfrans Zalı A</h4>
           <div class="meta">
-            <span><i class="bi bi-building"></i>Baş Ofis, 3-cü mərtəbə</span>
-            <span><i class="bi bi-people"></i>12 nəfər</span>
+            <span><i class="bi bi-building"></i><span data-i18n="mock.room.location">Baş Ofis, 3-cü mərtəbə</span></span>
+            <span><i class="bi bi-people"></i><span data-i18n="mock.room.capacity">12 nəfər</span></span>
           </div>
           <div class="mock-chip-row">
-            <span class="mock-chip"><i class="bi bi-projector"></i> Proyektor</span>
-            <span class="mock-chip"><i class="bi bi-wifi"></i> Wi-Fi</span>
-            <span class="mock-chip"><i class="bi bi-camera-video"></i> Video</span>
+            <span class="mock-chip"><i class="bi bi-projector"></i> <span data-i18n="mock.chip.projector">Proyektor</span></span>
+            <span class="mock-chip"><i class="bi bi-wifi"></i> <span data-i18n="mock.chip.wifi">Wi-Fi</span></span>
+            <span class="mock-chip"><i class="bi bi-camera-video"></i> <span data-i18n="mock.chip.video">Video</span></span>
           </div>
-          <span class="btn btn-primary btn-sm" style="width:100%; pointer-events:none; cursor:default;">Rezerv et</span>
+          <span class="btn btn-primary btn-sm" style="width:100%; pointer-events:none; cursor:default;" data-i18n="mock.reserve_btn">Rezerv et</span>
         </div>
       </div>
       <div class="float-card">
         <span class="ic"><i class="bi bi-bell"></i></span>
-        <span class="tx">Rezervasiya təsdiqləndi<small>10:00 – 11:00, bu gün</small></span>
+        <span class="tx"><span data-i18n="float.reservation.title">Rezervasiya təsdiqləndi</span><small data-i18n="float.reservation.time">10:00 – 11:00, bu gün</small></span>
       </div>
       <div class="ai-float-card">
         <span class="ai-ic"><i class="bi bi-robot"></i></span>
-        <span class="tx">MeetAI<small>Süni intellekt köməkçisi</small></span>
+        <span class="tx"><span data-i18n="float.ai.title">MeetAI</span><small data-i18n="float.ai.subtitle">Süni intellekt köməkçisi</small></span>
       </div>
     </div>
   </div>
@@ -82,40 +83,40 @@
 <section class="section" id="features">
   <div class="section-inner">
     <div class="section-head">
-      <span class="eyebrow"><i class="bi bi-grid"></i> Xüsusiyyətlər</span>
-      <h2>Nə üçün MeetHub?</h2>
-      <p>Görüş otaqlarınızı idarə etmək üçün lazım olan hər şey — sadə, sürətli və etibarlı bir yerdə.</p>
+      <span class="eyebrow"><i class="bi bi-grid"></i> <span data-i18n="features.eyebrow">Xüsusiyyətlər</span></span>
+      <h2 data-i18n="features.title">Nə üçün MeetHub?</h2>
+      <p data-i18n="features.lede">Görüş otaqlarınızı idarə etmək üçün lazım olan hər şey — sadə, sürətli və etibarlı bir yerdə.</p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
         <span class="feature-num">01</span>
         <span class="feature-ic"><i class="bi bi-lightning-charge-fill"></i></span>
-        <h3>Ani rezervasiya</h3>
-        <p>Bir neçə kliklə uyğun otağı tapın, tarixi seçin və dərhal rezerv edin.</p>
+        <h3 data-i18n="feature1.title">Ani rezervasiya</h3>
+        <p data-i18n="feature1.desc">Bir neçə kliklə uyğun otağı tapın, tarixi seçin və dərhal rezerv edin.</p>
       </div>
       <div class="feature-card">
         <span class="feature-num">02</span>
         <span class="feature-ic"><i class="bi bi-shield-check"></i></span>
-        <h3>Konflikt qorunması</h3>
-        <p>Server tərəfli yoxlama ilə iki nəfər eyni otağı eyni vaxtda tuta bilməz.</p>
+        <h3 data-i18n="feature2.title">Konflikt qorunması</h3>
+        <p data-i18n="feature2.desc">Server tərəfli yoxlama ilə iki nəfər eyni otağı eyni vaxtda tuta bilməz.</p>
       </div>
       <div class="feature-card">
         <span class="feature-num">03</span>
         <span class="feature-ic"><i class="bi bi-calendar3"></i></span>
-        <h3>Vizual təqvim</h3>
-        <p>Hər otağın gündəlik və həftəlik məşğulluğunu real vaxtda izləyin.</p>
+        <h3 data-i18n="feature3.title">Vizual təqvim</h3>
+        <p data-i18n="feature3.desc">Hər otağın gündəlik və həftəlik məşğulluğunu real vaxtda izləyin.</p>
       </div>
       <div class="feature-card">
         <span class="feature-num">04</span>
         <span class="feature-ic"><i class="bi bi-bell-fill"></i></span>
-        <h3>Bildirişlər</h3>
-        <p>Rezervasiya təsdiqləri və dəyişikliklər email vasitəsilə dərhal sizə çatır.</p>
+        <h3 data-i18n="feature4.title">Bildirişlər</h3>
+        <p data-i18n="feature4.desc">Rezervasiya təsdiqləri və dəyişikliklər email vasitəsilə dərhal sizə çatır.</p>
       </div>
       <div class="feature-card">
         <span class="feature-num">05</span>
         <span class="feature-ic"><i class="bi bi-robot"></i></span>
-        <h3>AI köməkçi</h3>
-        <p>MeetAI ilə sadəcə yazaraq soruşun — süni intellekt sizin üçün uyğun otağı saniyələr içində tapır.</p>
+        <h3 data-i18n="feature5.title">AI köməkçi</h3>
+        <p data-i18n="feature5.desc">MeetAI ilə sadəcə yazaraq soruşun — süni intellekt sizin üçün uyğun otağı saniyələr içində tapır.</p>
       </div>
     </div>
   </div>
@@ -124,25 +125,25 @@
 <section class="section how-section" id="how">
   <div class="section-inner">
     <div class="section-head">
-      <span class="eyebrow"><i class="bi bi-signpost-2"></i> Necə işləyir</span>
-      <h2>3 addımda rezervasiya</h2>
-      <p>Heç bir mürəkkəb proses yoxdur — daxil olun və istənilən otağı dəqiqələr içində rezerv edin.</p>
+      <span class="eyebrow"><i class="bi bi-signpost-2"></i> <span data-i18n="how.eyebrow">Necə işləyir</span></span>
+      <h2 data-i18n="how.title">3 addımda rezervasiya</h2>
+      <p data-i18n="how.lede">Heç bir mürəkkəb proses yoxdur — daxil olun və istənilən otağı dəqiqələr içində rezerv edin.</p>
     </div>
     <div class="steps-row">
       <div class="step-card">
         <span class="step-num">1</span>
-        <h3>Otağı seçin</h3>
-        <p>Bina, mərtəbə, tutum və avadanlığa görə filter edərək uyğun otağı tapın.</p>
+        <h3 data-i18n="step1.title">Otağı seçin</h3>
+        <p data-i18n="step1.desc">Bina, mərtəbə, tutum və avadanlığa görə filter edərək uyğun otağı tapın.</p>
       </div>
       <div class="step-card">
         <span class="step-num">2</span>
-        <h3>Vaxtı təyin edin</h3>
-        <p>Tarix və saat aralığını seçin — sistem mövcudluğu real vaxtda yoxlayır.</p>
+        <h3 data-i18n="step2.title">Vaxtı təyin edin</h3>
+        <p data-i18n="step2.desc">Tarix və saat aralığını seçin — sistem mövcudluğu real vaxtda yoxlayır.</p>
       </div>
       <div class="step-card">
         <span class="step-num">3</span>
-        <h3>Rezerv edin</h3>
-        <p>Bir kliklə təsdiqləyin, iştirakçıları əlavə edin — otaq artıq sizindir.</p>
+        <h3 data-i18n="step3.title">Rezerv edin</h3>
+        <p data-i18n="step3.desc">Bir kliklə təsdiqləyin, iştirakçıları əlavə edin — otaq artıq sizindir.</p>
       </div>
     </div>
   </div>
@@ -150,10 +151,10 @@
 
 <div class="cta-banner">
   <div class="cta-text">
-    <h2>Komandanız üçün ilk rezervasiyanızı edin</h2>
-    <p>Qeydiyyatdan keçin və bir neçə dəqiqə ərzində uyğun görüş otağını tapın.</p>
+    <h2 data-i18n="cta.title">Komandanız üçün ilk rezervasiyanızı edin</h2>
+    <p data-i18n="cta.lede">Qeydiyyatdan keçin və bir neçə dəqiqə ərzində uyğun görüş otağını tapın.</p>
   </div>
-  <a class="btn btn-primary btn-lg" href="login.html"><i class="bi bi-box-arrow-in-right"></i>Daxil ol</a>
+  <a class="btn btn-primary btn-lg" href="login.html"><i class="bi bi-box-arrow-in-right"></i><span data-i18n="cta.button">Daxil ol</span></a>
 </div>
 
 <footer class="footer">
@@ -168,7 +169,9 @@
 
 <script type="module">
   import { initThemeToggle } from "../javascripts/components/theme.js";
+  import { initLangToggle } from "../javascripts/components/i18n.js";
   initThemeToggle(document.getElementById("themeToggleBtn"));
+  initLangToggle(document.getElementById("langToggleBtn"));
 </script>
 </body>
 </html>

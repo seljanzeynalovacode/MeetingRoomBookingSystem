@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Avadanlıq — Admin — MeetHub</title>
+<title data-i18n="meta.title.adminEquipment">Avadanlıq — Admin — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
@@ -17,34 +17,35 @@
           <span class="wordmark">MeetHub</span>
         </div>
         <button type="button" class="sidebar-icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+        <button type="button" class="sidebar-icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
       </div>
-      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i>Admin</span>
+      <span class="admin-badge"><i class="bi bi-shield-lock-fill"></i><span data-i18n="admin.badge">Admin</span></span>
       <button type="button" class="admin-nav-toggle" id="adminNavToggle" aria-label="Menyunu aç/bağla"><i class="bi bi-list"></i></button>
 
       <div class="admin-nav-groups">
-        <div class="nav-section-label">Ümumi</div>
+        <div class="nav-section-label" data-i18n="admin.nav.general">Ümumi</div>
         <nav class="admin-nav">
-          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i>Ana səhifə</a>
-          <a href="adminUsers.html"><i class="bi bi-people"></i>İstifadəçilər</a>
-          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i>Rezervasiyalar</a>
+          <a href="adminDashboard.html"><i class="bi bi-grid-1x2"></i><span data-i18n="admin.nav.dashboard">Ana səhifə</span></a>
+          <a href="adminUsers.html"><i class="bi bi-people"></i><span data-i18n="admin.nav.users">İstifadəçilər</span></a>
+          <a href="adminReservations.html"><i class="bi bi-calendar-check"></i><span data-i18n="admin.nav.reservations">Rezervasiyalar</span></a>
         </nav>
 
-        <div class="nav-section-label">Struktur</div>
+        <div class="nav-section-label" data-i18n="admin.nav.structure">Struktur</div>
         <nav class="admin-nav">
-          <a href="adminBuildings.html"><i class="bi bi-building"></i>Binalar</a>
-          <a href="adminRooms.html"><i class="bi bi-door-open"></i>Otaqlar</a>
-          <a href="adminEquipment.html" class="active"><i class="bi bi-projector"></i>Avadanlıq</a>
+          <a href="adminBuildings.html"><i class="bi bi-building"></i><span data-i18n="admin.nav.buildings">Binalar</span></a>
+          <a href="adminRooms.html"><i class="bi bi-door-open"></i><span data-i18n="nav.rooms">Otaqlar</span></a>
+          <a href="adminEquipment.html" class="active"><i class="bi bi-projector"></i><span data-i18n="filters.equipment">Avadanlıq</span></a>
         </nav>
 
-        <div class="nav-section-label">Fəaliyyət</div>
+        <div class="nav-section-label" data-i18n="admin.nav.activity">Fəaliyyət</div>
         <nav class="admin-nav">
-          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i>Bloklamalar</a>
-          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i>İş saatları</a>
+          <a href="adminBlackouts.html"><i class="bi bi-calendar-x"></i><span data-i18n="admin.nav.blackouts">Bloklamalar</span></a>
+          <a href="adminWorkingHours.html"><i class="bi bi-clock-history"></i><span data-i18n="admin.nav.workingHours">İş saatları</span></a>
         </nav>
 
-        <div class="nav-section-label">Sistem</div>
+        <div class="nav-section-label" data-i18n="admin.nav.system">Sistem</div>
         <nav class="admin-nav">
-          <a href="adminSettings.html"><i class="bi bi-gear"></i>Ayarlar</a>
+          <a href="adminSettings.html"><i class="bi bi-gear"></i><span data-i18n="admin.nav.settings">Ayarlar</span></a>
         </nav>
       </div>
 
@@ -54,8 +55,8 @@
           <span class="admin-account-name" id="adminAccountName">Admin</span>
           <i class="bi bi-chevron-down"></i>
           <div class="admin-account-menu" id="adminAccountMenu">
-            <a href="adminProfile.html"><i class="bi bi-person"></i>Profil</a>
-            <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+            <a href="adminProfile.html"><i class="bi bi-person"></i><span data-i18n="user.profile">Profil</span></a>
+            <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i><span data-i18n="user.logout">Çıxış</span></button>
           </div>
         </div>
       </div>
@@ -64,19 +65,19 @@
     <main class="admin-main">
       <div class="admin-topbar">
         <div>
-          <h1>Avadanlıq</h1>
-          <p>Otaqlara təyin edilə bilən avadanlıq növlərini idarə edin.</p>
+          <h1 data-i18n="filters.equipment">Avadanlıq</h1>
+          <p data-i18n="adminequipment.subtitle">Otaqlara təyin edilə bilən avadanlıq növlərini idarə edin.</p>
         </div>
-        <button type="button" class="btn btn-primary" id="addEquipmentBtn"><i class="bi bi-plus-lg"></i>Yeni avadanlıq</button>
+        <button type="button" class="btn btn-primary" id="addEquipmentBtn"><i class="bi bi-plus-lg"></i><span data-i18n="adminequipment.add">Yeni avadanlıq</span></button>
       </div>
 
       <div id="alertBox"></div>
             <div class="search-toolbar">
         <div class="search-box">
           <i class="bi bi-search"></i>
-          <input type="text" id="equipmentSearchInput" placeholder="Avadanlıq adı ilə axtar..." />
+          <input type="text" id="equipmentSearchInput" placeholder="Avadanlıq adı ilə axtar..." data-i18n-placeholder="adminequipment.search_placeholder" />
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" id="resetSearchBtn"><i class="bi bi-arrow-counterclockwise"></i>Yenilə</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="resetSearchBtn"><i class="bi bi-arrow-counterclockwise"></i><span data-i18n="adminusers.refresh">Yenilə</span></button>
       </div>
 
       <div class="equipment-grid" id="equipmentGrid"></div>
@@ -94,7 +95,7 @@
 
       <form id="equipmentForm" novalidate>
         <div class="field" style="margin-bottom:0;">
-          <label class="field-label" for="equipmentName">Ad</label>
+          <label class="field-label" for="equipmentName" data-i18n="form.name">Ad</label>
           <div class="input-wrap">
             <i class="bi bi-projector leading-icon"></i>
             <input type="text" class="input has-icon" id="equipmentName" required minlength="2" maxlength="150" placeholder="Proyektor" />
@@ -102,13 +103,17 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="equipmentModalCancelBtn">İmtina</button>
-          <button type="submit" class="btn btn-primary" id="equipmentModalSubmitBtn">Yarat</button>
+          <button type="button" class="btn btn-outline" id="equipmentModalCancelBtn" data-i18n="common.cancel">İmtina</button>
+          <button type="submit" class="btn btn-primary" id="equipmentModalSubmitBtn" data-i18n="common.create">Yarat</button>
         </div>
       </form>
     </div>
   </div>
 
   <script type="module" src="../javascripts/controllers/adminEquipment.js"></script>
+  <script type="module">
+    import { initLangToggle } from "../javascripts/components/i18n.js";
+    initLangToggle(document.getElementById("langToggleBtn"));
+  </script>
 </body>
 </html>

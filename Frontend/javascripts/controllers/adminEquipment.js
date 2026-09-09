@@ -5,6 +5,8 @@ import { logout } from "../api/authApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
+import { translateEquipmentName } from "../utils/equipmentTranslate.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -72,8 +74,8 @@ function getEquipmentIcon(name) {
 let editingId = null;
 function openModal(item) {
   editingId = item ? item.id : null;
-  modalTitle.textContent = item ? "Avadanlığı redaktə et" : "Yeni avadanlıq";
-  submitBtn.textContent = item ? "Yadda saxla" : "Yarat";
+  modalTitle.textContent = item ? t("adminequipment.edit") : t("adminequipment.add");
+  submitBtn.textContent = item ? t("profile.save") : t("common.create");
   nameInput.value = item ? item.name : "";
   modalAlert.innerHTML = "";
   modal.classList.add("open");
@@ -99,7 +101,7 @@ form.addEventListener("submit", async (e) => {
   const dto = { Name: nameInput.value.trim() };
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Yadda saxlanılır...";
+  submitBtn.textContent = t("common.saving");
 
   try {
     if (editingId) {
@@ -113,7 +115,7 @@ form.addEventListener("submit", async (e) => {
     showAlert(modalAlert, err.message);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = editingId ? "Yadda saxla" : "Yarat";
+    submitBtn.textContent = editingId ? t("profile.save") : t("common.create");
   }
 });
 
@@ -122,17 +124,17 @@ function createEquipmentCardHtml(item) {
   return `
     <div class="equipment-card">
       <div class="equipment-icon"><i class="bi ${icon}"></i></div>
-      <div class="equipment-name">${escapeHtml(item.name)}</div>
+      <div class="equipment-name">${escapeHtml(translateEquipmentName(item.name))}</div>
       <div class="equipment-actions">
-        <button class="icon-action-btn edit-equipment-btn" data-id="${item.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-        <button class="icon-action-btn delete-equipment-btn" data-id="${item.id}" title="Sil"><i class="bi bi-trash"></i></button>
+        <button class="icon-action-btn edit-equipment-btn" data-id="${item.id}" title="${t("common.edit")}"><i class="bi bi-pencil"></i></button>
+        <button class="icon-action-btn delete-equipment-btn" data-id="${item.id}" title="${t("common.delete")}"><i class="bi bi-trash"></i></button>
       </div>
     </div>`;
 }
 
 function renderEquipment() {
   if (!equipment.length) {
-    equipmentGrid.innerHTML = `<div class="empty-state" style="width:100%;"><i class="bi bi-cpu"></i>Avadanlıq tapılmadı.</div>`;
+    equipmentGrid.innerHTML = `<div class="empty-state" style="width:100%;"><i class="bi bi-cpu"></i>${t("adminequipment.not_found")}</div>`;
     return;
   }
 
@@ -142,7 +144,7 @@ function renderEquipment() {
     : equipment;
 
   if (!matched.length) {
-    equipmentGrid.innerHTML = `<div class="empty-state" style="width:100%;"><i class="bi bi-search"></i>Axtarışa uyğun avadanlıq tapılmadı.</div>`;
+    equipmentGrid.innerHTML = `<div class="empty-state" style="width:100%;"><i class="bi bi-search"></i>${t("adminequipment.no_search_results")}</div>`;
     return;
   }
 
@@ -157,7 +159,7 @@ function renderEquipment() {
 
   equipmentGrid.querySelectorAll(".delete-equipment-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Bu avadanlığı silmək istədiyinizə əminsiniz?")) return;
+      if (!confirm(t("adminequipment.confirm_delete"))) return;
       clearAlert(alertBox);
       try {
         await deleteEquipment(btn.dataset.id);

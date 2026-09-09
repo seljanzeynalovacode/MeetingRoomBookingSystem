@@ -424,6 +424,7 @@ body.dashboard-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease)
   transition: background 0.15s, border-color 0.15s;
 }
 .icon-btn:hover { background: var(--violet-50); border-color: var(--violet-100); color: var(--violet-700); }
+.lang-toggle-btn { font-size: 12px; font-weight: 800; letter-spacing: 0.02em; }
 .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .icon-btn:disabled:hover { background: transparent; border-color: transparent; color: var(--text-secondary); }
 
@@ -990,6 +991,7 @@ body.admin-body { margin: 0; }
   font-size: 15px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
 }
 .floating-theme-toggle:hover { border-color: var(--violet-300); background: rgba(255,255,255,0.12); }
+.floating-lang-toggle { right: 4.5rem; font-size: 12px; font-weight: 800; }
 
 .admin-account {
   display: flex; align-items: center; gap: 10px;

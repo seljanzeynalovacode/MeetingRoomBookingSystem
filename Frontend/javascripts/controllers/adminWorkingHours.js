@@ -7,6 +7,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -31,18 +32,18 @@ const buildingDropdown = initDropdown({
   btn: buildingSelectBtn,
   panel: buildingSelectPanel,
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: (id) => selectBuilding(id),
 });
 
 const DAYS = [
-  { key: "Monday", label: "Bazar ertəsi" },
-  { key: "Tuesday", label: "Çərşənbə axşamı" },
-  { key: "Wednesday", label: "Çərşənbə" },
-  { key: "Thursday", label: "Cümə axşamı" },
-  { key: "Friday", label: "Cümə" },
-  { key: "Saturday", label: "Şənbə" },
-  { key: "Sunday", label: "Bazar" },
+  { key: "Monday", label: t("weekday.mon") },
+  { key: "Tuesday", label: t("weekday.tue") },
+  { key: "Wednesday", label: t("weekday.wed") },
+  { key: "Thursday", label: t("weekday.thu") },
+  { key: "Friday", label: t("weekday.fri") },
+  { key: "Saturday", label: t("weekday.sat") },
+  { key: "Sunday", label: t("weekday.sun") },
 ];
 
 let buildings = [];
@@ -77,7 +78,7 @@ async function selectBuilding(buildingId) {
     renderWeek();
   } catch (err) {
     hours = [];
-    weekCard.innerHTML = `<div class="empty-state"><i class="bi bi-exclamation-triangle"></i>İş saatları yüklənə bilmədi.</div>`;
+    weekCard.innerHTML = `<div class="empty-state"><i class="bi bi-exclamation-triangle"></i>${t("adminworkinghours.load_failed")}</div>`;
     showAlert(alertBox, err.message);
   }
 }
@@ -93,14 +94,14 @@ function renderWeek() {
         <span class="wh-day-name"><span class="wh-day-dot"></span>${d.label}</span>
         <span class="wh-switch-group">
           <label class="wh-switch">
-            <input type="checkbox" class="day-toggle" data-day="${d.key}" aria-label="${d.label} iş günüdür" ${row.isWorkingDay ? "checked" : ""} />
+            <input type="checkbox" class="day-toggle" data-day="${d.key}" aria-label="${d.label} ${t("adminworkinghours.is_working_day")}" ${row.isWorkingDay ? "checked" : ""} />
             <span class="track"></span>
           </label>
-          <span class="wh-status-label ${row.isWorkingDay ? "on" : "off"}">${row.isWorkingDay ? "İş günü" : "Qeyri-iş günü"}</span>
+          <span class="wh-status-label ${row.isWorkingDay ? "on" : "off"}">${row.isWorkingDay ? t("adminworkinghours.working_day") : t("adminworkinghours.non_working_day")}</span>
         </span>
         ${
           isOff
-            ? `<span class="wh-off-note">Bu gün rezervasiya üçün bağlıdır</span>`
+            ? `<span class="wh-off-note">${t("adminworkinghours.closed_note")}</span>`
             : `<span class="wh-time-range">
                 <span class="wh-time-input"><i class="bi bi-sunrise"></i><input type="time" class="start-time" data-day="${d.key}" value="${row.startTime}" /></span>
                 <span class="wh-time-sep">—</span>
@@ -125,27 +126,27 @@ function renderWeek() {
     <div class="wh-week-layout">
       <div class="card wh-card">
         <div class="wh-card-head">
-          <h3><i class="bi bi-clock-history"></i>${escapeHtml(building ? building.name : "")} — həftəlik qrafik</h3>
-          <button type="button" class="wh-copy-link" id="copyMondayBtn"><i class="bi bi-copy"></i>Bazar ertəsi saatlarını bütün iş günlərinə köçür</button>
+          <h3><i class="bi bi-clock-history"></i>${escapeHtml(building ? building.name : "")} — ${t("adminworkinghours.weekly_schedule")}</h3>
+          <button type="button" class="wh-copy-link" id="copyMondayBtn"><i class="bi bi-copy"></i>${t("adminworkinghours.copy_monday")}</button>
         </div>
         ${rowsHtml}
       </div>
       <div class="wh-summary-col">
       <div class="wh-summary">
-        <p class="wh-summary-label">Bu həftə</p>
+        <p class="wh-summary-label">${t("adminworkinghours.this_week")}</p>
         <div class="wh-summary-divider"></div>
         <div class="wh-summary-item">
           <span class="stat-icon violet"><i class="bi bi-calendar-check"></i></span>
           <div>
             <p class="wh-summary-value">${workingDaysCount}</p>
-            <p class="wh-summary-item-label">iş günü</p>
+            <p class="wh-summary-item-label">${t("adminworkinghours.working_days_unit")}</p>
           </div>
         </div>
         <div class="wh-summary-item">
           <span class="stat-icon amber"><i class="bi bi-hourglass-split"></i></span>
           <div>
             <p class="wh-summary-value">${totalHoursLabel}</p>
-            <p class="wh-summary-item-label">saat/həftə</p>
+            <p class="wh-summary-item-label">${t("adminworkinghours.hours_per_week")}</p>
           </div>
         </div>
         <div class="wh-summary-divider"></div>
@@ -153,20 +154,20 @@ function renderWeek() {
           <span class="stat-icon green"><i class="bi bi-sunrise"></i></span>
           <div>
             <p class="wh-summary-value">${earliestStart}</p>
-            <p class="wh-summary-item-label">ən erkən başlama</p>
+            <p class="wh-summary-item-label">${t("adminworkinghours.earliest_start")}</p>
           </div>
         </div>
         <div class="wh-summary-item">
           <span class="stat-icon green"><i class="bi bi-sunset"></i></span>
           <div>
             <p class="wh-summary-value">${latestEnd}</p>
-            <p class="wh-summary-item-label">ən gec bitmə</p>
+            <p class="wh-summary-item-label">${t("adminworkinghours.latest_end")}</p>
           </div>
         </div>
       </div>
       <div class="card wh-actions-bar">
-        <span class="wh-hint"><i class="bi bi-lightbulb"></i>Dəyişikliklər yalnız bu binadakı otaqlara aiddir</span>
-        <button type="button" class="btn btn-primary" id="saveWeekBtn"><i class="bi bi-check-lg"></i>Yadda saxla</button>
+        <span class="wh-hint"><i class="bi bi-lightbulb"></i>${t("adminworkinghours.hint")}</span>
+        <button type="button" class="btn btn-primary" id="saveWeekBtn"><i class="bi bi-check-lg"></i>${t("profile.save")}</button>
       </div>
       </div>
     </div>`;
@@ -213,7 +214,7 @@ async function handleSave() {
   const invalidDay = hours.find((h) => h.isWorkingDay && h.startTime >= h.endTime);
   if (invalidDay) {
     const label = DAYS.find((d) => d.key === invalidDay.dayOfWeek)?.label ?? invalidDay.dayOfWeek;
-    showAlert(alertBox, `${label}: başlama saatı bitmə saatından əvvəl olmalıdır.`);
+    showAlert(alertBox, `${label}: ${t("adminworkinghours.time_order_error")}`);
     return;
   }
 
@@ -230,7 +231,7 @@ async function handleSave() {
 
   try {
     await updateWorkingHours(selectedBuildingId, payload);
-    showAlert(alertBox, "İş saatları yadda saxlanıldı.", "success");
+    showAlert(alertBox, t("adminworkinghours.save_success"), "success");
   } catch (err) {
     showAlert(alertBox, err.message);
   } finally {

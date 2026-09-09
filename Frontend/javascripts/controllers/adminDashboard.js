@@ -7,6 +7,7 @@ import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin } from "../api/reservationsApi.js";
 import { showAlert, clearAlert } from "../components/alert.js";
+import { t } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -31,7 +32,7 @@ const reservationCountEl = document.getElementById("statReservationCount");
 const peakHourBadge = document.getElementById("peakHourBadge");
 const peakDayBadge = document.getElementById("peakDayBadge");
 
-const WEEKDAY_LABELS = ["Bazar ertəsi", "Çərşənbə axşamı", "Çərşənbə", "Cümə axşamı", "Cümə", "Şənbə", "Bazar"];
+const WEEKDAY_LABELS = [t("weekday.mon"), t("weekday.tue"), t("weekday.wed"), t("weekday.thu"), t("weekday.fri"), t("weekday.sat"), t("weekday.sun")];
 
 function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -126,7 +127,7 @@ function buildPeakHoursChart(reservations) {
 
   const maxCount = Math.max(...hourCounts);
   const peakHour = hourCounts.indexOf(maxCount);
-  peakHourBadge.textContent = maxCount > 0 ? `Pik: ${String(peakHour).padStart(2, "0")}:00` : "";
+  peakHourBadge.textContent = maxCount > 0 ? `${t("chart.peak")}: ${String(peakHour).padStart(2, "0")}:00` : "";
 
   const firstHour = hourCounts.findIndex((c) => c > 0);
   const lastHour = hourCounts.length - 1 - [...hourCounts].reverse().findIndex((c) => c > 0);
@@ -165,7 +166,7 @@ function buildStatusDonutChart(reservations) {
   statusDonutChartInstance = new Chart(document.getElementById("statusDonutChart"), {
     type: "doughnut",
     data: {
-      labels: ["Aktiv", "Tamamlanıb", "Ləğv edilib"],
+      labels: [t("room.status.active"), t("stats.completed"), t("stats.cancelled")],
       datasets: [{ data: [confirmed, completed, cancelled], backgroundColor: [CHART_COLORS.violetPeak, CHART_COLORS.amberSoft, CHART_COLORS.red], borderWidth: 0 }],
     },
     options: {
@@ -189,7 +190,7 @@ function buildWeekdayChart(reservations) {
 
   const maxCount = Math.max(...counts);
   const peakDayIndex = counts.indexOf(maxCount);
-  peakDayBadge.textContent = maxCount > 0 ? `Pik: ${WEEKDAY_LABELS[peakDayIndex]}` : "";
+  peakDayBadge.textContent = maxCount > 0 ? `${t("chart.peak")}: ${WEEKDAY_LABELS[peakDayIndex]}` : "";
 
   const colors = counts.map((c, i) => (i === peakDayIndex && c > 0 ? peakBarGradient : CHART_COLORS.violetLight));
 
@@ -219,7 +220,7 @@ function buildBuildingChart(reservations, rooms) {
 
   reservations.forEach((r) => {
     const room = roomMap.get(r.roomId);
-    const buildingName = room ? room.buildingName : "Naməlum";
+    const buildingName = room ? room.buildingName : t("common.unknown");
     counts[buildingName] = (counts[buildingName] || 0) + 1;
   });
 

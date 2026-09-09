@@ -209,6 +209,7 @@ public class RoomService : IRoomService
             RoomName = r.Name,
             Capacity = r.Capacity,
             FloorName = r.Floor.Name,
+            FloorLevelNumber = r.Floor.LevelNumber,
             BuildingId = r.Floor.BuildingId,
             BuildingName = r.Floor.Building.Name,
             Equipment = equipmentByRoom

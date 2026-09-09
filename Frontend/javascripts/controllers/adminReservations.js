@@ -2,7 +2,7 @@ import { requireAdmin, getDisplayIdentity } from "../components/adminGuard.js";
 import { initAdminMobileNav, initAdminAccountMenu } from "../components/mobileNav.js";
 import { logout } from "../api/authApi.js";
 import { getAccessToken, API_BASE_URL } from "../api/apiClient.js";
-import { getAllRooms, getAllBuildings } from "../api/roomsApi.js";
+import { getAllRooms, getAllBuildings, getAllFloors } from "../api/roomsApi.js";
 import { getAllUsersWithRoles } from "../api/adminApi.js";
 import { getAllReservationsAdmin, cancelReservation } from "../api/reservationsApi.js";
 import { getParticipantsByReservation } from "../api/participantsApi.js";
@@ -10,6 +10,8 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t, getLang } from "../components/i18n.js";
+import { floorLabel } from "../utils/floorLabel.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -36,7 +38,7 @@ const filterBuildingDropdown = initDropdown({
   btn: document.getElementById("filterBuildingBtn"),
   panel: document.getElementById("filterBuildingPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   portal: true,
   onChange: (value) => {
     populateRoomFilterOptions(value);
@@ -48,7 +50,7 @@ const filterRoomDropdown = initDropdown({
   btn: document.getElementById("filterRoomBtn"),
   panel: document.getElementById("filterRoomPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   portal: true,
   onChange: () => renderTable(),
 });
@@ -57,13 +59,13 @@ const filterStatusDropdown = initDropdown({
   btn: document.getElementById("filterStatusBtn"),
   panel: document.getElementById("filterStatusPanel"),
   options: [
-    { value: "", label: "Hamısı" },
-    { value: "Confirmed", label: "Aktiv" },
-    { value: "Completed", label: "Tamamlanıb" },
-    { value: "Cancelled", label: "Ləğv edilib" },
+    { value: "", label: t("common.all") },
+    { value: "Confirmed", label: t("room.status.active") },
+    { value: "Completed", label: t("stats.completed") },
+    { value: "Cancelled", label: t("stats.cancelled") },
   ],
   value: "",
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   portal: true,
   onChange: () => renderTable(),
 });
@@ -76,6 +78,7 @@ let reservations = [];
 let users = [];
 let rooms = [];
 let buildings = [];
+let floors = [];
 let allRows = [];
 function getEffectiveStatus(status, endDate) {
   if (status === "Cancelled") return "Cancelled";
@@ -84,15 +87,15 @@ function getEffectiveStatus(status, endDate) {
 
 function statusBadgeHtml(status, endDate) {
   const effective = getEffectiveStatus(status, endDate);
-  if (effective === "Cancelled") return `<span class="badge badge-booked"><span class="badge-dot"></span>Ləğv edilib</span>`;
-  if (effective === "Completed") return `<span class="badge badge-completed"><span class="badge-dot"></span>Tamamlanıb</span>`;
-  return `<span class="badge badge-available"><span class="badge-dot"></span>Aktiv</span>`;
+  if (effective === "Cancelled") return `<span class="badge badge-booked"><span class="badge-dot"></span>${t("stats.cancelled")}</span>`;
+  if (effective === "Completed") return `<span class="badge badge-completed"><span class="badge-dot"></span>${t("stats.completed")}</span>`;
+  return `<span class="badge badge-available"><span class="badge-dot"></span>${t("room.status.active")}</span>`;
 }
 
 function formatRange(startIso, endIso) {
   const start = new Date(startIso);
   const end = new Date(endIso);
-  const dateStr = start.toLocaleDateString("az-AZ", { day: "2-digit", month: "short", year: "numeric" });
+  const dateStr = start.toLocaleDateString(getLang() === "en" ? "en-US" : "az-AZ", { day: "2-digit", month: "short", year: "numeric" });
   return `${dateStr}, ${start.toTimeString().slice(0, 5)}–${end.toTimeString().slice(0, 5)}`;
 }
 
@@ -107,6 +110,7 @@ function buildRows() {
   return reservations.map((r) => {
     const user = users.find((u) => u.id === r.reservedByUserId);
     const room = rooms.find((rm) => rm.id === r.roomId);
+    const floor = room ? floors.find((f) => f.id === room.floorId) : null;
     return {
       id: r.id,
       title: r.title,
@@ -116,7 +120,7 @@ function buildRows() {
       roomId: r.roomId,
       roomName: r.roomName,
       buildingName: room ? room.buildingName : "",
-      floorName: room ? room.floorName : "",
+      floorName: floor ? floorLabel(floor.levelNumber) : room ? room.floorName : "",
       fullName: user ? `${user.firstName} ${user.lastName}` : r.reservedByUserName,
       userName: user ? user.userName : "—",
       email: user ? user.email : "—",
@@ -158,7 +162,7 @@ function renderTable() {
   const rows = applyFilters(allRows);
 
   if (!rows.length) {
-    tableBody.innerHTML = `<div class="empty-state" style="padding:2rem;"><i class="bi bi-calendar-x"></i>Nəticə tapılmadı.</div>`;
+    tableBody.innerHTML = `<div class="empty-state" style="padding:2rem;"><i class="bi bi-calendar-x"></i>${t("common.no_results")}</div>`;
     return;
   }
 
@@ -172,14 +176,14 @@ function renderTable() {
         <p class="reservation-email">${escapeHtml(row.email)}</p>
       </div>
       <div class="reservation-room">
-        <p><span class="reservation-room-label">Otaq:</span> ${escapeHtml(row.roomName)}</p>
-        <p class="reservation-building"><span class="reservation-room-label">Bina:</span> ${escapeHtml(row.buildingName || "")}${row.floorName ? ` <span class="reservation-floor">(${escapeHtml(row.floorName)})</span>` : ""}</p>
+        <p><span class="reservation-room-label">${t("calendar.room")}:</span> ${escapeHtml(row.roomName)}</p>
+        <p class="reservation-building"><span class="reservation-room-label">${t("filters.building")}:</span> ${escapeHtml(row.buildingName || "")}${row.floorName ? ` <span class="reservation-floor">(${escapeHtml(row.floorName)})</span>` : ""}</p>
       </div>
       <div class="reservation-time"><i class="bi bi-calendar3"></i>${formatRange(row.startDate, row.endDate)}</div>
       ${statusBadgeHtml(row.status, row.endDate)}
       <div class="row-actions">
-        <button class="icon-action-btn view-btn" data-id="${row.id}" title="Ətraflı bax"><i class="bi bi-eye"></i></button>
-        <button class="icon-action-btn cancel-btn" data-id="${row.id}" title="Ləğv et" ${getEffectiveStatus(row.status, row.endDate) !== "Confirmed" ? "disabled" : ""}><i class="bi bi-x-circle"></i></button>
+        <button class="icon-action-btn view-btn" data-id="${row.id}" title="${t("adminreservations.view_details")}"><i class="bi bi-eye"></i></button>
+        <button class="icon-action-btn cancel-btn" data-id="${row.id}" title="${t("adminreservations.cancel")}" ${getEffectiveStatus(row.status, row.endDate) !== "Confirmed" ? "disabled" : ""}><i class="bi bi-x-circle"></i></button>
       </div>
     </div>`
     )
@@ -194,16 +198,16 @@ async function openDetails(id) {
   if (!row) return;
 
   detailsModalBody.innerHTML = `
-    <div class="detail-row"><span class="dr-label">Başlıq</span><span class="dr-value">${escapeHtml(row.title)}</span></div>
-    <div class="detail-row"><span class="dr-label">Otaq</span><span class="dr-value">${escapeHtml(row.roomName)}${row.buildingName ? " · " + escapeHtml(row.buildingName) : ""}</span></div>
-    <div class="detail-row"><span class="dr-label">Tarix/Saat</span><span class="dr-value">${formatRange(row.startDate, row.endDate)}</span></div>
-    <div class="detail-row"><span class="dr-label">Təşkilatçı</span><span class="dr-value">${escapeHtml(row.fullName)}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("adminreservations.title_label")}</span><span class="dr-value">${escapeHtml(row.title)}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("calendar.room")}</span><span class="dr-value">${escapeHtml(row.roomName)}${row.buildingName ? " · " + escapeHtml(row.buildingName) : ""}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("adminreservations.date_time")}</span><span class="dr-value">${formatRange(row.startDate, row.endDate)}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("adminreservations.organizer")}</span><span class="dr-value">${escapeHtml(row.fullName)}</span></div>
     <div class="detail-row"><span class="dr-label">Email</span><span class="dr-value">${escapeHtml(row.email)}</span></div>
-    <div class="detail-row"><span class="dr-label">İstifadəçi adı</span><span class="dr-value">${escapeHtml(row.userName)}</span></div>
-    <div class="detail-row"><span class="dr-label">Status</span><span class="dr-value">${statusBadgeHtml(row.status, row.endDate)}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("form.username")}</span><span class="dr-value">${escapeHtml(row.userName)}</span></div>
+    <div class="detail-row"><span class="dr-label">${t("filters.status")}</span><span class="dr-value">${statusBadgeHtml(row.status, row.endDate)}</span></div>
     <div class="detail-participants">
-      <h4>Qonaqlar</h4>
-      <div id="detailsParticipants" class="text-muted" style="font-size:12.5px;">Yüklənir...</div>
+      <h4>${t("adminreservations.guests")}</h4>
+      <div id="detailsParticipants" class="text-muted" style="font-size:12.5px;">${t("common.loading")}</div>
     </div>
   `;
   detailsModal.classList.add("open");
@@ -212,7 +216,7 @@ async function openDetails(id) {
     const participants = await getParticipantsByReservation(id);
     const box = document.getElementById("detailsParticipants");
     if (!participants.length) {
-      box.textContent = "Qonaq yoxdur.";
+      box.textContent = t("adminreservations.no_guests");
     } else {
       box.innerHTML = participants
         .map(
@@ -223,7 +227,7 @@ async function openDetails(id) {
     }
   } catch (err) {
     const box = document.getElementById("detailsParticipants");
-    if (box) box.textContent = err?.message || "Yüklənə bilmədi.";
+    if (box) box.textContent = err?.message || t("adminreservations.load_failed");
   }
 }
 
@@ -233,7 +237,7 @@ detailsModal.addEventListener("click", (e) => {
 });
 
 async function handleCancel(id) {
-  if (!confirm("Bu rezervasiyanı ləğv etmək istədiyinizə əminsiniz?")) return;
+  if (!confirm(t("adminreservations.confirm_cancel"))) return;
   clearAlert(alertBox);
   try {
     await cancelReservation(id);
@@ -264,16 +268,18 @@ logoutBtn.addEventListener("click", async () => {
 async function loadData() {
   clearAlert(alertBox);
   try {
-    const [res, userList, roomList, buildingList] = await Promise.all([
+    const [res, userList, roomList, buildingList, floorList] = await Promise.all([
       getAllReservationsAdmin(),
       getAllUsersWithRoles(),
       getAllRooms(),
       getAllBuildings(),
+      getAllFloors(),
     ]);
     reservations = res;
     users = userList;
     rooms = roomList;
     buildings = buildingList;
+    floors = floorList;
     allRows = buildRows();
 
     filterBuildingDropdown.setOptions(buildings.map((b) => ({ value: b.name, label: b.name })), "");

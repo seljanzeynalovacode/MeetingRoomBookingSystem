@@ -14,6 +14,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -41,7 +42,7 @@ const filterRoleDropdown = initDropdown({
   btn: document.getElementById("filterRoleBtn"),
   panel: document.getElementById("filterRolePanel"),
   options: [],
-  placeholder: "Bütün rollar",
+  placeholder: t("adminusers.all_roles"),
   onChange: () => renderUsers(),
 });
 
@@ -57,10 +58,10 @@ let users = [];
 let roleAssignDropdowns = new Map();
 function renderRoles() {
   const roleCountEl = document.getElementById("roleCount");
-  if (roleCountEl) roleCountEl.textContent = `${roles.length} rol`;
+  if (roleCountEl) roleCountEl.textContent = `${roles.length} ${t("adminusers.role_unit")}`;
 
   if (!roles.length) {
-    roleListEl.innerHTML = `<span class="text-muted" style="font-size:12.5px;">Rol yoxdur.</span>`;
+    roleListEl.innerHTML = `<span class="text-muted" style="font-size:12.5px;">${t("adminusers.no_roles")}</span>`;
     return;
   }
 
@@ -69,14 +70,14 @@ function renderRoles() {
       const cls = r.name === "Admin" ? "rm-chip rm-chip-admin" : "rm-chip";
       const inUseCount = users.filter((u) => u.roles.includes(r.name)).length;
       const disabled = inUseCount > 0;
-      const title = disabled ? `Bu rol ${inUseCount} istifadəçiyə təyin edilib, əvvəlcə onlardan silin` : "Sil";
-      return `<span class="${cls}"><span class="rm-chip-dot"></span>${escapeHtml(r.name)}<button type="button" data-id="${r.id}" data-name="${escapeHtml(r.name)}" class="rm-delete-btn" aria-label="Sil" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
+      const title = disabled ? `${t("adminusers.role_in_use")} ${inUseCount} ${t("adminusers.role_in_use_suffix")}` : t("common.delete");
+      return `<span class="${cls}"><span class="rm-chip-dot"></span>${escapeHtml(r.name)}<button type="button" data-id="${r.id}" data-name="${escapeHtml(r.name)}" class="rm-delete-btn" aria-label="${t("common.delete")}" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
     })
     .join("");
 
   roleListEl.querySelectorAll(".rm-delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm(`"${btn.dataset.name}" rolunu silmək istədiyinizə əminsiniz?`)) return;
+      if (!confirm(`"${btn.dataset.name}" ${t("adminusers.confirm_delete_role")}`)) return;
       clearAlert(alertBox);
       try {
         await deleteRole(btn.dataset.id);
@@ -134,11 +135,11 @@ function createUserRowHtml(user) {
       const isLastAdmin = roleName === "Admin" && adminCount <= 1;
       const disabled = isLastRole || isLastAdmin;
       const title = isLastRole
-        ? "İstifadəçinin son rolu silinə bilməz"
+        ? t("adminusers.last_role")
         : isLastAdmin
-          ? "Sistemdə son Admin, rolu silinə bilməz"
-          : "Rolu sil";
-      return `<span class="${cls}">${escapeHtml(roleName)}<button type="button" class="remove-role-btn" data-user-id="${user.id}" data-role="${escapeHtml(roleName)}" aria-label="Rolu sil" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
+          ? t("adminusers.last_admin")
+          : t("adminusers.remove_role");
+      return `<span class="${cls}">${escapeHtml(roleName)}<button type="button" class="remove-role-btn" data-user-id="${user.id}" data-role="${escapeHtml(roleName)}" aria-label="${t("adminusers.remove_role")}" title="${escapeHtml(title)}" ${disabled ? "disabled" : ""}><i class="bi bi-x"></i></button></span>`;
     })
     .join("");
 
@@ -146,12 +147,12 @@ function createUserRowHtml(user) {
   const assignSelectHtml = availableRoles.length
     ? `<div class="assign-role-row">
          <div class="dd-wrap assign-role-dd" data-user-id="${user.id}">
-           <button type="button" class="dd-btn"><span>Seçin</span><i class="bi bi-chevron-down"></i></button>
+           <button type="button" class="dd-btn"><span>${t("common.select")}</span><i class="bi bi-chevron-down"></i></button>
            <div class="dd-panel"></div>
          </div>
          <button type="button" class="btn btn-secondary btn-sm assign-role-btn" data-user-id="${user.id}"><i class="bi bi-plus"></i></button>
        </div>`
-    : `<span class="text-muted" style="font-size:12px;">Hamısı təyin edilib</span>`;
+    : `<span class="text-muted" style="font-size:12px;">${t("adminusers.all_assigned")}</span>`;
 
   return `
     <div class="user-row">
@@ -159,13 +160,13 @@ function createUserRowHtml(user) {
       <div class="user-identity">
         <p class="user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</p>
         <p class="user-meta">${escapeHtml(user.email)}</p>
-        <p class="user-meta user-username">İstifadəçi adı: <span>@${escapeHtml(user.userName)}</span></p>
+        <p class="user-meta user-username">${t("form.username")}: <span>@${escapeHtml(user.userName)}</span></p>
       </div>
       <div class="user-roles">
-        ${roleChips || '<span class="text-muted" style="font-size:12px;">Rol yoxdur</span>'}
+        ${roleChips || `<span class="text-muted" style="font-size:12px;">${t("adminusers.no_roles")}</span>`}
         ${assignSelectHtml}
       </div>
-      <button type="button" class="icon-action-btn delete-user-btn" data-user-id="${user.id}" title="İstifadəçini sil"><i class="bi bi-trash"></i></button>
+      <button type="button" class="icon-action-btn delete-user-btn" data-user-id="${user.id}" title="${t("adminusers.delete_user")}"><i class="bi bi-trash"></i></button>
     </div>`;
 }
 
@@ -178,7 +179,7 @@ function renderUsers() {
   destroyRoleDropdowns();
 
   if (!users.length) {
-    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-people"></i>İstifadəçi tapılmadı.</div>`;
+    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-people"></i>${t("adminusers.no_users")}</div>`;
     return;
   }
 
@@ -193,7 +194,7 @@ function renderUsers() {
   });
 
   if (!matched.length) {
-    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>Axtarışa uyğun istifadəçi tapılmadı.</div>`;
+    usersTableBody.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>${t("adminusers.no_search_results")}</div>`;
     return;
   }
 
@@ -208,7 +209,7 @@ function renderUsers() {
       btn: wrap.querySelector(".dd-btn"),
       panel: wrap.querySelector(".dd-panel"),
       options: availableRoles.map((r) => ({ value: r.name, label: r.name })),
-      placeholder: "Seçin",
+      placeholder: t("common.select"),
       onChange: () => {},
     });
     roleAssignDropdowns.set(userId, dd);
@@ -219,7 +220,7 @@ function renderUsers() {
       const userId = btn.dataset.userId;
       const roleName = roleAssignDropdowns.get(userId)?.getValue();
       if (!roleName) {
-        showAlert(alertBox, "Zəhmət olmasa bir rol seçin.");
+        showAlert(alertBox, t("adminusers.select_role_first"));
         return;
       }
       clearAlert(alertBox);
@@ -237,7 +238,7 @@ function renderUsers() {
 
   usersTableBody.querySelectorAll(".remove-role-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm(`"${btn.dataset.role}" rolunu bu istifadəçidən silmək istədiyinizə əminsiniz?`)) return;
+      if (!confirm(`"${btn.dataset.role}" ${t("adminusers.confirm_remove_role")}`)) return;
       clearAlert(alertBox);
       try {
         await removeRole(btn.dataset.userId, btn.dataset.role);
@@ -250,7 +251,7 @@ function renderUsers() {
 
   usersTableBody.querySelectorAll(".delete-user-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Bu istifadəçini silmək istədiyinizə əminsiniz? Bu geri qaytarıla bilməz.")) return;
+      if (!confirm(t("adminusers.confirm_delete_user"))) return;
       clearAlert(alertBox);
       try {
         await deleteUser(btn.dataset.userId);

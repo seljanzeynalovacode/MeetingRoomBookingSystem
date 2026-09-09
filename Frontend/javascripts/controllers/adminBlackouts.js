@@ -7,6 +7,7 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -45,7 +46,7 @@ const roomDropdown = initDropdown({
   btn: document.getElementById("blackoutRoomBtn"),
   panel: document.getElementById("blackoutRoomPanel"),
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: () => {},
 });
 
@@ -53,7 +54,7 @@ const filterBuildingDropdown = initDropdown({
   btn: document.getElementById("filterBuildingBtn"),
   panel: document.getElementById("filterBuildingPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: (value) => {
     populateRoomFilterOptions(value);
     renderBlackouts();
@@ -64,7 +65,7 @@ const filterRoomDropdown = initDropdown({
   btn: document.getElementById("filterRoomBtn"),
   panel: document.getElementById("filterRoomPanel"),
   options: [],
-  placeholder: "Hamısı",
+  placeholder: t("common.all"),
   onChange: () => renderBlackouts(),
 });
 
@@ -80,7 +81,7 @@ function toDateOnlyString(date) {
   return `${y}-${m}-${d}`;
 }
 
-const STATUS_LABELS = { ongoing: "Davam edir", upcoming: "Planlaşdırılıb", past: "Bitib" };
+const STATUS_LABELS = { ongoing: t("blackout.status.ongoing"), upcoming: t("blackout.status.upcoming"), past: t("blackout.status.past") };
 const STATUS_BADGE_CLASS = { ongoing: "badge-booked", upcoming: "badge-neutral", past: "badge-completed" };
 
 function getBlackoutStatus(startIso, endIso) {
@@ -94,8 +95,8 @@ function getBlackoutStatus(startIso, endIso) {
 
 function openModal(blackout) {
   editingId = blackout ? blackout.id : null;
-  modalTitle.textContent = blackout ? "Bloklamanı redaktə et" : "Yeni bloklama";
-  submitBtn.textContent = blackout ? "Yadda saxla" : "Yarat";
+  modalTitle.textContent = blackout ? t("adminblackouts.edit") : t("adminblackouts.add");
+  submitBtn.textContent = blackout ? t("profile.save") : t("common.create");
 
   if (blackout) {
     roomDropdown.setValue(blackout.roomId);
@@ -206,8 +207,8 @@ function createBlackoutCardHtml(b) {
         <div class="blackout-card-time"><i class="bi bi-clock"></i>${timeRange}</div>
         <span class="chip">${escapeHtml(b.reason)}</span>
         <div class="row-actions">
-          <button class="icon-action-btn edit-btn" data-id="${b.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-          <button class="icon-action-btn delete-btn" data-id="${b.id}" title="Sil"><i class="bi bi-trash"></i></button>
+          <button class="icon-action-btn edit-btn" data-id="${b.id}" title="${t("common.edit")}"><i class="bi bi-pencil"></i></button>
+          <button class="icon-action-btn delete-btn" data-id="${b.id}" title="${t("common.delete")}"><i class="bi bi-trash"></i></button>
         </div>
       </div>
     </div>`;

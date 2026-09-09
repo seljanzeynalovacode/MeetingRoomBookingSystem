@@ -3,6 +3,7 @@ import { createParticipant, getParticipantsByReservation, deleteParticipant } fr
 import { showFieldErrors, clearFieldErrors } from "../components/alert.js";
 import { getSystemSettings } from "../api/systemSettingsApi.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { t } from "./i18n.js";
 
 let modalEl = null;
 let pendingParticipantEmails = [""];
@@ -24,7 +25,7 @@ function ensureModal() {
   modalEl.innerHTML = `
     <div class="modal-panel">
       <div class="modal-header">
-        <h3 id="bookingModalTitle">Rezervasiya</h3>
+        <h3 id="bookingModalTitle">${t("bookingmodal.title")}</h3>
         <button type="button" class="modal-close" id="bookingModalClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
       </div>
 
@@ -34,41 +35,41 @@ function ensureModal() {
 
       <form id="bookingModalForm" novalidate>
         <div class="field">
-          <label class="field-label" for="bookingTitle">Başlıq</label>
+          <label class="field-label" for="bookingTitle">${t("adminreservations.title_label")}</label>
           <div class="input-wrap">
             <i class="bi bi-card-text leading-icon"></i>
-            <input type="text" class="input has-icon" id="bookingTitle" name="Title" required minlength="2" maxlength="200" placeholder="Həftəlik komanda görüşü" />
+            <input type="text" class="input has-icon" id="bookingTitle" name="Title" required minlength="2" maxlength="200" placeholder="${t("bookingmodal.title_placeholder")}" />
           </div>
         </div>
 
         <div class="field">
-          <label class="field-label" for="bookingDate">Tarix</label>
+          <label class="field-label" for="bookingDate">${t("filters.date")}</label>
           <input type="date" class="input" id="bookingDate" required />
         </div>
 
         <div class="grid-2">
           <div class="field">
-            <label class="field-label" for="bookingStart">Başlama</label>
+            <label class="field-label" for="bookingStart">${t("adminblackouts.start")}</label>
             <input type="time" class="input" id="bookingStart" required />
           </div>
           <div class="field">
-            <label class="field-label" for="bookingEnd">Bitmə</label>
+            <label class="field-label" for="bookingEnd">${t("adminblackouts.end")}</label>
             <input type="time" class="input" id="bookingEnd" required />
           </div>
         </div>
 
         <div class="field">
-          <label class="field-label">Qonaqlar (email)</label>
+          <label class="field-label">${t("bookingmodal.guests")}</label>
           <div class="participant-list" id="participantList"></div>
           <div class="participant-add-row" id="participantAddRow">
-            <input type="email" class="input" id="participantEmailInput" placeholder="qonaq@nümunə.com" />
+            <input type="email" class="input" id="participantEmailInput" placeholder="${t("bookingmodal.email_placeholder")}" />
             <button type="button" class="btn btn-secondary btn-sm" id="addParticipantBtn"><i class="bi bi-plus"></i></button>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" id="bookingModalCancelBtn">İmtina</button>
-          <button type="submit" class="btn btn-primary" id="bookingModalSubmitBtn">Rezerv et</button>
+          <button type="button" class="btn btn-outline" id="bookingModalCancelBtn">${t("common.cancel")}</button>
+          <button type="submit" class="btn btn-primary" id="bookingModalSubmitBtn">${t("mock.reserve_btn")}</button>
         </div>
       </form>
     </div>
@@ -122,7 +123,7 @@ function renderParticipants() {
     listEl.innerHTML = existingParticipants
       .map(
         (p) =>
-          `<div class="participant-row"><span class="p-email"><i class="bi bi-person"></i> ${escapeHtml(p.guestEmail || p.email)}</span><button type="button" data-id="${p.id}" class="remove-participant-btn" aria-label="Sil"><i class="bi bi-x"></i></button></div>`
+          `<div class="participant-row"><span class="p-email"><i class="bi bi-person"></i> ${escapeHtml(p.guestEmail || p.email)}</span><button type="button" data-id="${p.id}" class="remove-participant-btn" aria-label="${t("common.delete")}"><i class="bi bi-x"></i></button></div>`
       )
       .join("");
 
@@ -146,11 +147,11 @@ function renderParticipants() {
     .map((email, idx) => {
       const isLast = idx === pendingParticipantEmails.length - 1;
       const actionBtn = isLast
-        ? `<button type="button" class="btn btn-secondary btn-sm participant-add-btn" aria-label="Qonaq əlavə et"><i class="bi bi-plus"></i></button>`
-        : `<button type="button" class="btn btn-outline btn-sm participant-remove-btn" data-idx="${idx}" aria-label="Sil"><i class="bi bi-x"></i></button>`;
+        ? `<button type="button" class="btn btn-secondary btn-sm participant-add-btn" aria-label="${t("bookingmodal.add_guest")}"><i class="bi bi-plus"></i></button>`
+        : `<button type="button" class="btn btn-outline btn-sm participant-remove-btn" data-idx="${idx}" aria-label="${t("common.delete")}"><i class="bi bi-x"></i></button>`;
       return `
         <div class="participant-add-row">
-          <input type="email" class="input participant-email-input" data-idx="${idx}" placeholder="qonaq@nümunə.com" value="${escapeHtml(email)}" />
+          <input type="email" class="input participant-email-input" data-idx="${idx}" placeholder="${t("bookingmodal.email_placeholder")}" value="${escapeHtml(email)}" />
           ${actionBtn}
         </div>`;
     })
@@ -221,18 +222,18 @@ async function handleSubmit(e) {
   const end = endInput.value;
 
   if (!title || !date) {
-    showModalAlert("Bütün sahələri doldurun.", "warning");
+    showModalAlert(t("bookingmodal.fill_all_fields"), "warning");
     return;
   }
 
   if (!start || !end) {
-    showModalAlert("Zəhmət olmasa saat təyin edin.", "warning");
+    showModalAlert(t("bookingmodal.set_time"), "warning");
     return;
   }
 
   if (title.length < 2) {
-    showFieldErrors(form, { Title: ["Başlıq minimum 2 simvol olmalıdır."] });
-    showModalAlert("Başlıq minimum 2 simvol olmalıdır.", "warning");
+    showFieldErrors(form, { Title: [t("bookingmodal.title_min_length")] });
+    showModalAlert(t("bookingmodal.title_min_length"), "warning");
     return;
   }
 
@@ -240,32 +241,32 @@ async function handleSubmit(e) {
   const endDate = new Date(`${date}T${end}`);
 
     if (startDate >= endDate) {
-    showModalAlert("Bitmə saatı başlama saatından sonra olmalıdır.", "warning");
+    showModalAlert(t("bookingmodal.end_after_start"), "warning");
     return;
   }
 
   if (startDate < new Date()) {
-    showModalAlert("Keçmiş tarixə və ya saata rezervasiya edilə bilməz.", "warning");
+    showModalAlert(t("bookingmodal.no_past_booking"), "warning");
     return;
   }
 
   if (endDate - startDate < currentSettings.minReservationMinutes * 60 * 1000) {
-    showModalAlert(`Rezervasiya minimum ${currentSettings.minReservationMinutes} dəqiqə olmalıdır.`, "warning");
+    showModalAlert(`${t("bookingmodal.min_duration_prefix")} ${currentSettings.minReservationMinutes} ${t("adminsettings.minutes")} ${t("bookingmodal.must_be_suffix")}`, "warning");
     return;
   }
 
   if (endDate - startDate > currentSettings.maxReservationHours * 60 * 60 * 1000) {
-    showModalAlert(`Rezervasiya maksimum ${currentSettings.maxReservationHours} saat ola bilər.`, "warning");
+    showModalAlert(`${t("bookingmodal.max_duration_prefix")} ${currentSettings.maxReservationHours} ${t("adminsettings.hours")} ${t("bookingmodal.can_be_suffix")}`, "warning");
     return;
   }
 
   if (currentOptions.isAdmin !== true && startDate > new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000)) {
-    showModalAlert(`Rezervasiya yalnız növbəti ${currentSettings.bookingHorizonDays} gün ərzində yaradıla bilər.`, "warning");
+    showModalAlert(`${t("bookingmodal.horizon_prefix")} ${currentSettings.bookingHorizonDays} ${t("adminsettings.days")} ${t("bookingmodal.horizon_suffix")}`, "warning");
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = currentOptions.mode === "edit" ? "Yadda saxlanılır..." : "Rezerv edilir...";
+  submitBtn.textContent = currentOptions.mode === "edit" ? t("common.saving") : t("bookingmodal.booking_in_progress");
 
   try {
     if (currentOptions.mode === "edit") {
@@ -292,7 +293,7 @@ async function handleSubmit(e) {
         );
         const failed = results.filter((r) => r.status === "rejected").length;
         if (failed) {
-          showModalAlert(`Rezervasiya yaradıldı, amma ${failed} qonaq əlavə edilmədi.`, "warning");
+          showModalAlert(`${t("bookingmodal.created_but_guests_failed_1")} ${failed} ${t("bookingmodal.created_but_guests_failed_2")}`, "warning");
           setTimeout(() => {
             closeModal();
             if (currentOptions.onSuccess) currentOptions.onSuccess();
@@ -311,7 +312,7 @@ async function handleSubmit(e) {
     showModalAlert(err.message);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = currentOptions.mode === "edit" ? "Yadda saxla" : "Rezerv et";
+    submitBtn.textContent = currentOptions.mode === "edit" ? t("profile.save") : t("mock.reserve_btn");
   }
 }
 
@@ -347,8 +348,8 @@ export async function openBookingModal(options) {
   dateInput.max = isAdmin ? "" : toDateOnlyString(new Date(Date.now() + currentSettings.bookingHorizonDays * 24 * 60 * 60 * 1000));
 
   if (options.mode === "edit") {
-    modalTitleEl.textContent = "Rezervasiyanı redaktə et";
-    submitBtn.textContent = "Yadda saxla";
+    modalTitleEl.textContent = t("bookingmodal.edit_title");
+    submitBtn.textContent = t("profile.save");
     roomNameEl.textContent = options.reservation.roomName;
     titleInput.value = options.reservation.title;
 
@@ -366,8 +367,8 @@ export async function openBookingModal(options) {
       })
       .catch((err) => showModalAlert(err.message));
   } else {
-    modalTitleEl.textContent = "Otağı rezerv et";
-    submitBtn.textContent = "Rezerv et";
+    modalTitleEl.textContent = t("bookingmodal.book_title");
+    submitBtn.textContent = t("mock.reserve_btn");
     roomNameEl.textContent = options.room.name;
     titleInput.value = "";
     dateInput.value = options.prefillDate || toDateOnlyString(new Date());

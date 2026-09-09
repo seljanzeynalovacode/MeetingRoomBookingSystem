@@ -15,6 +15,8 @@ import { showAlert, clearAlert } from "../components/alert.js";
 import { initDropdown } from "../components/customDropdown.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
 import { initThemeToggle } from "../components/theme.js";
+import { t } from "../components/i18n.js";
+import { floorLabel } from "../utils/floorLabel.js";
 
 requireAdmin();
 initAdminMobileNav();
@@ -58,15 +60,15 @@ const floorModalAlert = document.getElementById("floorModalAlert");
 const floorModalClose = document.getElementById("floorModalClose");
 const floorModalCancelBtn = document.getElementById("floorModalCancelBtn");
 const floorForm = document.getElementById("floorForm");
-const floorNameInput = document.getElementById("floorName");
 const floorLevelInput = document.getElementById("floorLevel");
+const floorNamePreview = document.getElementById("floorNamePreview");
 const floorSubmitBtn = document.getElementById("floorModalSubmitBtn");
 
 const floorBuildingDropdown = initDropdown({
   btn: document.getElementById("floorBuildingBtn"),
   panel: document.getElementById("floorBuildingPanel"),
   options: [],
-  placeholder: "Seçin",
+  placeholder: t("common.select"),
   onChange: () => applySuggestedFloorDefaults(),
 });
 
@@ -75,14 +77,9 @@ let floors = [];
 let editingBuildingId = null;
 let editingFloorId = null;
 
-const ORDINAL_SUFFIXES = {
-  1: "ci", 2: "ci", 3: "cü", 4: "cü", 5: "ci", 6: "cı", 7: "ci", 8: "ci", 9: "cu", 10: "cu",
-  11: "ci", 12: "ci", 13: "cü", 14: "cü", 15: "ci", 16: "cı", 17: "ci", 18: "ci", 19: "cu", 20: "ci",
-};
-
-function suggestFloorName(nextLevel) {
-  const suffix = ORDINAL_SUFFIXES[nextLevel] || "ci";
-  return `${nextLevel}-${suffix} mərtəbə`;
+function updateFloorNamePreview() {
+  const level = floorLevelInput.value;
+  floorNamePreview.textContent = level !== "" ? floorLabel(level) : "";
 }
 
 function getNextLevelForBuilding(buildingId) {
@@ -95,16 +92,17 @@ function applySuggestedFloorDefaults() {
   if (editingFloorId) return;
   const buildingId = floorBuildingDropdown.getValue();
   if (!buildingId) return;
-  const nextLevel = getNextLevelForBuilding(buildingId);
-  floorNameInput.value = suggestFloorName(nextLevel);
-  floorLevelInput.value = nextLevel;
+  floorLevelInput.value = getNextLevelForBuilding(buildingId);
+  updateFloorNamePreview();
 }
+
+floorLevelInput.addEventListener("input", updateFloorNamePreview);
 /* ---------- Building modal ---------- */
 
 function openBuildingModal(building) {
   editingBuildingId = building ? building.id : null;
-  buildingModalTitle.textContent = building ? "Binanı redaktə et" : "Yeni bina";
-  buildingSubmitBtn.textContent = building ? "Yadda saxla" : "Yarat";
+  buildingModalTitle.textContent = building ? t("adminbuildings.edit_building") : t("adminbuildings.add_building");
+  buildingSubmitBtn.textContent = building ? t("profile.save") : t("common.create");
   buildingNameInput.value = building ? building.name : "";
   buildingAddressInput.value = building ? building.address : "";
   buildingModalAlert.innerHTML = "";
@@ -130,7 +128,7 @@ buildingForm.addEventListener("submit", async (e) => {
   const dto = { Name: buildingNameInput.value.trim(), Address: buildingAddressInput.value.trim() };
 
   buildingSubmitBtn.disabled = true;
-  buildingSubmitBtn.textContent = "Yadda saxlanılır...";
+  buildingSubmitBtn.textContent = t("common.saving");
 
   try {
     if (editingBuildingId) {
@@ -144,7 +142,7 @@ buildingForm.addEventListener("submit", async (e) => {
     showAlert(buildingModalAlert, err.message);
   } finally {
     buildingSubmitBtn.disabled = false;
-    buildingSubmitBtn.textContent = editingBuildingId ? "Yadda saxla" : "Yarat";
+    buildingSubmitBtn.textContent = editingBuildingId ? t("profile.save") : t("common.create");
   }
 });
 
@@ -152,13 +150,13 @@ buildingForm.addEventListener("submit", async (e) => {
 
 function openFloorModal(floor) {
   editingFloorId = floor ? floor.id : null;
-  floorModalTitle.textContent = floor ? "Mərtəbəni redaktə et" : "Yeni mərtəbə";
-  floorSubmitBtn.textContent = floor ? "Yadda saxla" : "Yarat";
+  floorModalTitle.textContent = floor ? t("adminbuildings.edit_floor") : t("adminbuildings.add_floor");
+  floorSubmitBtn.textContent = floor ? t("profile.save") : t("common.create");
 
   if (floor) {
     floorBuildingDropdown.setValue(floor.buildingId);
-    floorNameInput.value = floor.name;
     floorLevelInput.value = floor.levelNumber;
+    updateFloorNamePreview();
   } else {
     floorBuildingDropdown.setValue(buildings[0]?.id || "");
     applySuggestedFloorDefaults();
@@ -166,8 +164,8 @@ function openFloorModal(floor) {
 
   floorModalAlert.innerHTML = "";
   floorModal.classList.add("open");
-  floorNameInput.focus();
-  floorNameInput.select();
+  floorLevelInput.focus();
+  floorLevelInput.select();
 }
 
 function closeFloorModal() {
@@ -185,14 +183,15 @@ floorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   floorModalAlert.innerHTML = "";
 
+  const level = Number(floorLevelInput.value);
   const dto = {
-    Name: floorNameInput.value.trim(),
-    LevelNumber: Number(floorLevelInput.value),
+    Name: floorLabel(level),
+    LevelNumber: level,
     BuildingId: floorBuildingDropdown.getValue(),
   };
 
   floorSubmitBtn.disabled = true;
-  floorSubmitBtn.textContent = "Yadda saxlanılır...";
+  floorSubmitBtn.textContent = t("common.saving");
 
   try {
     if (editingFloorId) {
@@ -206,7 +205,7 @@ floorForm.addEventListener("submit", async (e) => {
     showAlert(floorModalAlert, err.message);
   } finally {
     floorSubmitBtn.disabled = false;
-    floorSubmitBtn.textContent = editingFloorId ? "Yadda saxla" : "Yarat";
+    floorSubmitBtn.textContent = editingFloorId ? t("profile.save") : t("common.create");
   }
 });
 
@@ -218,15 +217,15 @@ function createBuildingCardHtml(building, buildingFloors) {
         .map(
           (f) => `
         <div class="floor-row">
-          <span class="floor-name"><span class="floor-level-dot"></span>${escapeHtml(f.name)}</span>
+          <span class="floor-name"><span class="floor-level-dot"></span>${escapeHtml(floorLabel(f.levelNumber))}</span>
           <div class="floor-row-actions">
-            <button class="edit-floor-btn" data-id="${f.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-            <button class="danger delete-floor-btn" data-id="${f.id}" title="Sil"><i class="bi bi-trash"></i></button>
+            <button class="edit-floor-btn" data-id="${f.id}" title="${t("common.edit")}"><i class="bi bi-pencil"></i></button>
+            <button class="danger delete-floor-btn" data-id="${f.id}" title="${t("common.delete")}"><i class="bi bi-trash"></i></button>
           </div>
         </div>`
         )
         .join("")
-    : `<div class="floors-empty">Mərtəbə yoxdur</div>`;
+    : `<div class="floors-empty">${t("adminbuildings.no_floors")}</div>`;
 
   return `
     <div class="building-card">
@@ -237,8 +236,8 @@ function createBuildingCardHtml(building, buildingFloors) {
           <p>${escapeHtml(building.address)}</p>
         </div>
         <div class="building-header-actions">
-          <button class="icon-action-btn edit-building-btn" data-id="${building.id}" title="Redaktə et"><i class="bi bi-pencil"></i></button>
-          <button class="icon-action-btn delete-building-btn" data-id="${building.id}" title="Sil"><i class="bi bi-trash"></i></button>
+          <button class="icon-action-btn edit-building-btn" data-id="${building.id}" title="${t("common.edit")}"><i class="bi bi-pencil"></i></button>
+          <button class="icon-action-btn delete-building-btn" data-id="${building.id}" title="${t("common.delete")}"><i class="bi bi-trash"></i></button>
         </div>
       </div>
       <div class="floors-list">${floorsHtml}</div>
@@ -288,7 +287,7 @@ function renderBuildings() {
 
   buildingsGrid.querySelectorAll(".delete-building-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Bu binanı silmək istədiyinizə əminsiniz?")) return;
+      if (!confirm(t("adminbuildings.confirm_delete_building"))) return;
       clearAlert(alertBox);
       try {
         await deleteBuilding(btn.dataset.id);
@@ -308,7 +307,7 @@ function renderBuildings() {
 
   buildingsGrid.querySelectorAll(".delete-floor-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Bu mərtəbəni silmək istədiyinizə əminsiniz?")) return;
+      if (!confirm(t("adminbuildings.confirm_delete_floor"))) return;
       clearAlert(alertBox);
       try {
         await deleteFloor(btn.dataset.id);

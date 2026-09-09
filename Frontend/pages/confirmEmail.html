@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Email təsdiqi — MeetHub</title>
+  <title data-i18n="meta.title.confirmEmail">Email təsdiqi — MeetHub</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <link href="../css/style.css" rel="stylesheet" />
   <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 </head>
 <body>
   <button type="button" class="floating-theme-toggle" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+  <button type="button" class="floating-theme-toggle floating-lang-toggle" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
   <div class="auth-shell">
     <div class="auth-form-col stacked">
       <div class="brand-mark">
@@ -21,13 +22,13 @@
       <div class="auth-card text-center" style="max-width: 420px;">
         <div class="icon-orb"><i class="bi bi-envelope-check"></i></div>
 
-        <h1>Email-i təsdiqləyin</h1>
-        <p class="lede">6 rəqəmli təsdiq kodu email ünvanınıza göndərildi.</p>
+        <h1 data-i18n="confirm.heading">Email-i təsdiqləyin</h1>
+        <p class="lede" data-i18n="confirm.lede">6 rəqəmli təsdiq kodu email ünvanınıza göndərildi.</p>
 
         <div id="alertBox"></div>
 
         <div class="field" style="text-align: left;">
-          <label class="field-label" for="email">Email</label>
+          <label class="field-label" for="email" data-i18n="form.email">Email</label>
           <div class="input-wrap">
             <i class="bi bi-envelope leading-icon"></i>
             <input type="email" class="input has-icon" id="email" name="Email" placeholder="ad@nümunə.com" required maxlength="256" />
@@ -45,15 +46,15 @@
           </div>
 
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
-            Təsdiqlə <i class="bi bi-check2"></i>
+            <span data-i18n="confirm.submit">Təsdiqlə</span> <i class="bi bi-check2"></i>
           </button>
         </form>
 
         <div class="resend-row">
-          Kod gəlmədi? <span id="resendWrap"><span class="timer" id="timer">0:60</span> sonra <a href="#" id="resendLink" class="disabled">yenidən göndər</a></span>
+          <span data-i18n="confirm.resend.question">Kod gəlmədi?</span> <span id="resendWrap"><span class="timer" id="timer">0:60</span> <span data-i18n="confirm.resend.after">sonra</span> <a href="#" id="resendLink" class="disabled" data-i18n="confirm.resend.link">yenidən göndər</a></span>
         </div>
 
-        <p class="foot-line"><a href="login.html"><i class="bi bi-arrow-left"></i> Girişə qayıt</a></p>
+        <p class="foot-line"><a href="login.html"><i class="bi bi-arrow-left"></i> <span data-i18n="auth.back_to_login">Girişə qayıt</span></a></p>
       </div>
       </div>
     </div>
@@ -66,9 +67,9 @@
         <span class="word">MeetHub</span>
       </div>
       <div class="auth-visual-mid">
-        <span class="tag"><i class="bi bi-envelope-paper"></i> Poçt qutunuzu yoxlayın</span>
-        <h2>Az qaldı — kodu daxil edin</h2>
-        <p>Təsdiq kodu bir neçə dəqiqə ərzində gəlməyibsə spam qovluğunu yoxlayın və ya yenidən göndərin.</p>
+        <span class="tag"><i class="bi bi-envelope-paper"></i> <span data-i18n="confirm.visual.tag">Poçt qutunuzu yoxlayın</span></span>
+        <h2 data-i18n="confirm.visual.heading">Az qaldı — kodu daxil edin</h2>
+        <p data-i18n="confirm.visual.lede">Təsdiq kodu bir neçə dəqiqə ərzində gəlməyibsə spam qovluğunu yoxlayın və ya yenidən göndərin.</p>
       </div>
       <div class="auth-visual-bottom">© 2026 MeetHub</div>
     </div>
@@ -77,7 +78,9 @@
   <script type="module" src="../javascripts/controllers/confirmEmail.js"></script>
   <script type="module">
     import { initThemeToggle } from "../javascripts/components/theme.js";
+    import { initLangToggle } from "../javascripts/components/i18n.js";
     initThemeToggle(document.getElementById("themeToggleBtn"));
+    initLangToggle(document.getElementById("langToggleBtn"));
   </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 import { sendChatMessage } from "../api/chatApi.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { t } from "./i18n.js";
 
 const STORAGE_KEY = "mrb_chat_state";
-const WELCOME_TEXT = "Salam! Mən MeetAI-yam — MeetHub-in süni intellekt köməkçisi. Hansı tarix/saatda, hansı binada boş otaq axtardığınızı yazın, mən tapım.";
 function formatMessageText(text) {
   const lines = escapeHtml(text).split("\n");
   const introIndex = lines.findIndex((line) => line.trim().endsWith(":"));
@@ -55,7 +55,7 @@ export function initChatWidget() {
       </div>
       <div class="chat-widget-messages" id="chatWidgetMessages"></div>
       <form class="chat-widget-input-row" id="chatWidgetForm">
-        <input type="text" class="input" id="chatWidgetInput" placeholder="Sualınızı yazın..." autocomplete="off" />
+        <input type="text" class="input" id="chatWidgetInput" placeholder="${t("chatwidget.placeholder")}" autocomplete="off" />
         <button type="submit" class="chat-widget-send" id="chatWidgetSend" aria-label="Göndər"><i class="bi bi-send"></i></button>
       </form>
     </div>
@@ -71,7 +71,7 @@ export function initChatWidget() {
   const sendBtn = document.getElementById("chatWidgetSend");
 
   const saved = loadState();
-  let messages = saved?.messages?.length ? saved.messages : [{ role: "bot", text: WELCOME_TEXT }];
+  let messages = saved?.messages?.length ? saved.messages : [{ role: "bot", text: t("chatwidget.welcome") }];
   let history = saved?.history || [];
   let sending = false;
 
@@ -122,7 +122,7 @@ export function initChatWidget() {
       addMessage("bot", result.reply);
     } catch (err) {
       messages.pop();
-      addMessage("bot", err.message || "Üzr istəyirəm, xəta baş verdi. Yenidən cəhd edin.");
+      addMessage("bot", err.message || t("chatwidget.error"));
     } finally {
       setSending(false);
       input.focus();

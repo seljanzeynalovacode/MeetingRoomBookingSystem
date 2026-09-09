@@ -6,6 +6,7 @@ public record ResponseAvailableRoomDto
     public string RoomName { get; set; } = null!;
     public int Capacity { get; set; }
     public string FloorName { get; set; } = null!;
+    public int FloorLevelNumber { get; set; }
     public Guid BuildingId { get; set; }
     public string BuildingName { get; set; } = null!;
     public ICollection<string> Equipment { get; set; } = new List<string>();

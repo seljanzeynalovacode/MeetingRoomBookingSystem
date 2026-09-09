@@ -10,6 +10,9 @@ import { initDropdown } from "../components/customDropdown.js";
 import { initMobileNav } from "../components/mobileNav.js";
 import { initThemeToggle } from "../components/theme.js";
 import { escapeHtml } from "../utils/escapeHtml.js";
+import { t } from "../components/i18n.js";
+import { floorLabel } from "../utils/floorLabel.js";
+import { translateEquipmentName } from "../utils/equipmentTranslate.js";
 
 if (!isLoggedIn()) {
   window.location.href = "landing.html";
@@ -58,7 +61,7 @@ const buildingDropdown = initDropdown({
   btn: document.getElementById("buildingSelectBtn"),
   panel: document.getElementById("buildingSelectPanel"),
   options: [],
-  placeholder: "Bina seçin",
+  placeholder: t("dashboard.select_building"),
   onChange: (value) => populateFloorOptions(value),
 });
 
@@ -75,7 +78,7 @@ const equipmentDropdown = initDropdown({
   btn: document.getElementById("equipmentSelectBtn"),
   panel: document.getElementById("equipmentSelectPanel"),
   options: [],
-  placeholder: "Avadanlıq seçin",
+  placeholder: t("dashboard.select_equipment"),
   onChange: (value) => {
     selectedEquipmentIds.add(value);
     renderSelectedEquipmentChips();
@@ -149,7 +152,10 @@ function normalizeCatalogRoom(r) {
     name: r.name,
     capacity: r.capacity,
     floorId: r.floorId,
-    floorName: r.floorName,
+    floorName: (() => {
+      const floor = allFloors.find((f) => f.id === r.floorId);
+      return floor ? floorLabel(floor.levelNumber) : r.floorName;
+    })(),
     buildingId: r.buildingId,
     buildingName: r.buildingName,
     equipment: equipmentNames.length ? equipmentNames : null,
@@ -192,7 +198,7 @@ function normalizeSearchRoom(r) {
     id: r.roomId,
     name: r.roomName,
     capacity: r.capacity,
-    floorName: r.floorName,
+    floorName: r.floorLevelNumber != null ? floorLabel(r.floorLevelNumber) : r.floorName,
     buildingId: r.buildingId,
     buildingName: r.buildingName,
     equipment: r.equipment,
@@ -204,16 +210,16 @@ function normalizeSearchRoom(r) {
 function populateFloorOptions(buildingId) {
   if (!buildingId) {
     floorDropdown.setOptions([], "");
-    floorDropdown.setPlaceholder("Əvvəlcə bina seçin");
+    floorDropdown.setPlaceholder(t("dashboard.select_building_first"));
     floorDropdown.setDisabled(true);
     return;
   }
 
   floorDropdown.setDisabled(false);
-  floorDropdown.setPlaceholder("Bütün mərtəbələr");
+  floorDropdown.setPlaceholder(t("dashboard.all_floors"));
   const filtered = allFloors.filter((f) => f.buildingId === buildingId);
   floorDropdown.setOptions(
-    filtered.map((f) => ({ value: f.id, label: f.name })),
+    filtered.map((f) => ({ value: f.id, label: floorLabel(f.levelNumber) })),
     ""
   );
 }
@@ -221,7 +227,7 @@ function populateFloorOptions(buildingId) {
 function populateEquipmentSelect() {
   const available = allEquipmentTypes.filter((eq) => !selectedEquipmentIds.has(eq.id));
   equipmentDropdown.setOptions(
-    available.map((eq) => ({ value: eq.id, label: eq.name })),
+    available.map((eq) => ({ value: eq.id, label: translateEquipmentName(eq.name) })),
     ""
   );
 }
@@ -231,7 +237,7 @@ function renderSelectedEquipmentChips() {
     .map((id) => {
       const eq = allEquipmentTypes.find((e) => e.id === id);
       if (!eq) return "";
-      return `<span class="chip-toggle active"><i class="bi bi-check2"></i>${escapeHtml(eq.name)}<button type="button" class="remove-equipment-chip" data-id="${id}" aria-label="Sil"><i class="bi bi-x"></i></button></span>`;
+      return `<span class="chip-toggle active"><i class="bi bi-check2"></i>${escapeHtml(translateEquipmentName(eq.name))}<button type="button" class="remove-equipment-chip" data-id="${id}" aria-label="Sil"><i class="bi bi-x"></i></button></span>`;
     })
     .join("");
 
@@ -246,8 +252,8 @@ function renderSelectedEquipmentChips() {
 }
 
 function setHeader(mode, count) {
-  const label = mode === "search" ? "Axtarış nəticələri" : "Otaqlar";
-  resultsTitle.innerHTML = `${label} <span class="count">— ${count} nəticə</span>`;
+  const label = mode === "search" ? t("dashboard.search_results") : t("nav.rooms");
+  resultsTitle.innerHTML = `${label} <span class="count">— ${count} ${t("dashboard.results_unit")}</span>`;
 
   const catalogHint = document.getElementById("catalogHint");
   catalogHint.style.display = mode === "catalog" ? "" : "none";
@@ -258,11 +264,11 @@ function createRoomCardHtml(room, idx) {
 
   let statusBadge;
   if (room.mode === "search") {
-    statusBadge = `<span class="badge badge-available status-badge"><span class="badge-dot"></span>Bu vaxtda boşdur</span>`;
+    statusBadge = `<span class="badge badge-available status-badge"><span class="badge-dot"></span>${t("dashboard.available_now")}</span>`;
   } else if (room.isActive) {
-    statusBadge = `<span class="badge badge-neutral status-badge"><span class="badge-dot"></span>Aktiv</span>`;
+    statusBadge = `<span class="badge badge-neutral status-badge"><span class="badge-dot"></span>${t("room.status.active")}</span>`;
   } else {
-    statusBadge = `<span class="badge badge-inactive status-badge"><span class="badge-dot"></span>Deaktiv</span>`;
+    statusBadge = `<span class="badge badge-inactive status-badge"><span class="badge-dot"></span>${t("room.status.inactive")}</span>`;
   }
 
   const bookDisabled = !room.isActive ? "disabled" : "";
@@ -279,9 +285,9 @@ function createRoomCardHtml(room, idx) {
           <span><i class="bi bi-building"></i>${escapeHtml(room.buildingName)}, ${escapeHtml(room.floorName)}</span>
           <span><i class="bi bi-people"></i>${room.capacity}</span>
         </div>
-        <button type="button" class="room-equipment-link" data-room-id="${room.id}"><i class="bi bi-projector"></i>Avadanlıqlar</button>
+        <button type="button" class="room-equipment-link" data-room-id="${room.id}"><i class="bi bi-projector"></i>${t("filters.equipment")}</button>
         <div class="room-footer">
-          <button class="btn btn-primary book-btn" data-room-id="${room.id}" ${bookDisabled}>Rezerv et</button>
+          <button class="btn btn-primary book-btn" data-room-id="${room.id}" ${bookDisabled}>${t("mock.reserve_btn")}</button>
         </div>
       </div>
     </div>`;
@@ -292,7 +298,7 @@ function renderRooms(list, mode = "catalog") {
   currentRoomsList = list;
   setHeader(mode, list.length);
   if (!list.length) {
-    roomGrid.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>Uyğun otaq tapılmadı.</div>`;
+    roomGrid.innerHTML = `<div class="empty-state"><i class="bi bi-search"></i>${t("dashboard.no_matching_room")}</div>`;
     return;
   }
   roomGrid.innerHTML = list.map((room, idx) => createRoomCardHtml(room, idx)).join("");
@@ -414,14 +420,14 @@ function showRoomEquipmentPopover(roomId, anchorEl) {
     ? items
         .map((re) => {
           const eq = allEquipmentTypes.find((e) => e.id === re.equipmentId);
-          return `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(eq ? eq.name : "Naməlum")} × ${re.quantity}</div>`;
+          return `<div class="ep-row"><i class="bi bi-check2"></i>${escapeHtml(eq ? translateEquipmentName(eq.name) : t("common.unknown"))} × ${re.quantity}</div>`;
         })
         .join("")
-    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>Avadanlıq təyin edilməyib</div>`;
+    : `<div class="ep-row"><i class="bi bi-slash-circle"></i>${t("adminrooms.no_equipment")}</div>`;
 
   pop.innerHTML = `
     <div class="ep-head">
-      <strong>Avadanlıqlar</strong>
+      <strong>${t("filters.equipment")}</strong>
       <button type="button" class="ep-close" aria-label="Bağla"><i class="bi bi-x"></i></button>
     </div>
     ${bodyHtml}

@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Admin girişi — MeetHub</title>
+<title data-i18n="meta.title.adminLogin">Admin girişi — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 <style>
@@ -15,6 +15,7 @@
 </head>
 <body>
   <button type="button" class="floating-theme-toggle" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+  <button type="button" class="floating-theme-toggle floating-lang-toggle" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
   <div class="auth-shell">
     <div class="auth-form-col">
       <div class="auth-card">
@@ -26,13 +27,13 @@
         <div id="alertBox"></div>
 
         <div class="step active" id="step1">
-          <span class="admin-eyebrow"><i class="bi bi-shield-lock-fill"></i> Admin girişi</span>
-          <h1>İdarəetmə paneli</h1>
-          <p class="lede">Daxil olmaq üçün hesab məlumatlarınızı daxil edin.</p>
+          <span class="admin-eyebrow"><i class="bi bi-shield-lock-fill"></i> <span data-i18n="adminlogin.eyebrow">Admin girişi</span></span>
+          <h1 data-i18n="adminlogin.heading">İdarəetmə paneli</h1>
+          <p class="lede" data-i18n="adminlogin.lede">Daxil olmaq üçün hesab məlumatlarınızı daxil edin.</p>
 
           <form id="adminLoginForm" novalidate>
             <div class="field">
-              <label class="field-label" for="email">Email</label>
+              <label class="field-label" for="email" data-i18n="form.email">Email</label>
               <div class="input-wrap">
                 <i class="bi bi-envelope leading-icon"></i>
                 <input type="email" class="input has-icon" id="email" name="Email" placeholder="admin@mrbsystem.com" required maxlength="256" />
@@ -40,7 +41,7 @@
             </div>
 
             <div class="field" style="margin-bottom: 0">
-              <label class="field-label" for="password">Şifrə</label>
+              <label class="field-label" for="password" data-i18n="form.password">Şifrə</label>
               <div class="input-wrap">
                 <i class="bi bi-lock leading-icon"></i>
                 <input type="password" class="input has-icon" id="password" name="Password" placeholder="••••••••" required style="padding-right: 2.6rem" />
@@ -51,20 +52,20 @@
             </div>
 
             <div class="row-between">
-              <label class="remember"><input type="checkbox" id="rememberMe" name="RememberMe" />Məni xatırla</label>
-              <a href="adminForgotPassword.html">Şifrəni unutmusunuz?</a>
+              <label class="remember"><input type="checkbox" id="rememberMe" name="RememberMe" /><span data-i18n="form.remember">Məni xatırla</span></label>
+              <a href="adminForgotPassword.html" data-i18n="form.forgot">Şifrəni unutmusunuz?</a>
             </div>
 
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="step1SubmitBtn">
-              Davam et <i class="bi bi-arrow-right"></i>
+              <span data-i18n="adminlogin.continue">Davam et</span> <i class="bi bi-arrow-right"></i>
             </button>
           </form>
         </div>
 
         <div class="step" id="step2">
           <div class="icon-orb"><i class="bi bi-shield-lock"></i></div>
-          <h1 style="text-align:center">2FA Təsdiq kodu</h1>
-          <p class="lede" style="text-align:center"><span id="step2EmailLabel">email</span> ünvanına göndərilən 6 rəqəmli kodu daxil edin.</p>
+          <h1 style="text-align:center" data-i18n="adminlogin.2fa.heading">2FA Təsdiq kodu</h1>
+          <p class="lede" style="text-align:center"><span id="step2EmailLabel">email</span> <span data-i18n="adminlogin.2fa.lede">ünvanına göndərilən 6 rəqəmli kodu daxil edin.</span></p>
 
           <form id="admin2faForm" novalidate>
             <div class="otp-row" id="otpRow">
@@ -77,11 +78,11 @@
             </div>
 
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="step2SubmitBtn">
-              Təsdiqlə <i class="bi bi-check2"></i>
+              <span data-i18n="confirm.submit">Təsdiqlə</span> <i class="bi bi-check2"></i>
             </button>
           </form>
 
-          <p class="foot-line"><a href="#" id="backToStep1"><i class="bi bi-arrow-left"></i> Geri qayıt</a></p>
+          <p class="foot-line"><a href="#" id="backToStep1"><i class="bi bi-arrow-left"></i> <span data-i18n="adminlogin.back">Geri qayıt</span></a></p>
         </div>
       </div>
     </div>
@@ -94,14 +95,18 @@
         <span class="word">MeetHub</span>
       </div>
       <div class="auth-visual-mid">
-        <span class="tag"><i class="bi bi-shield-lock-fill"></i> Admin girişi ayrıdır</span>
-        <h2>İdarəetmə panelinə xoş gəlmisiniz</h2>
-        <p>Bina, otaq, istifadəçi və rezervasiyaları buradan idarə edin. Əlavə təhlükəsizlik üçün 2FA tələb olunur.</p>
+        <span class="tag"><i class="bi bi-shield-lock-fill"></i> <span data-i18n="adminlogin.visual.tag">Admin girişi ayrıdır</span></span>
+        <h2 data-i18n="adminlogin.visual.heading">İdarəetmə panelinə xoş gəlmisiniz</h2>
+        <p data-i18n="adminlogin.visual.lede">Bina, otaq, istifadəçi və rezervasiyaları buradan idarə edin. Əlavə təhlükəsizlik üçün 2FA tələb olunur.</p>
       </div>
       <div class="auth-visual-bottom">© 2026 MeetHub</div>
     </div>
   </div>
 
   <script type="module" src="../javascripts/controllers/adminLogin.js"></script>
+  <script type="module">
+    import { initLangToggle } from "../javascripts/components/i18n.js";
+    initLangToggle(document.getElementById("langToggleBtn"));
+  </script>
 </body>
 </html>

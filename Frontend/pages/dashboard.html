@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script>try{if(localStorage.getItem('mrb_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
-<title>Otaqlar — MeetHub</title>
+<title data-i18n="meta.title.dashboard">Otaqlar — MeetHub</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <link href="../css/style.css" rel="stylesheet" />
 </head>
@@ -16,22 +16,23 @@
     </div>
 
         <div class="nav-links">
-      <a href="dashboard.html" class="btn btn-ghost btn-sm active"><i class="bi bi-door-open"></i>Otaqlar</a>
-      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i>Təqvim</a>
-      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i>Rezervasiyalarım</a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm active"><i class="bi bi-door-open"></i><span data-i18n="nav.rooms">Otaqlar</span></a>
+      <a href="roomCalendar.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar3"></i><span data-i18n="nav.calendar">Təqvim</span></a>
+      <a href="myBookings.html" class="btn btn-ghost btn-sm"><i class="bi bi-calendar-check"></i><span data-i18n="nav.myBookings">Rezervasiyalarım</span></a>
     </div>
 
               <div class="nav-right">
                 <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menyu"><i class="bi bi-list"></i></button>
-                <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i>Admin panel</a>
+                <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i><span data-i18n="nav.adminPanel">Admin panel</span></a>
       <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
+      <button type="button" class="icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
       <div class="notification-wrap">
         <button class="icon-btn" id="notificationBtn" aria-label="Bildirişlər">
           <i class="bi bi-bell"></i>
           <span class="notification-badge" id="notificationBadge" style="display:none;"></span>
         </button>
         <div class="notification-panel" id="notificationPanel">
-          <div class="notification-panel-head">Bildirişlər</div>
+          <div class="notification-panel-head" data-i18n="notifications.title">Bildirişlər</div>
           <div class="notification-list" id="notificationList"></div>
         </div>
       </div>
@@ -40,12 +41,12 @@
         <span class="name" id="avatarName">İstifadəçi</span>
         <i class="bi bi-chevron-down"></i>
         <div class="avatar-menu" id="avatarMenu">
-          <a href="profile.html"><i class="bi bi-person"></i>Profil</a>
-          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>Çıxış</button>
+          <a href="profile.html"><i class="bi bi-person"></i><span data-i18n="user.profile">Profil</span></a>
+          <button type="button" id="logoutBtn"><i class="bi bi-box-arrow-right"></i><span data-i18n="user.logout">Çıxış</span></button>
         </div>
-        
+
       </div>
-            
+
     </div>
   </header>
 
@@ -55,12 +56,12 @@
     <aside class="sidebar">
       <div class="card filter-card">
         <div class="filter-card-head">
-          <h3><i class="bi bi-sliders"></i>Filtrlər</h3>
+          <h3><i class="bi bi-sliders"></i><span data-i18n="filters.title">Filtrlər</span></h3>
           <button type="button" class="icon-btn" id="resetFiltersBtn" title="Filtrləri sıfırla" aria-label="Filtrləri sıfırla"><i class="bi bi-arrow-counterclockwise"></i></button>
         </div>
 
         <div class="filter-group">
-          <label class="field-label" for="searchDate">Tarix</label>
+          <label class="field-label" for="searchDate" data-i18n="filters.date">Tarix</label>
           <div class="input-wrap">
             <i class="bi bi-calendar3 leading-icon"></i>
             <input type="date" class="input has-icon" id="searchDate" name="searchDate" />
@@ -68,7 +69,7 @@
         </div>
 
         <div class="filter-group">
-          <label class="field-label">Saat aralığı</label>
+          <label class="field-label" data-i18n="filters.time_range">Saat aralığı</label>
           <div class="time-range-row">
             <input type="time" class="input" id="searchStart" name="searchStart" />
             <span class="time-sep">–</span>
@@ -79,7 +80,7 @@
         <div class="filter-card-divider"></div>
 
         <div class="filter-group">
-          <label class="field-label" for="buildingSelectBtn">Bina</label>
+          <label class="field-label" for="buildingSelectBtn" data-i18n="filters.building">Bina</label>
           <div class="dd-wrap">
             <button type="button" class="dd-btn" id="buildingSelectBtn"><span>Bina seçin</span><i class="bi bi-chevron-down"></i></button>
             <div class="dd-panel" id="buildingSelectPanel"></div>
@@ -87,7 +88,7 @@
         </div>
 
         <div class="filter-group">
-          <label class="field-label" for="floorSelectBtn">Mərtəbə</label>
+          <label class="field-label" for="floorSelectBtn" data-i18n="filters.floor">Mərtəbə</label>
           <div class="dd-wrap">
             <button type="button" class="dd-btn" id="floorSelectBtn"><span>Bütün mərtəbələr</span><i class="bi bi-chevron-down"></i></button>
             <div class="dd-panel" id="floorSelectPanel"></div>
@@ -95,7 +96,7 @@
         </div>
 
         <div class="filter-group">
-          <label class="field-label" for="capacityInput">Minimum tutum</label>
+          <label class="field-label" for="capacityInput" data-i18n="filters.capacity">Minimum tutum</label>
           <div class="input-wrap">
             <i class="bi bi-people leading-icon"></i>
             <input type="number" class="input has-icon" id="capacityInput" min="1" max="1000" value="1" />
@@ -103,7 +104,7 @@
         </div>
 
         <div class="filter-group" style="margin-bottom: 0.5rem;">
-          <label class="field-label">Avadanlıq</label>
+          <label class="field-label" data-i18n="filters.equipment">Avadanlıq</label>
           <div class="dd-wrap">
             <button type="button" class="dd-btn" id="equipmentSelectBtn"><span>Avadanlıq seçin</span><i class="bi bi-chevron-down"></i></button>
             <div class="dd-panel" id="equipmentSelectPanel"></div>
@@ -111,7 +112,7 @@
           <div class="chip-toggle-group" id="equipmentChips" style="margin-top:8px;"></div>
         </div>
 
-        <button type="button" class="btn btn-primary btn-block btn-sm" id="applyFiltersBtn"><i class="bi bi-funnel"></i>Filtrlə</button>
+        <button type="button" class="btn btn-primary btn-block btn-sm" id="applyFiltersBtn"><i class="bi bi-funnel"></i><span data-i18n="filters.apply">Filtrlə</span></button>
       </div>
     </aside>
 
@@ -120,7 +121,7 @@
         <h2 id="resultsTitle">Otaqlar <span class="count" id="resultsCount"></span></h2>
       </div>
 
-      <p class="catalog-hint" id="catalogHint">Bu, bütün otaqların ümumi siyahısıdır. Konkret tarix/saat üçün dəqiq mövcudluğu yoxlamaq üçün soldakı paneldən axtarış edin.</p>
+      <p class="catalog-hint" id="catalogHint" data-i18n="dashboard.catalog_hint">Bu, bütün otaqların ümumi siyahısıdır. Konkret tarix/saat üçün dəqiq mövcudluğu yoxlamaq üçün soldakı paneldən axtarış edin.</p>
 
       <div class="room-grid" id="roomGrid"></div>
     </main>
@@ -129,5 +130,9 @@
   <div class="toast" id="toast"></div>
 
   <script type="module" src="../javascripts/controllers/dashboard.js"></script>
+  <script type="module">
+    import { initLangToggle } from "../javascripts/components/i18n.js";
+    initLangToggle(document.getElementById("langToggleBtn"));
+  </script>
 </body>
 </html>
