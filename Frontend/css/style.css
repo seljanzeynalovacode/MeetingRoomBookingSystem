@@ -727,6 +727,9 @@ select.input { appearance: none; cursor: pointer; }
   border-color: var(--green-100);
   box-shadow: 0 0 0 1px var(--green-100), var(--shadow-sm);
 }
+[data-theme="dark"] .mb2-card.is-live {
+  background: linear-gradient(135deg, rgba(46, 191, 128, 0.14), var(--surface-raised) 55%);
+}
 .mb2-card.is-completed, .mb2-card.is-cancelled { box-shadow: none; }
 .mb2-card.is-completed:hover, .mb2-card.is-cancelled:hover { transform: none; box-shadow: var(--shadow-sm); border-color: var(--border); }
 
@@ -1182,6 +1185,7 @@ body.admin-body { margin: 0; }
   background: var(--violet-100); color: var(--violet-600);
   display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
+[data-theme="dark"] .rm-header-icon { color: var(--violet-700); }
 .rm-header h3 { font-size: 15px; margin-bottom: 1px; }
 .rm-header p { font-size: 12px; color: var(--text-secondary); margin: 0; }
 .rm-count {
@@ -1335,8 +1339,9 @@ body.admin-body { margin: 0; }
 .search-box input {
   width: 100%; border: 1.5px solid var(--border); border-radius: var(--r-sm);
   padding: 0.65rem 0.9rem 0.65rem 2.4rem; font-size: 13.5px; font-family: 'Plus Jakarta Sans', sans-serif;
-  outline: none; background: var(--surface-raised);
+  outline: none; background: var(--surface-raised); color: var(--text-primary);
 }
+.search-box input::placeholder { color: var(--text-muted); }
 .search-box input:focus { border-color: var(--violet-500); box-shadow: var(--glow-violet); }
 
 
@@ -1690,6 +1695,8 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .wh-card-head h3 i { color: var(--violet-500); }
 .wh-copy-link { font-size:12.5px; font-weight:700; color: var(--violet-600); cursor:pointer; display:inline-flex; align-items:center; gap:6px; background:none; border:none; padding:0; }
 .wh-copy-link:hover { color: var(--violet-700); }
+[data-theme="dark"] .wh-copy-link { color: var(--violet-300); }
+[data-theme="dark"] .wh-copy-link:hover { color: var(--violet-700); }
 
 .wh-row {
   display: grid; grid-template-columns: 180px auto 1fr; align-items: center; gap: 1.4rem;
@@ -1741,7 +1748,7 @@ body.landing-body { padding-top: 76px; animation: pageFadeIn 0.28s var(--ease); 
 .settings-info-banner {
   display:flex; gap:12px; align-items:flex-start; background: var(--violet-50); border:1px solid var(--violet-100);
   border-radius: var(--r-md); padding: 1rem 1.2rem; font-size: 13px; color: var(--violet-700); line-height:1.6;
-  flex: 1 1 calc(50% - 0.65rem); max-width: calc(50% - 0.65rem);
+  flex: 1 1 320px; max-width: 900px;
 }
 .settings-info-banner i { font-size: 17px; margin-top:1px; }
 .settings-info-banner.is-fallback { background: var(--amber-100); border-color: oklch(85% 0.08 75); color: var(--amber-700); }
