@@ -2,18 +2,33 @@
 
 A full-stack meeting room booking platform. Employees search, book, and manage meeting rooms across multiple buildings; admins manage the organization's structure, reservations, and system-wide rules — with an AI chatbot, live calendar updates, and email notifications on top.
 
-![.NET](https://img.shields.io/badge/.NET_8-512BD4?logo=dotnet&logoColor=white)
+![.NET 8](https://img.shields.io/badge/.NET_8-512BD4?logo=dotnet&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-5C2D91?logo=dotnet&logoColor=white)
+
+![Entity Framework Core](https://img.shields.io/badge/EF_Core-512BD4)
 ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?logo=microsoftsqlserver&logoColor=white)
+
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black)
+![JWT](https://img.shields.io/badge/JWT-black?logo=jsonwebtokens&logoColor=white)
+![2FA](https://img.shields.io/badge/2FA-17A2B8)
+
+![AutoMapper](https://img.shields.io/badge/AutoMapper-B33A3A)
+![Serilog](https://img.shields.io/badge/Serilog-C73E1D)
+![SignalR](https://img.shields.io/badge/SignalR-0078D4)
+
+![xUnit](https://img.shields.io/badge/xUnit-5C2D91?logo=dotnet&logoColor=white)
+![Moq / FluentAssertions](https://img.shields.io/badge/Moq_%2F_FluentAssertions-6A4C93)
+
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
-![xUnit](https://img.shields.io/badge/xUnit-5C2D91?logo=dotnet&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?logo=jsonwebtokens&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?logo=bootstrap&logoColor=white)
 
-Also: **Entity Framework Core** · **AutoMapper** · **SignalR** · **Serilog** · **Moq / FluentAssertions** · **Google Gemini API**
+![i18n](https://img.shields.io/badge/i18n-AZ%2FEN-4F7DF3)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=white)
+![Dark/Light Mode](https://img.shields.io/badge/Dark%2FLight_Mode-0B1626)
+
 
 ---
 
