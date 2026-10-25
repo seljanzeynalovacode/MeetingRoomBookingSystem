@@ -7,6 +7,8 @@ A full-stack meeting room booking platform. Employees search, book, and manage m
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-5C2D91?logo=dotnet&logoColor=white)
 ![Entity Framework Core](https://img.shields.io/badge/EF_Core-512BD4)
 ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?logo=microsoftsqlserver&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?logo=docker&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black)
 ![JWT](https://img.shields.io/badge/JWT-black?logo=jsonwebtokens&logoColor=white)
 ![2FA](https://img.shields.io/badge/2FA-17A2B8)
@@ -22,7 +24,6 @@ A full-stack meeting room booking platform. Employees search, book, and manage m
 ![i18n](https://img.shields.io/badge/i18n-AZ%2FEN-4F7DF3)
 ![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=white)
 ![Dark/Light Mode](https://img.shields.io/badge/Dark%2FLight_Mode-0B1626)
-
 
 ---
 
@@ -141,46 +142,162 @@ xUnit + Moq + FluentAssertions, backed by **EF Core over in-memory SQLite** (a r
 dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
 ```
 
+---
+
 ## Installation & Setup
 
-**Prerequisites**: [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0), SQL Server, an SMTP account, a Gemini API key (for AI chat).
+### Option 1: Local Development (Recommended for Development)
 
-```bash
-cd Backend/MRBSystem
-dotnet restore && dotnet build
+**Prerequisites**: 
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- SQL Server (local instance or Docker)
+- SMTP account
+- Gemini API key
 
-dotnet user-secrets init --project presentation/MRBSystem.WebAPI
-dotnet user-secrets set "ConnectionStrings:MRBSystemConnectionString" "Server=.;Database=MRBSystemDb;Trusted_Connection=True;TrustServerCertificate=True" --project presentation/MRBSystem.WebAPI
-# ...set the remaining keys from Configuration below
+**Steps:**
 
-dotnet ef database update --project infrasturucture/MRBSystem.Persistence --startup-project presentation/MRBSystem.WebAPI
+1. **Database Setup** (SQL Server)
+   ```bash
+   cd Backend/MRBSystem
+   ```
 
-dotnet run --project presentation/MRBSystem.WebAPI --launch-profile https
-```
+2. **Configure Secrets** (User Secrets)
+   ```bash
+   dotnet user-secrets init --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "ConnectionStrings:MRBSystemConnectionString" "Server=localhost,1433;Database=MRBSystemDb;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Jwt:Key" "your-super-secret-key-minimum-32-characters-long" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Jwt:Issuer" "MRBSystem" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Jwt:Audience" "MRBSystemUsers" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "SeedAdmin:Email" "admin@example.com" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "SeedAdmin:Password" "Admin@123456" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Smtp:Host" "smtp.gmail.com" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Smtp:Port" "587" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Smtp:Email" "your-email@gmail.com" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Smtp:Password" "your-app-password" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "Gemini:ApiKey" "your-gemini-api-key" --project presentation/MRBSystem.WebAPI
+   ```
 
-API: `https://localhost:7114` (Swagger at `/swagger`); an Admin account is auto-seeded from `SeedAdmin:*`.
+3. **Database Migration**
+   ```bash
+   dotnet ef database update --project infrasturucture/MRBSystem.Persistence --startup-project presentation/MRBSystem.WebAPI
+   ```
 
-**Frontend** is static (no build step) — serve `Frontend/` with a static server (e.g. VS Code Live Server), don't open via `file://`. The backend must run on **HTTPS**: `Program.cs` calls `UseHttpsRedirection()` before `UseCors()`, so an HTTP-origin CORS preflight gets redirected and rejected by the browser. Open `Frontend/pages/landing.html`, `login.html`, or `adminLogin.html`.
+4. **Run Backend**
+   ```bash
+   dotnet run --project presentation/MRBSystem.WebAPI --launch-profile https
+   ```
+   API: `https://localhost:7114` (Swagger: `/swagger`)
+
+5. **Run Frontend**
+   - Use VS Code Live Server or similar static server on `Frontend/` directory
+   - Update `Frontend/javascripts/api/apiClient.js`: `API_BASE_URL = "https://localhost:7114/api"`
+   - Open `http://localhost:5500/pages/landing.html` (or your server's URL)
+
+### Option 2: Docker Compose (Recommended for Deployment)
+
+**Prerequisites**:
+- Docker & Docker Compose
+
+**Steps:**
+
+1. **Create `.env` from template**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Update `.env` with your values**
+   ```env
+   DB_SA_PASSWORD=your_password
+   DB_CONNECTION_STRING=Server=sqlserver,1433;Database=MRBSystemDb;User Id=sa;Password=your_password;TrustServerCertificate=True;Connection Timeout=30;ConnectRetryCount=5;ConnectRetryInterval=10;
+   JWT_KEY=your-super-secret-key-minimum-32-characters-long
+   JWT_ISSUER=MRBSystem
+   JWT_AUDIENCE=MRBSystemUsers
+   ADMIN_EMAIL=admin@example.com
+   ADMIN_PASSWORD=Admin@123456
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_EMAIL=your-email@gmail.com
+   SMTP_PASSWORD=your-app-password
+   GEMINI_API_KEY=your-gemini-api-key
+   FRONTEND_URL=http://localhost:80
+   TIMEZONE=Asia/Baku
+   ```
+
+3. **Start Containers**
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Database Migration (First Time Only)**
+   ```bash
+   docker exec mrb-backend dotnet ef database update \
+     --project infrasturucture/MRBSystem.Persistence \
+     --startup-project presentation/MRBSystem.WebAPI
+   ```
+
+5. **Access Application**
+   - Frontend: `http://localhost`
+   - Backend API: `http://localhost:8080`
+   - SQL Server: `localhost:1433`
+
+6. **Stop Containers**
+   ```bash
+   docker compose down
+   ```
+
+---
+
+## Docker Services
+
+| Service | Port | Container | Purpose |
+|---------|------|-----------|---------|
+| Frontend | 80 | mrb-frontend | Static HTML/JS/CSS server |
+| Backend API | 8080 | mrb-backend | ASP.NET Core WebAPI |
+| SQL Server | 1433 | mrb-sqlserver | Database |
+
+**Volume:** `sqlserver-data` — persists database across container restarts
+
+**Network:** `mrb-network` — internal communication between services
+
+---
 
 ## Configuration
 
-Secrets via **.NET User Secrets** (never committed):
+### Local (User Secrets)
+Secrets stored in: `%APPDATA%\Microsoft\UserSecrets\aebb6b86-05bf-4d0d-a3ed-436c2b5fc710\` (Windows) or `~/.microsoft/usersecrets/...` (Linux/Mac)
+
+### Docker (Environment Variables)
+Secrets stored in `.env` file (**git-ignored**, never committed)
 
 | Key | Purpose |
 |---|---|
-| `ConnectionStrings:MRBSystemConnectionString` | SQL Server connection |
-| `Jwt:Key` / `Issuer` / `Audience` / `AccessTokenExpirationMinutes` / `RefreshTokenExpirationDays` | JWT signing & lifetimes (60 min / 30 days) |
-| `SeedAdmin:Email` / `Password` / `FirstName` / `LastName` | First-run admin bootstrap |
-| `Smtp:*` | Outgoing email (confirmation, 2FA, reset) |
-| `Gemini:ApiKey` | AI chat |
-| `Cors:AllowedOrigins` | Allowed frontend origins |
-| `Localization:TimeZoneId` | `Asia/Baku` |
+| `DB_SA_PASSWORD` | SQL Server SA password |
+| `DB_CONNECTION_STRING` | Database connection |
+| `JWT_KEY` | JWT signing key (min 32 chars) |
+| `JWT_ISSUER` / `JWT_AUDIENCE` | Token issuer/audience |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First-run admin account |
+| `SMTP_*` | Email configuration |
+| `GEMINI_API_KEY` | AI chat API key |
+| `FRONTEND_URL` | Frontend origin for CORS |
+| `TIMEZONE` | `Asia/Baku` |
 
-`Frontend/javascripts/api/apiClient.js`'s `API_BASE_URL` must match the backend's origin.
+---
 
 ## API Documentation (Swagger)
 
-`https://localhost:7114/swagger` (Development only) — includes a Bearer auth scheme; click "Authorize" and paste `Bearer {token}`.
+**Development Only**: `https://localhost:7114/swagger`
+
+- Bearer auth scheme available
+- Click "Authorize" and paste: `Bearer {token}`
+
+---
+
+## Default Admin Credentials
+
+- **Email**: `admin@meethub.local` (or configured in `.env` / User Secrets)
+- **Password**: `Admin@123456` (or configured in `.env` / User Secrets)
+
+Login at: `http://localhost/pages/adminLogin.html`
 
 ---
 
