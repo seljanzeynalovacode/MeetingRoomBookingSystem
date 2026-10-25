@@ -1,0 +1,76 @@
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mrb-sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${DB_SA_PASSWORD}
+      MSSQL_PID: Express
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - mrb-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./Backend/MRBSystem
+      dockerfile: Dockerfile
+    container_name: mrb-backend
+    ports:
+      - "8443:8443"
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORT: 8080
+      ConnectionStrings__MRBSystemConnectionString: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__AccessTokenExpirationMinutes: ${JWT_ACCESS_TOKEN_EXPIRATION}
+      Jwt__RefreshTokenExpirationDays: ${JWT_REFRESH_TOKEN_EXPIRATION}
+      SeedAdmin__Email: ${ADMIN_EMAIL}
+      SeedAdmin__Password: ${ADMIN_PASSWORD}
+      SeedAdmin__FirstName: ${ADMIN_FIRSTNAME}
+      SeedAdmin__LastName: ${ADMIN_LASTNAME}
+      Smtp__Host: ${SMTP_HOST}
+      Smtp__Port: ${SMTP_PORT}
+      Smtp__Email: ${SMTP_EMAIL}
+      Smtp__Password: ${SMTP_PASSWORD}
+      Gemini__ApiKey: ${GEMINI_API_KEY}
+      Cors__AllowedOrigins__0: ${FRONTEND_URL}
+      Localization__TimeZoneId: ${TIMEZONE}
+    depends_on:
+      - sqlserver
+    networks:
+      - mrb-network
+    volumes:
+      - ./Logs:/app/Logs
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: mrb-frontend
+    ports:
+      - "80:80"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    depends_on:
+      - backend
+    networks:
+      - mrb-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+
+networks:
+  mrb-network:
+    driver: bridge

@@ -5,6 +5,7 @@ using MRBSystem.Contracts.DTOs.RoomDtos;
 using MRBSystem.Contracts.Services;
 using MRBSystem.Infrasturucture.AI.Gemini;
 using System.Globalization;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
@@ -14,6 +15,7 @@ public class GeminiChatService : IChatService
 {
     private const string Model = "gemini-3.5-flash-lite";
     private const int MaxToolRounds = 3;
+    private const int MaxApiAttempts = 3;
 
     private const string SystemPrompt =
         "Sənin adın MeetAI-dır — MeetHub görüş otağı rezervasiya sisteminin süni intellekt köməkçisisən. " +
@@ -33,7 +35,7 @@ public class GeminiChatService : IChatService
         "Əgər bina adı tapılmasa, alət sənə mövcud bina adlarının siyahısını qaytaracaq — " +
         "həmin adlardan istifadəçinin nəzərdə tutduğuna ən yaxın olanı seçib yenidən cəhd et. " +
         "İstifadəçi tarix/saat vermirsə VƏ söhbətin əvvəlki mesajlarında da bu məlumat yoxdursa, aydınlaşdırıcı sual ver. " +
-        "Əgər istifadəçi 'nə vaxt boş olar' kimi açıq-uçlu sual versə (dəqiq başlanğıc/bitmə saatı vermədən), " +
+        "Əgər istifadəçi 'nə vaxt boş olar' kimi açıq-uclu sual versə (dəqiq başlanğıc/bitmə saatı vermədən), " +
         "iş saatları daxilində qalan mümkün vaxt aralığını özün hesabla və onu alətlə yoxla — sadəcə iş saatlarını demə, konkret cavab ver. " +
         "Əgər bina, tarix və ya saat söhbətin əvvəlki mesajlarında artıq qeyd olunubsa, bunu xatırla və təkrar soruşma — " +
         "istifadəçi yalnız bir parametri (məs. müddəti) dəyişmək istəyirsə, qalan parametrləri əvvəlki mesajlardan götürüb alətə ötür. " +
@@ -77,38 +79,65 @@ public class GeminiChatService : IChatService
     public async Task<ChatResponseDto> SendMessageAsync(ChatRequestDto dto)
     {
         var apiKey = _configuration["Gemini:ApiKey"];
+
         if (string.IsNullOrWhiteSpace(apiKey))
         {
-            throw new InvalidOperationException("Gemini API açarı konfiqurasiya olunmayıb.");
+            throw new InvalidOperationException(
+                "Gemini API açarı konfiqurasiya olunmayıb.");
         }
 
         var contents = dto.History
-            .Select(h => new GeminiContent { Role = h.Role, Parts = new List<GeminiPart> { new() { Text = h.Text } } })
+            .Select(h => new GeminiContent
+            {
+                Role = h.Role,
+                Parts = new List<GeminiPart>
+                {
+                    new() { Text = h.Text }
+                }
+            })
             .ToList();
 
         contents.Add(new GeminiContent
         {
             Role = "user",
-            Parts = new List<GeminiPart> { new() { Text = dto.Message } },
+            Parts = new List<GeminiPart>
+            {
+                new() { Text = dto.Message }
+            },
         });
 
         var today = _timeZoneService.ToLocal(DateTime.UtcNow).Date;
+
         var systemInstruction =
             $"{SystemPrompt} Bugünkü həqiqi tarix: {today:yyyy-MM-dd} ({today.DayOfWeek}). " +
             "İstifadəçi 'bugün', 'sabah', 'srağagün' kimi nisbi tarix ifadələri işlətsə, bu tarixə əsaslanaraq hesabla.";
 
         for (var round = 0; round < MaxToolRounds; round++)
         {
-            var response = await CallGeminiAsync(contents, apiKey, systemInstruction);
+            var response = await CallGeminiAsync(
+                contents,
+                apiKey,
+                systemInstruction);
+
             var candidate = response.Candidates?.FirstOrDefault();
             var parts = candidate?.Content?.Parts ?? new List<GeminiPart>();
 
-            var functionCallPart = parts.FirstOrDefault(p => p.FunctionCall != null);
+            var functionCallPart = parts.FirstOrDefault(
+                p => p.FunctionCall != null);
 
             if (functionCallPart == null)
             {
-                contents.Add(new GeminiContent { Role = "model", Parts = parts });
-                var text = string.Join("\n", parts.Where(p => !string.IsNullOrEmpty(p.Text)).Select(p => p.Text));
+                contents.Add(new GeminiContent
+                {
+                    Role = "model",
+                    Parts = parts
+                });
+
+                var text = string.Join(
+                    "\n",
+                    parts
+                        .Where(p => !string.IsNullOrEmpty(p.Text))
+                        .Select(p => p.Text));
 
                 return new ChatResponseDto
                 {
@@ -119,13 +148,19 @@ public class GeminiChatService : IChatService
                 };
             }
 
-            contents.Add(new GeminiContent { Role = "model", Parts = parts });
+            contents.Add(new GeminiContent
+            {
+                Role = "model",
+                Parts = parts
+            });
 
             var toolResult = functionCallPart.FunctionCall!.Name switch
             {
                 "list_buildings" => await ListBuildingsAsync(),
-                "search_available_rooms" => await SearchRoomsAsync(functionCallPart.FunctionCall.Args),
-                _ => LogAndBuildUnknownFunctionError(functionCallPart.FunctionCall.Name),
+                "search_available_rooms" => await SearchRoomsAsync(
+                    functionCallPart.FunctionCall.Args),
+                _ => LogAndBuildUnknownFunctionError(
+                    functionCallPart.FunctionCall.Name),
             };
 
             contents.Add(new GeminiContent
@@ -135,13 +170,20 @@ public class GeminiChatService : IChatService
                 {
                     new()
                     {
-                        FunctionResponse = new { name = functionCallPart.FunctionCall.Name, response = new { result = toolResult } },
+                        FunctionResponse = new
+                        {
+                            name = functionCallPart.FunctionCall.Name,
+                            response = new { result = toolResult }
+                        },
                     },
                 },
             });
         }
 
-        _logger.LogWarning("Gemini did not return a final response within {MaxRounds} rounds.", MaxToolRounds);
+        _logger.LogWarning(
+            "Gemini did not return a final response within {MaxRounds} rounds.",
+            MaxToolRounds);
+
         return new ChatResponseDto
         {
             Reply = "Üzr istəyirəm, sorğunuzu emal edərkən problem yarandı. Zəhmət olmasa sualı fərqli şəkildə yenidən yazın.",
@@ -149,23 +191,37 @@ public class GeminiChatService : IChatService
         };
     }
 
-    private static List<ChatMessageDto> BuildHistoryDto(List<GeminiContent> contents)
+    private static List<ChatMessageDto> BuildHistoryDto(
+        List<GeminiContent> contents)
     {
         return contents
             .Select(c => new ChatMessageDto
             {
                 Role = c.Role ?? "user",
-                Text = string.Join("\n", c.Parts.Where(p => !string.IsNullOrEmpty(p.Text)).Select(p => p.Text)),
+                Text = string.Join(
+                    "\n",
+                    c.Parts
+                        .Where(p => !string.IsNullOrEmpty(p.Text))
+                        .Select(p => p.Text)),
             })
             .Where(m => !string.IsNullOrWhiteSpace(m.Text))
             .ToList();
     }
 
-    private async Task<GeminiResponse> CallGeminiAsync(List<GeminiContent> contents, string apiKey, string systemInstructionText)
+    private async Task<GeminiResponse> CallGeminiAsync(
+        List<GeminiContent> contents,
+        string apiKey,
+        string systemInstructionText)
     {
         var requestBody = new
         {
-            systemInstruction = new { parts = new[] { new { text = systemInstructionText } } },
+            systemInstruction = new
+            {
+                parts = new[]
+                {
+                    new { text = systemInstructionText }
+                }
+            },
             contents,
             tools = new[]
             {
@@ -188,30 +244,85 @@ public class GeminiChatService : IChatService
                     },
                 },
             },
-            generationConfig = new { temperature = 0.3, maxOutputTokens = 800 },
+            generationConfig = new
+            {
+                temperature = 0.3,
+                maxOutputTokens = 800
+            },
         };
 
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={apiKey}";
+        var url =
+            $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={apiKey}";
+
         var json = JsonSerializer.Serialize(requestBody, JsonOptions);
 
-        using var content = new StringContent(json, Encoding.UTF8, "application/json");
-        using var response = await _httpClient.PostAsync(url, content);
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
+        for (var attempt = 1; attempt <= MaxApiAttempts; attempt++)
         {
-            _logger.LogError("Gemini API error {StatusCode}: {Body}", response.StatusCode, responseBody);
-            throw new InvalidOperationException("Chatbot xidməti hazırda cavab vermir. Bir az sonra yenidən cəhd edin.");
+            using var content = new StringContent(
+                json,
+                Encoding.UTF8,
+                "application/json");
+
+            using var response = await _httpClient.PostAsync(url, content);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<GeminiResponse>(
+                           responseBody,
+                           JsonOptions)
+                       ?? throw new InvalidOperationException(
+                           "Chatbot xidmətindən boş cavab alındı.");
+            }
+
+            var statusCode = response.StatusCode;
+
+            var shouldRetry =
+                statusCode == HttpStatusCode.TooManyRequests ||
+                statusCode == HttpStatusCode.RequestTimeout ||
+                (int)statusCode >= 500;
+
+            if (shouldRetry && attempt < MaxApiAttempts)
+            {
+                var delay = TimeSpan.FromSeconds(
+                    Math.Pow(2, attempt - 1));
+
+                _logger.LogWarning(
+                    "Gemini API returned {StatusCode}. Retry {Attempt}/{MaxAttempts} after {Delay} seconds.",
+                    (int)statusCode,
+                    attempt,
+                    MaxApiAttempts,
+                    delay.TotalSeconds);
+
+                await Task.Delay(delay);
+
+                continue;
+            }
+
+            _logger.LogError(
+                "Gemini API error {StatusCode}: {Body}",
+                (int)statusCode,
+                responseBody);
+
+            throw new InvalidOperationException(
+                "Chatbot xidməti hazırda cavab vermir. Bir az sonra yenidən cəhd edin.");
         }
 
-        return JsonSerializer.Deserialize<GeminiResponse>(responseBody, JsonOptions)
-            ?? throw new InvalidOperationException("Chatbot xidmətindən boş cavab alındı.");
+        throw new InvalidOperationException(
+            "Chatbot xidməti hazırda cavab vermir. Bir az sonra yenidən cəhd edin.");
     }
 
     private object LogAndBuildUnknownFunctionError(string? functionName)
     {
-        _logger.LogWarning("Gemini called an unknown function: {FunctionName}", functionName);
-        return new { error = "Bu əməliyyat dəstəklənmir." };
+        _logger.LogWarning(
+            "Gemini called an unknown function: {FunctionName}",
+            functionName);
+
+        return new
+        {
+            error = "Bu əməliyyat dəstəklənmir."
+        };
     }
 
     private async Task<object> SearchRoomsAsync(JsonElement args)
@@ -222,15 +333,27 @@ public class GeminiChatService : IChatService
         var endTime = TryGetString(args, "endTime");
         var minCapacity = TryGetInt(args, "minCapacity") ?? 1;
 
-        if (string.IsNullOrWhiteSpace(buildingName) || string.IsNullOrWhiteSpace(date)
-            || string.IsNullOrWhiteSpace(startTime) || string.IsNullOrWhiteSpace(endTime))
+        if (string.IsNullOrWhiteSpace(buildingName) ||
+            string.IsNullOrWhiteSpace(date) ||
+            string.IsNullOrWhiteSpace(startTime) ||
+            string.IsNullOrWhiteSpace(endTime))
         {
-            return new { error = "buildingName, date, startTime və endTime tələb olunur." };
+            return new
+            {
+                error = "buildingName, date, startTime və endTime tələb olunur."
+            };
         }
 
         var buildings = await _buildingService.GetAllAsync();
-        var building = buildings.FirstOrDefault(b => b.Name.Equals(buildingName, StringComparison.OrdinalIgnoreCase))
-            ?? buildings.FirstOrDefault(b => b.Name.Contains(buildingName, StringComparison.OrdinalIgnoreCase));
+
+        var building = buildings.FirstOrDefault(
+                           b => b.Name.Equals(
+                               buildingName,
+                               StringComparison.OrdinalIgnoreCase))
+                       ?? buildings.FirstOrDefault(
+                           b => b.Name.Contains(
+                               buildingName,
+                               StringComparison.OrdinalIgnoreCase));
 
         if (building == null)
         {
@@ -241,15 +364,29 @@ public class GeminiChatService : IChatService
             };
         }
 
-        if (!DateTime.TryParse($"{date}T{startTime}", CultureInfo.InvariantCulture, DateTimeStyles.None, out var localStart)
-            || !DateTime.TryParse($"{date}T{endTime}", CultureInfo.InvariantCulture, DateTimeStyles.None, out var localEnd))
+        if (!DateTime.TryParse(
+                $"{date}T{startTime}",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var localStart) ||
+            !DateTime.TryParse(
+                $"{date}T{endTime}",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var localEnd))
         {
-            return new { error = "Tarix/saat formatı düzgün deyil. Tarix YYYY-MM-DD, saat HH:mm formatında olmalıdır." };
+            return new
+            {
+                error = "Tarix/saat formatı düzgün deyil. Tarix YYYY-MM-DD, saat HH:mm formatında olmalıdır."
+            };
         }
 
         if (localEnd <= _timeZoneService.ToLocal(DateTime.UtcNow))
         {
-            return new { error = "Seçilmiş tarix/saat artıq keçmişdədir. Zəhmət olmasa gələcək bir tarix/saat üçün müraciət edin." };
+            return new
+            {
+                error = "Seçilmiş tarix/saat artıq keçmişdədir. Zəhmət olmasa gələcək bir tarix/saat üçün müraciət edin."
+            };
         }
 
         var startDate = _timeZoneService.ToUtc(localStart);
@@ -257,17 +394,23 @@ public class GeminiChatService : IChatService
 
         try
         {
-            var results = await _roomService.SearchAvailableAsync(new RoomAvailabilityRequestDto
-            {
-                StartDate = startDate,
-                EndDate = endDate,
-                BuildingId = building.Id,
-                Capacity = minCapacity,
-            });
+            var results = await _roomService.SearchAvailableAsync(
+                new RoomAvailabilityRequestDto
+                {
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    BuildingId = building.Id,
+                    Capacity = minCapacity,
+                });
 
             if (results.Count == 0)
             {
-                var hasAnyMatch = await _roomService.HasAnyMatchingRoomAsync(building.Id, null, minCapacity);
+                var hasAnyMatch =
+                    await _roomService.HasAnyMatchingRoomAsync(
+                        building.Id,
+                        null,
+                        minCapacity);
+
                 return new
                 {
                     message = hasAnyMatch
@@ -294,15 +437,25 @@ public class GeminiChatService : IChatService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "An error occurred during room search.");
-            return new { error = "Otaq axtarışı zamanı xəta baş verdi." };
+            _logger.LogWarning(
+                ex,
+                "An error occurred during room search.");
+
+            return new
+            {
+                error = "Otaq axtarışı zamanı xəta baş verdi."
+            };
         }
     }
 
     private async Task<object> ListBuildingsAsync()
     {
         var buildings = await _buildingService.GetAllAsync();
-        return new { buildings = buildings.Select(b => b.Name) };
+
+        return new
+        {
+            buildings = buildings.Select(b => b.Name)
+        };
     }
 
     private static object BuildListBuildingsSchema()
@@ -314,13 +467,21 @@ public class GeminiChatService : IChatService
         };
     }
 
-    private static string? TryGetString(JsonElement args, string propertyName)
-        => args.ValueKind == JsonValueKind.Object && args.TryGetProperty(propertyName, out var value) && value.ValueKind == JsonValueKind.String
+    private static string? TryGetString(
+        JsonElement args,
+        string propertyName)
+        => args.ValueKind == JsonValueKind.Object &&
+           args.TryGetProperty(propertyName, out var value) &&
+           value.ValueKind == JsonValueKind.String
             ? value.GetString()
             : null;
 
-    private static int? TryGetInt(JsonElement args, string propertyName)
-        => args.ValueKind == JsonValueKind.Object && args.TryGetProperty(propertyName, out var value) && value.ValueKind == JsonValueKind.Number
+    private static int? TryGetInt(
+        JsonElement args,
+        string propertyName)
+        => args.ValueKind == JsonValueKind.Object &&
+           args.TryGetProperty(propertyName, out var value) &&
+           value.ValueKind == JsonValueKind.Number
             ? value.GetInt32()
             : null;
 
@@ -331,13 +492,39 @@ public class GeminiChatService : IChatService
             type = "object",
             properties = new
             {
-                buildingName = new { type = "string", description = "Binanın adı (məs. 'Baş bina', 'DIV Academy')." },
-                date = new { type = "string", description = "Tarix, YYYY-MM-DD formatında (məs. '2026-09-05')." },
-                startTime = new { type = "string", description = "Başlama saatı, HH:mm formatında (məs. '14:00')." },
-                endTime = new { type = "string", description = "Bitmə saatı, HH:mm formatında (məs. '15:00')." },
-                minCapacity = new { type = "integer", description = "Minimum tutum (opsional, verilməzsə 1 qəbul edilir)." },
+                buildingName = new
+                {
+                    type = "string",
+                    description = "Binanın adı (məs. 'Baş bina', 'DIV Academy')."
+                },
+                date = new
+                {
+                    type = "string",
+                    description = "Tarix, YYYY-MM-DD formatında (məs. '2026-09-05')."
+                },
+                startTime = new
+                {
+                    type = "string",
+                    description = "Başlama saatı, HH:mm formatında (məs. '14:00')."
+                },
+                endTime = new
+                {
+                    type = "string",
+                    description = "Bitmə saatı, HH:mm formatında (məs. '15:00')."
+                },
+                minCapacity = new
+                {
+                    type = "integer",
+                    description = "Minimum tutum (opsional, verilməzsə 1 qəbul edilir)."
+                },
             },
-            required = new[] { "buildingName", "date", "startTime", "endTime" },
+            required = new[]
+            {
+                "buildingName",
+                "date",
+                "startTime",
+                "endTime"
+            },
         };
     }
 }

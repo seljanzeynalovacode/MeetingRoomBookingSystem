@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# VS Code / IDE
+.vscode/
+.vs/
+*.code-workspace
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+dist/
+build/
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment & Secrets
+.env
+.env.*
+.env.local
+.env.*.local
+user-secrets/
+
+# Logs
+*.log
+logs/
+Logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Development
+appsettings.Development.json
+.claude/
+**/.claude/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Testing
+coverage/
+.nyc_output/

@@ -1,0 +1,56 @@
+## Build outputs
+bin/
+obj/
+**/.classpath
+**/.dockerignore
+**/.env
+**/.git
+**/.gitattributes
+**/.gitignore
+**/.project
+**/.settings
+**/.toolstartsection
+**/.vs
+**/.vscode
+**/appsettings.Development.json
+**/Dockerfile
+**/docker-compose.yml
+**/npm-debug.log
+**/README.md
+**/env.list
+**/.claude
+
+## Git
+.git
+.gitignore
+
+## VS Code & IDE
+.vscode/
+.vs/
+*.user
+*.suo
+
+## Logs
+logs/
+*.log
+
+## Node
+node_modules/
+npm-debug.log
+
+## Build artifacts
+dist/
+.gradle/
+build/
+target/
+out/
+
+## Test
+.coverage
+.pytest_cache/
+*.coverage
+coverage.xml
+
+## Misc
+.env
+.env.*
