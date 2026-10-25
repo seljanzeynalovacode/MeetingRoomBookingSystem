@@ -4,7 +4,7 @@
 
 ### Tələblər
 - Docker & Docker Compose
-- SQL Server SA Password: `Selcan123456@`
+- SQL Server SA Password: `YourPassword`
 
 ### Addımlar
 
@@ -25,7 +25,7 @@
    - Backend API: http://localhost:8080
    - SQL Server: localhost:1433
 
-### Default Admin Credentials
+### Default Admin Credentials (example)
 - Email: `admin@meethub.local`
 - Password: `Admin@123456`
 
