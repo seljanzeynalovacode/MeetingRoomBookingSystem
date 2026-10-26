@@ -245,6 +245,33 @@ namespace MRBSystem.WebAPI
 
             var app = builder.Build();
 
+            // --- Apply EF Core migrations on startup (waits for SQL Server to become ready) ---
+            using (var migrationScope = app.Services.CreateScope())
+            {
+                var db = migrationScope.ServiceProvider
+                    .GetRequiredService<MRBAppDbContext>();
+
+                const int maxAttempts = 12;
+
+                for (var attempt = 1; attempt <= maxAttempts; attempt++)
+                {
+                    try
+                    {
+                        await db.Database.MigrateAsync();
+                        Log.Information("Database migration completed successfully.");
+                        break;
+                    }
+                    catch (Exception ex) when (attempt < maxAttempts)
+                    {
+                        Log.Warning(ex,
+                            "Database not ready (attempt {Attempt}/{Max}). Retrying in 5s...",
+                            attempt, maxAttempts);
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                    }
+                }
+            }
+            // --- End migration block ---
+
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager =

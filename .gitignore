@@ -12,5 +12,6 @@ obj/
 node_modules/
 dist/
 appsettings.Development.json
+appsettings.json
 Logs/
 logs/

@@ -23,8 +23,10 @@ services:
     ports:
       - "8443:8443"
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_HTTP_PORT: 8080
       ConnectionStrings__MRBSystemConnectionString: ${DB_CONNECTION_STRING}
@@ -39,8 +41,11 @@ services:
       SeedAdmin__LastName: ${ADMIN_LASTNAME}
       Smtp__Host: ${SMTP_HOST}
       Smtp__Port: ${SMTP_PORT}
-      Smtp__Email: ${SMTP_EMAIL}
+      Smtp__Username: ${SMTP_USERNAME}
       Smtp__Password: ${SMTP_PASSWORD}
+      Smtp__FromEmail: ${SMTP_FROMEMAIL}
+      Smtp__FromName: ${SMTP_FROMNAME}
+      Smtp__EnableSsl: ${SMTP_ENABLESSL}
       Gemini__ApiKey: ${GEMINI_API_KEY}
       Cors__AllowedOrigins__0: ${FRONTEND_URL}
       Localization__TimeZoneId: ${TIMEZONE}

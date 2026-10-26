@@ -35,8 +35,6 @@ COPY --from=publish /app/publish .
 
 # Create logs directory for Serilog
 RUN mkdir -p /app/Logs
-
-# Expose port
 EXPOSE 8080 8443
 
 # Set environment for ASP.NET Core
