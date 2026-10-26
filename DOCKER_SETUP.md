@@ -4,7 +4,7 @@
 
 ### Tələblər
 - Docker & Docker Compose
-- SQL Server SA Password: `YourPassword`
+- SQL Server SA Password: `YourStrongPassword`
 
 ### Addımlar
 
