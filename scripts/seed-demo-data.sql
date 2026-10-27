@@ -53,26 +53,31 @@ JOIN (VALUES (1),(2),(3),(4)) AS n(lvl) ON n.lvl <= b.floors;
 INSERT INTO "Floors" ("Id","Name","BuildingId","LevelNumber","CreatedAt","UpdatedAt")
 SELECT id, name, building_id, level, (now() AT TIME ZONE 'utc'), NULL FROM tmp_floor;
 
--- 5) Otaq adları hovuzu
+-- 5) Otaq adları hovuzu (peşəkar)
 CREATE TEMP TABLE tmp_names (ord int, nm text) ON COMMIT DROP;
 INSERT INTO tmp_names (ord, nm) VALUES
- (1,'Araz'),(2,'Kür'),(3,'Xəzər'),(4,'Göygöl'),(5,'Şahdağ'),(6,'Zirvə'),
- (7,'Günəş'),(8,'Dəniz'),(9,'Palıd'),(10,'Çinar'),(11,'Lalə'),(12,'Nərgiz'),
- (13,'Zümrüd'),(14,'Firuzə'),(15,'Qartal'),(16,'Şimşək');
+ (1,'Executive'),(2,'Horizon'),(3,'Summit'),(4,'Atlas'),(5,'Nexus'),(6,'Pinnacle'),
+ (7,'Vertex'),(8,'Zenith'),(9,'Catalyst'),(10,'Momentum'),(11,'Synergy'),(12,'Vanguard'),
+ (13,'Pioneer'),(14,'Beacon'),(15,'Orbit'),(16,'Meridian'),(17,'Apex'),(18,'Quantum'),
+ (19,'Fusion'),(20,'Cascade'),(21,'Spectrum'),(22,'Infinity'),(23,'Odyssey'),(24,'Voyager'),
+ (25,'Discovery'),(26,'Frontier'),(27,'Keystone'),(28,'Cornerstone'),(29,'Landmark'),(30,'Milestone'),
+ (31,'Endeavour'),(32,'Aspire'),(33,'Elevate'),(34,'Ascend'),(35,'Stratus'),(36,'Nimbus'),
+ (37,'Aurora'),(38,'Eclipse'),(39,'Polaris'),(40,'Vega'),(41,'Orion'),(42,'Nova'),
+ (43,'Titan'),(44,'Cosmos'),(45,'Pulse'),(46,'Ignite'),(47,'Forge'),(48,'Unity');
 
 -- 6) Otaqlar
 CREATE TEMP TABLE tmp_room (id uuid DEFAULT gen_random_uuid(), floor_id uuid, bcode text, lvl int, rn int, name text, capacity int) ON COMMIT DROP;
 INSERT INTO tmp_room (floor_id, bcode, lvl, rn, name, capacity)
 SELECT rr.floor_id, rr.bcode, rr.lvl, rr.rn,
-       nm.nm || ' (' || rr.bcode || ')',
+       nm.nm,
        rr.capacity
 FROM (
     SELECT f.id AS floor_id, f.bcode, f.level AS lvl, r.rn, 4 + r.rn * 3 AS capacity,
-           row_number() OVER (PARTITION BY f.building_id ORDER BY f.level, r.rn) AS rnbldg
+           row_number() OVER (ORDER BY f.bcode, f.level, r.rn) AS gseq
     FROM tmp_floor f
     JOIN (VALUES (1),(2),(3)) AS r(rn) ON r.rn <= f.rooms
 ) rr
-JOIN tmp_names nm ON nm.ord = rr.rnbldg;
+JOIN tmp_names nm ON nm.ord = ((rr.gseq - 1) % (SELECT count(*) FROM tmp_names)) + 1;
 INSERT INTO "Rooms" ("Id","Name","FloorId","Capacity","IsActive","CreatedAt","UpdatedAt")
 SELECT id, name, floor_id, capacity, true, (now() AT TIME ZONE 'utc'), NULL FROM tmp_room;
 
