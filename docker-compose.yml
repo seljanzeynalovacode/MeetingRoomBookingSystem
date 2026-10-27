@@ -46,6 +46,7 @@ services:
       Smtp__FromName: ${SMTP_FROMNAME}
       Smtp__EnableSsl: ${SMTP_ENABLESSL}
       Gemini__ApiKey: ${GEMINI_API_KEY}
+      Brevo__ApiKey: ${BREVO_API_KEY}
       Cors__AllowedOrigins__0: ${FRONTEND_URL}
       Localization__TimeZoneId: ${TIMEZONE}
     depends_on:

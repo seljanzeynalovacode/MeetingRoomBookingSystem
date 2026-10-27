@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MRBSystem.Contracts.Services;
-using System.Net;
-using System.Net.Mail;
+using System.Net.Http.Json;
 
 namespace MRBSystem.Infrasturucture.Services;
 
@@ -10,42 +9,57 @@ public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
+    private readonly HttpClient _httpClient;
 
-    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
+    public EmailService(
+        IConfiguration configuration,
+        ILogger<EmailService> logger,
+        HttpClient httpClient)
     {
         _configuration = configuration;
         _logger = logger;
+        _httpClient = httpClient;
     }
 
+    // Emails are sent via Brevo's HTTPS transactional API (not SMTP), because many
+    // hosts (e.g. Render free tier) block outbound SMTP ports.
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         try
         {
-            var host = _configuration["Smtp:Host"]!;
-            var port = int.Parse(_configuration["Smtp:Port"]!);
-            var username = _configuration["Smtp:Username"]!;
-            var password = _configuration["Smtp:Password"]!;
+            var apiKey = _configuration["Brevo:ApiKey"]!;
             var fromEmail = _configuration["Smtp:FromEmail"]!;
-            var fromName = _configuration["Smtp:FromName"]!;
-            var enableSsl = bool.Parse(_configuration["Smtp:EnableSsl"]!);
+            var fromName = _configuration["Smtp:FromName"] ?? "MRBSystem";
 
-            using var client = new SmtpClient(host, port)
+            var payload = new
             {
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(username, password),
-                EnableSsl = enableSsl
+                sender = new { name = fromName, email = fromEmail },
+                to = new[] { new { email = toEmail } },
+                subject = subject,
+                textContent = body
             };
 
-            using var message = new MailMessage
+            using var request = new HttpRequestMessage(
+                HttpMethod.Post, "https://api.brevo.com/v3/smtp/email")
             {
-                From = new MailAddress(fromEmail, fromName),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = false
+                Content = JsonContent.Create(payload)
             };
-            message.To.Add(toEmail);
+            request.Headers.Add("api-key", apiKey);
+            request.Headers.Add("accept", "application/json");
 
-            await client.SendMailAsync(message);
+            using var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogError(
+                    "Brevo email failed to {ToEmail}. Status: {Status}. Body: {Body}",
+                    toEmail, response.StatusCode, errorBody);
+                throw new InvalidOperationException(
+                    $"Email send failed with status {response.StatusCode}.");
+            }
+
+            _logger.LogInformation("Email sent to {ToEmail} via Brevo.", toEmail);
         }
         catch (Exception ex)
         {

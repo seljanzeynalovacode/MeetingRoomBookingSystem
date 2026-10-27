@@ -176,7 +176,7 @@ namespace MRBSystem.WebAPI
             builder.Services.AddScoped<IRoomCalendarBroadcastService, SignalRRoomCalendarBroadcastService>();
             builder.Services.AddScoped<IParticipantService, ParticipantService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddHttpClient<IEmailService, EmailService>();
             builder.Services.AddHttpClient<IChatService, GeminiChatService>(client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(30);
