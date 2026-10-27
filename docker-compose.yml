@@ -1,16 +1,16 @@
 services:
-  # SQL Server Database
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: mrb-sqlserver
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16
+    container_name: mrb-postgres
     ports:
-      - "1433:1433"
+      - "5432:5432"
     environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: ${DB_SA_PASSWORD}
-      MSSQL_PID: Express
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - mrb-network
 
@@ -49,7 +49,7 @@ services:
       Cors__AllowedOrigins__0: ${FRONTEND_URL}
       Localization__TimeZoneId: ${TIMEZONE}
     depends_on:
-      - sqlserver
+      - postgres
     networks:
       - mrb-network
     volumes:
@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  sqlserver-data:
+  postgres-data:
 
 networks:
   mrb-network:

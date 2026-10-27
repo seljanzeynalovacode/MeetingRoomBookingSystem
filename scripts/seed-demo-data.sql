@@ -1,169 +1,127 @@
 /* ============================================================
-   MRBSystem - Demo seed data (v2)
-   Binalar, mərtəbələr, FƏRQLİ ADLI otaqlar, avadanlıqlar və
-   DAHA ÇOX bloklama (xüsusən cari olanlar).
-   Tarixlər UTC-dir (SYSUTCDATETIME).
+   MRBSystem - Demo seed data (PostgreSQL)
+   Binalar, mərtəbələr, fərqli adlı otaqlar, avadanlıqlar, bloklamalar.
+   Tarixlər UTC-dir. Script əvvəlcə mövcud kataloq + asılı
+   rezervasiyaları silir, sonra təmiz seed edir.
 
-   DİQQƏT: Script əvvəlcə mövcud kataloq məlumatını (binalar,
-   mərtəbələr, otaqlar, avadanlıqlar, bloklamalar) VƏ otaqlara
-   bağlı rezervasiya/iştirakçıları SİLİR, sonra təmiz seed edir.
-   Qlobal SystemSettings sətri saxlanılır.
-
-   İşə salma (Docker SQL konteyneri) - istəyə görə:
-     docker exec -i mrb-sqlserver /opt/mssql-tools18/bin/sqlcmd \
-       -S localhost -U sa -P "YOUR_DB_PASSWORD" -C -d MRBSystemDb \
+   İşə salma (Docker):
+     docker exec -i mrb-postgres psql -U postgres -d MRBSystemDb \
        < scripts/seed-demo-data.sql
    ============================================================ */
 
-SET NOCOUNT ON;
-SET XACT_ABORT ON;
-BEGIN TRANSACTION;
+BEGIN;
 
-/* ---------- 1) Köhnə məlumatların təmizlənməsi (FK-təhlükəsiz sıra) ---------- */
-DELETE FROM RoomEquipment;
-DELETE FROM RoomBlackouts;
-DELETE FROM Participants;
-DELETE FROM Reservations;
-DELETE FROM Rooms;
-DELETE FROM Floors;
-DELETE FROM BuildingWorkingHours;
-DELETE FROM SystemSettings WHERE BuildingId IS NOT NULL;
-DELETE FROM Buildings;
-DELETE FROM Equipment;
+-- 1) Köhnə məlumatların təmizlənməsi (FK-təhlükəsiz sıra)
+DELETE FROM "RoomEquipment";
+DELETE FROM "RoomBlackouts";
+DELETE FROM "Participants";
+DELETE FROM "Reservations";
+DELETE FROM "Rooms";
+DELETE FROM "Floors";
+DELETE FROM "BuildingWorkingHours";
+DELETE FROM "SystemSettings" WHERE "BuildingId" IS NOT NULL;
+DELETE FROM "Buildings";
+DELETE FROM "Equipment";
 
-DECLARE @now datetime2 = SYSUTCDATETIME();
+-- 2) Avadanlıq kataloqu
+CREATE TEMP TABLE tmp_equip (code text, id uuid DEFAULT gen_random_uuid(), name text) ON COMMIT DROP;
+INSERT INTO tmp_equip (code, name) VALUES
+ ('PROJ','Projektor'),('WB','Ağ lövhə'),('TV','TV Ekran'),
+ ('VC','Video konfrans sistemi'),('PHONE','Konfrans telefonu'),('FLIP','Flipchart');
+INSERT INTO "Equipment" ("Id","Name","CreatedAt","UpdatedAt")
+SELECT id, name, (now() AT TIME ZONE 'utc'), NULL FROM tmp_equip;
 
-/* ---------- 2) Avadanlıq kataloqu ---------- */
-DECLARE @Equip TABLE (Code varchar(30), Id uniqueidentifier, Name nvarchar(150));
-INSERT INTO @Equip (Code, Name) VALUES
- ('PROJ',  N'Projektor'),
- ('WB',    N'Ağ lövhə'),
- ('TV',    N'TV Ekran'),
- ('VC',    N'Video konfrans sistemi'),
- ('PHONE', N'Konfrans telefonu'),
- ('FLIP',  N'Flipchart');
-UPDATE @Equip SET Id = NEWID();
+-- 3) Binalar (6) + mərtəbə sayı (2-4)
+CREATE TEMP TABLE tmp_bld (code text, id uuid DEFAULT gen_random_uuid(), name text, address text, floors int) ON COMMIT DROP;
+INSERT INTO tmp_bld (code, name, address, floors) VALUES
+ ('B1','Mərkəzi Ofis','Bakı, Nizami küç. 10',4),
+ ('B2','Texnologiya Mərkəzi','Bakı, Xətai pr. 25',3),
+ ('B3','İnnovasiya Binası','Bakı, Həsən Əliyev küç. 5',4),
+ ('B4','Biznes Qüllə','Bakı, Neftçilər pr. 110',2),
+ ('B5','Təlim Kampusu','Sumqayıt, Sülh küç. 3',3),
+ ('B6','Filial Ofis','Gəncə, Atatürk pr. 40',2);
+INSERT INTO "Buildings" ("Id","Name","Address","CreatedAt","UpdatedAt")
+SELECT id, name, address, (now() AT TIME ZONE 'utc'), NULL FROM tmp_bld;
 
-INSERT INTO Equipment (Id, Name, CreatedAt, UpdatedAt)
-SELECT Id, Name, @now, NULL FROM @Equip;
+-- 4) Mərtəbələr
+CREATE TEMP TABLE tmp_floor (id uuid DEFAULT gen_random_uuid(), building_id uuid, bcode text, name text, level int, rooms int) ON COMMIT DROP;
+INSERT INTO tmp_floor (building_id, bcode, name, level, rooms)
+SELECT b.id, b.code, (n.lvl || '-ci mərtəbə'), n.lvl,
+       CASE WHEN n.lvl IN (1,3) THEN 3 ELSE 2 END
+FROM tmp_bld b
+JOIN (VALUES (1),(2),(3),(4)) AS n(lvl) ON n.lvl <= b.floors;
+INSERT INTO "Floors" ("Id","Name","BuildingId","LevelNumber","CreatedAt","UpdatedAt")
+SELECT id, name, building_id, level, (now() AT TIME ZONE 'utc'), NULL FROM tmp_floor;
 
-/* ---------- 3) Binalar (6) və mərtəbə sayı (2-4) ---------- */
-DECLARE @Bld TABLE (Code varchar(20), Id uniqueidentifier, Name nvarchar(200), Address nvarchar(300), FloorsCount int);
-INSERT INTO @Bld (Code, Name, Address, FloorsCount) VALUES
- ('B1', N'Mərkəzi Ofis',        N'Bakı, Nizami küç. 10',        4),
- ('B2', N'Texnologiya Mərkəzi', N'Bakı, Xətai pr. 25',          3),
- ('B3', N'İnnovasiya Binası',   N'Bakı, Həsən Əliyev küç. 5',   4),
- ('B4', N'Biznes Qüllə',        N'Bakı, Neftçilər pr. 110',     2),
- ('B5', N'Təlim Kampusu',       N'Sumqayıt, Sülh küç. 3',       3),
- ('B6', N'Filial Ofis',         N'Gəncə, Atatürk pr. 40',       2);
-UPDATE @Bld SET Id = NEWID();
+-- 5) Otaq adları hovuzu
+CREATE TEMP TABLE tmp_names (ord int, nm text) ON COMMIT DROP;
+INSERT INTO tmp_names (ord, nm) VALUES
+ (1,'Araz'),(2,'Kür'),(3,'Xəzər'),(4,'Göygöl'),(5,'Şahdağ'),(6,'Zirvə'),
+ (7,'Günəş'),(8,'Dəniz'),(9,'Palıd'),(10,'Çinar'),(11,'Lalə'),(12,'Nərgiz'),
+ (13,'Zümrüd'),(14,'Firuzə'),(15,'Qartal'),(16,'Şimşək');
 
-INSERT INTO Buildings (Id, Name, Address, CreatedAt, UpdatedAt)
-SELECT Id, Name, Address, @now, NULL FROM @Bld;
+-- 6) Otaqlar
+CREATE TEMP TABLE tmp_room (id uuid DEFAULT gen_random_uuid(), floor_id uuid, bcode text, lvl int, rn int, name text, capacity int) ON COMMIT DROP;
+INSERT INTO tmp_room (floor_id, bcode, lvl, rn, name, capacity)
+SELECT rr.floor_id, rr.bcode, rr.lvl, rr.rn,
+       nm.nm || ' (' || rr.bcode || ')',
+       rr.capacity
+FROM (
+    SELECT f.id AS floor_id, f.bcode, f.level AS lvl, r.rn, 4 + r.rn * 3 AS capacity,
+           row_number() OVER (PARTITION BY f.building_id ORDER BY f.level, r.rn) AS rnbldg
+    FROM tmp_floor f
+    JOIN (VALUES (1),(2),(3)) AS r(rn) ON r.rn <= f.rooms
+) rr
+JOIN tmp_names nm ON nm.ord = rr.rnbldg;
+INSERT INTO "Rooms" ("Id","Name","FloorId","Capacity","IsActive","CreatedAt","UpdatedAt")
+SELECT id, name, floor_id, capacity, true, (now() AT TIME ZONE 'utc'), NULL FROM tmp_room;
 
-/* ---------- 4) Mərtəbələr ---------- */
-DECLARE @Floor TABLE (Id uniqueidentifier, BuildingId uniqueidentifier, BCode varchar(20),
-                      Name nvarchar(150), LevelNumber int, RoomsCount int);
-INSERT INTO @Floor (BuildingId, BCode, Name, LevelNumber, RoomsCount)
-SELECT b.Id, b.Code, CONCAT(n.Lvl, N'-ci mərtəbə'), n.Lvl,
-       CASE WHEN n.Lvl IN (1,3) THEN 3 ELSE 2 END      -- tək mərtəbələrdə 3, cütlərdə 2 otaq
-FROM @Bld b
-JOIN (VALUES (1),(2),(3),(4)) AS n(Lvl) ON n.Lvl <= b.FloorsCount;
-UPDATE @Floor SET Id = NEWID();
+-- 7) Otaq-avadanlıq təyinatı (unikal)
+CREATE TEMP TABLE tmp_re (room_id uuid, ecode text, qty int) ON COMMIT DROP;
+INSERT INTO tmp_re SELECT id,'WB',1    FROM tmp_room;
+INSERT INTO tmp_re SELECT id,'PROJ',1  FROM tmp_room WHERE rn % 2 = 0;
+INSERT INTO tmp_re SELECT id,'TV',1    FROM tmp_room WHERE rn % 2 = 1;
+INSERT INTO tmp_re SELECT id,'VC',1    FROM tmp_room WHERE rn = 3;
+INSERT INTO tmp_re SELECT id,'PHONE',1 FROM tmp_room WHERE capacity >= 13;
+INSERT INTO tmp_re SELECT id,'FLIP',2  FROM tmp_room WHERE capacity >= 13;
+INSERT INTO "RoomEquipment" ("Id","RoomId","EquipmentId","Quantity","CreatedAt","UpdatedAt")
+SELECT gen_random_uuid(), re.room_id, e.id, re.qty, (now() AT TIME ZONE 'utc'), NULL
+FROM tmp_re re JOIN tmp_equip e ON e.code = re.ecode;
 
-INSERT INTO Floors (Id, Name, BuildingId, LevelNumber, CreatedAt, UpdatedAt)
-SELECT Id, Name, BuildingId, LevelNumber, @now, NULL FROM @Floor;
+-- 8) Bloklamalar (16: 4 keçmiş, 6 cari, 6 gələcək)
+CREATE TEMP TABLE tmp_rn (seq int, id uuid) ON COMMIT DROP;
+INSERT INTO tmp_rn (seq, id)
+SELECT row_number() OVER (ORDER BY bcode, lvl, rn), id FROM tmp_room;
 
-/* ---------- 5) Otaq adları hovuzu (tematik, fərqli adlar) ---------- */
-DECLARE @Names TABLE (Ord int, Nm nvarchar(150));
-INSERT INTO @Names (Ord, Nm) VALUES
- (1,N'Araz'),(2,N'Kür'),(3,N'Xəzər'),(4,N'Göygöl'),(5,N'Şahdağ'),(6,N'Zirvə'),
- (7,N'Günəş'),(8,N'Dəniz'),(9,N'Palıd'),(10,N'Çinar'),(11,N'Lalə'),(12,N'Nərgiz'),
- (13,N'Zümrüd'),(14,N'Firuzə'),(15,N'Qartal'),(16,N'Şimşək');
+CREATE TEMP TABLE tmp_black (seq int, start_ts timestamp, end_ts timestamp, reason text) ON COMMIT DROP;
+INSERT INTO tmp_black (seq, start_ts, end_ts, reason) VALUES
+ (1,  (now() AT TIME ZONE 'utc') - interval '15 day', (now() AT TIME ZONE 'utc') - interval '14 day', 'Köçürülmə işləri (tamamlanıb)'),
+ (19, (now() AT TIME ZONE 'utc') - interval '10 day', (now() AT TIME ZONE 'utc') - interval '7 day',  'Əsaslı təmir (keçmiş)'),
+ (34, (now() AT TIME ZONE 'utc') - interval '3 day',  (now() AT TIME ZONE 'utc') - interval '3 day' + interval '2 hour', 'Qısa təmir (keçmiş)'),
+ (42, (now() AT TIME ZONE 'utc') - interval '1 day',  (now() AT TIME ZONE 'utc') - interval '1 day' + interval '4 hour', 'Təmizlik (keçmiş)'),
+ (5,  (now() AT TIME ZONE 'utc') - interval '1 hour',  (now() AT TIME ZONE 'utc') + interval '1 hour',  'Təmizlik işləri (davam edir)'),
+ (13, (now() AT TIME ZONE 'utc') - interval '30 minute', (now() AT TIME ZONE 'utc') + interval '90 minute', 'Qısa texniki yoxlama'),
+ (22, (now() AT TIME ZONE 'utc') - interval '3 hour',  (now() AT TIME ZONE 'utc') + interval '3 hour',  'İclas gedir — rezerv'),
+ (29, (now() AT TIME ZONE 'utc') - interval '1 day',   (now() AT TIME ZONE 'utc') + interval '1 day',   'Texniki xidmət (davam edir)'),
+ (37, (now() AT TIME ZONE 'utc') - interval '2 day',   (now() AT TIME ZONE 'utc') + interval '3 day',   'Əsaslı təmir (davam edir)'),
+ (44, (now() AT TIME ZONE 'utc') - interval '4 hour',  (now() AT TIME ZONE 'utc') + interval '20 hour', 'Tədbir hazırlığı'),
+ (8,  (now() AT TIME ZONE 'utc') + interval '1 day',   (now() AT TIME ZONE 'utc') + interval '1 day' + interval '1 hour',  'Avadanlıq quraşdırılması'),
+ (16, (now() AT TIME ZONE 'utc') + interval '2 day',   (now() AT TIME ZONE 'utc') + interval '2 day' + interval '2 hour',  'Prezentasiya hazırlığı'),
+ (25, (now() AT TIME ZONE 'utc') + interval '3 day',   (now() AT TIME ZONE 'utc') + interval '3 day' + interval '4 hour',  'Müsahibə otağı rezervi'),
+ (31, (now() AT TIME ZONE 'utc') + interval '5 day',   (now() AT TIME ZONE 'utc') + interval '8 day',   'Konfrans üçün rezerv'),
+ (40, (now() AT TIME ZONE 'utc') + interval '7 day',   (now() AT TIME ZONE 'utc') + interval '7 day' + interval '3 hour',  'Təlim sessiyası'),
+ (46, (now() AT TIME ZONE 'utc') + interval '10 day',  (now() AT TIME ZONE 'utc') + interval '11 day',  'Audit üçün bağlı');
 
-/* ---------- 6) Otaqlar (hər binada ad hovuzundan ardıcıl, unikal) ---------- */
-DECLARE @RoomRaw TABLE (FloorId uniqueidentifier, BuildingId uniqueidentifier, BCode varchar(20),
-                        Lvl int, Rn int, Capacity int, RnBldg int);
-INSERT INTO @RoomRaw (FloorId, BuildingId, BCode, Lvl, Rn, Capacity, RnBldg)
-SELECT f.Id, f.BuildingId, f.BCode, f.LevelNumber, r.Rn, 4 + r.Rn * 3,
-       ROW_NUMBER() OVER (PARTITION BY f.BuildingId ORDER BY f.LevelNumber, r.Rn)
-FROM @Floor f
-JOIN (VALUES (1),(2),(3)) AS r(Rn) ON r.Rn <= f.RoomsCount;
+INSERT INTO "RoomBlackouts" ("Id","RoomId","StartDate","EndDate","Reason","CreatedAt","UpdatedAt")
+SELECT gen_random_uuid(), rn.id, bl.start_ts, bl.end_ts, bl.reason, (now() AT TIME ZONE 'utc'), NULL
+FROM tmp_black bl JOIN tmp_rn rn ON rn.seq = bl.seq;
 
-DECLARE @Room TABLE (Id uniqueidentifier, FloorId uniqueidentifier, BCode varchar(20),
-                     Lvl int, Rn int, Name nvarchar(150), Capacity int);
-INSERT INTO @Room (FloorId, BCode, Lvl, Rn, Name, Capacity)
-SELECT rr.FloorId, rr.BCode, rr.Lvl, rr.Rn,
-       CONCAT(nm.Nm, N' (', rr.BCode, N')'),            -- məs: "Xəzər (B1)" - bina üzrə fərqli
-       rr.Capacity
-FROM @RoomRaw rr
-JOIN @Names nm ON nm.Ord = rr.RnBldg;
-UPDATE @Room SET Id = NEWID();
+COMMIT;
 
-INSERT INTO Rooms (Id, Name, FloorId, Capacity, IsActive, CreatedAt, UpdatedAt)
-SELECT Id, Name, FloorId, Capacity, 1, @now, NULL FROM @Room;
-
-/* ---------- 7) Otaq-avadanlıq təyinatı (unikal) ---------- */
-DECLARE @RoomEq TABLE (RoomId uniqueidentifier, ECode varchar(30), Qty int);
-INSERT INTO @RoomEq SELECT Id, 'WB',    1 FROM @Room;                       -- hər otaqda ağ lövhə
-INSERT INTO @RoomEq SELECT Id, 'PROJ',  1 FROM @Room WHERE Rn % 2 = 0;      -- cüt otaqlarda projektor
-INSERT INTO @RoomEq SELECT Id, 'TV',    1 FROM @Room WHERE Rn % 2 = 1;      -- tək otaqlarda TV
-INSERT INTO @RoomEq SELECT Id, 'VC',    1 FROM @Room WHERE Rn = 3;          -- 3-cü otaqda video konfrans
-INSERT INTO @RoomEq SELECT Id, 'PHONE', 1 FROM @Room WHERE Capacity >= 13;  -- böyük otaqlarda telefon
-INSERT INTO @RoomEq SELECT Id, 'FLIP',  2 FROM @Room WHERE Capacity >= 13;  -- böyük otaqlarda 2 flipchart
-
-INSERT INTO RoomEquipment (Id, RoomId, EquipmentId, Quantity, CreatedAt, UpdatedAt)
-SELECT NEWID(), req.RoomId, e.Id, req.Qty, @now, NULL
-FROM @RoomEq req
-JOIN @Equip e ON e.Code = req.ECode;
-
-/* ---------- 8) Bloklamalar (16 ədəd: 4 keçmiş, 6 CARİ, 6 gələcək) ---------- */
-DECLARE @RN TABLE (Seq int, Id uniqueidentifier);
-INSERT INTO @RN (Seq, Id)
-SELECT ROW_NUMBER() OVER (ORDER BY BCode, Lvl, Rn), Id FROM @Room;
-
-DECLARE @Black TABLE (Seq int, StartDate datetime2, EndDate datetime2, Reason nvarchar(500));
-INSERT INTO @Black (Seq, StartDate, EndDate, Reason) VALUES
- -- KEÇMİŞ (4)
- (1,  DATEADD(DAY,  -15, @now), DATEADD(DAY,  -14, @now),                        N'Köçürülmə işləri (tamamlanıb)'),
- (19, DATEADD(DAY,  -10, @now), DATEADD(DAY,   -7, @now),                        N'Əsaslı təmir (keçmiş)'),
- (34, DATEADD(DAY,   -3, @now), DATEADD(HOUR,   2, DATEADD(DAY,  -3, @now)),      N'Qısa təmir (keçmiş)'),
- (42, DATEADD(DAY,   -1, @now), DATEADD(HOUR,   4, DATEADD(DAY,  -1, @now)),      N'Təmizlik (keçmiş)'),
- -- CARİ / indi aktiv (6)
- (5,  DATEADD(HOUR,   -1, @now), DATEADD(HOUR,   1, @now),                        N'Təmizlik işləri (davam edir)'),
- (13, DATEADD(MINUTE, -30, @now), DATEADD(MINUTE, 90, @now),                      N'Qısa texniki yoxlama'),
- (22, DATEADD(HOUR,   -3, @now), DATEADD(HOUR,   3, @now),                        N'İclas gedir — rezerv'),
- (29, DATEADD(DAY,    -1, @now), DATEADD(DAY,    1, @now),                        N'Texniki xidmət (davam edir)'),
- (37, DATEADD(DAY,    -2, @now), DATEADD(DAY,    3, @now),                        N'Əsaslı təmir (davam edir)'),
- (44, DATEADD(HOUR,   -4, @now), DATEADD(HOUR,  20, @now),                        N'Tədbir hazırlığı'),
- -- GƏLƏCƏK (6)
- (8,  DATEADD(DAY,     1, @now), DATEADD(HOUR,   1, DATEADD(DAY,  1, @now)),       N'Avadanlıq quraşdırılması'),
- (16, DATEADD(DAY,     2, @now), DATEADD(HOUR,   2, DATEADD(DAY,  2, @now)),       N'Prezentasiya hazırlığı'),
- (25, DATEADD(DAY,     3, @now), DATEADD(HOUR,   4, DATEADD(DAY,  3, @now)),       N'Müsahibə otağı rezervi'),
- (31, DATEADD(DAY,     5, @now), DATEADD(DAY,    8, @now),                        N'Konfrans üçün rezerv'),
- (40, DATEADD(DAY,     7, @now), DATEADD(HOUR,   3, DATEADD(DAY,  7, @now)),       N'Təlim sessiyası'),
- (46, DATEADD(DAY,    10, @now), DATEADD(DAY,   11, @now),                        N'Audit üçün bağlı');
-
-INSERT INTO RoomBlackouts (Id, RoomId, StartDate, EndDate, Reason, CreatedAt, UpdatedAt)
-SELECT NEWID(), rn.Id, bl.StartDate, bl.EndDate, bl.Reason, @now, NULL
-FROM @Black bl
-JOIN @RN rn ON rn.Seq = bl.Seq;
-
-COMMIT TRANSACTION;
-
-/* ---------- Nəticə ---------- */
-PRINT '--- Seed (v2) tamamlandi ---';
-SELECT 'Buildings' AS [Table], COUNT(*) AS Cnt FROM Buildings
-UNION ALL SELECT 'Floors',        COUNT(*) FROM Floors
-UNION ALL SELECT 'Rooms',         COUNT(*) FROM Rooms
-UNION ALL SELECT 'Equipment',     COUNT(*) FROM Equipment
-UNION ALL SELECT 'RoomEquipment', COUNT(*) FROM RoomEquipment
-UNION ALL SELECT 'RoomBlackouts', COUNT(*) FROM RoomBlackouts;
-
-SELECT
-  CASE WHEN SYSUTCDATETIME() BETWEEN StartDate AND EndDate THEN 'CARI'
-       WHEN EndDate < SYSUTCDATETIME() THEN 'KECMIS' ELSE 'GELECEK' END AS Status,
-  COUNT(*) AS Cnt
-FROM RoomBlackouts
-GROUP BY CASE WHEN SYSUTCDATETIME() BETWEEN StartDate AND EndDate THEN 'CARI'
-              WHEN EndDate < SYSUTCDATETIME() THEN 'KECMIS' ELSE 'GELECEK' END;
+-- Nəticə
+SELECT 'Buildings' AS tbl, count(*) AS cnt FROM "Buildings"
+UNION ALL SELECT 'Floors',        count(*) FROM "Floors"
+UNION ALL SELECT 'Rooms',         count(*) FROM "Rooms"
+UNION ALL SELECT 'Equipment',     count(*) FROM "Equipment"
+UNION ALL SELECT 'RoomEquipment', count(*) FROM "RoomEquipment"
+UNION ALL SELECT 'RoomBlackouts', count(*) FROM "RoomBlackouts";

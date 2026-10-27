@@ -25,6 +25,10 @@ namespace MRBSystem.WebAPI
     {
         public static async Task Main(string[] args)
         {
+            // PostgreSQL (Npgsql) — keep legacy timestamp behavior so the existing
+            // UtcDateTimeConverter / DateTime handling works like it did on SQL Server.
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             var builder = WebApplication.CreateBuilder(args);
 
             Log.Logger = new LoggerConfiguration()
@@ -123,9 +127,9 @@ namespace MRBSystem.WebAPI
             });
 
             builder.Services.AddDbContext<MRBAppDbContext>(options =>
-     options.UseSqlServer(
+     options.UseNpgsql(
          builder.Configuration.GetConnectionString("MRBSystemConnectionString"),
-         sqlOptions => sqlOptions.EnableRetryOnFailure()));
+         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure()));
 
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
