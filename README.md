@@ -216,8 +216,11 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
    ADMIN_PASSWORD=Admin@123456
    SMTP_HOST=smtp.gmail.com
    SMTP_PORT=587
-   SMTP_EMAIL=your-email@gmail.com
+   SMTP_USERNAME=your-email@gmail.com
    SMTP_PASSWORD=your-app-password
+   SMTP_FROMEMAIL=your-email@gmail.com
+   SMTP_FROMNAME=Meeting Room Booking System
+   SMTP_ENABLESSL=true
    GEMINI_API_KEY=your-gemini-api-key
    FRONTEND_URL=http://localhost:80
    TIMEZONE=Asia/Baku
@@ -228,12 +231,7 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
    docker compose up -d
    ```
 
-4. **Database Migration (First Time Only)**
-   ```bash
-   docker exec mrb-backend dotnet ef database update \
-     --project infrasturucture/MRBSystem.Persistence \
-     --startup-project presentation/MRBSystem.WebAPI
-   ```
+4. **Database Migration** — automatic. On startup the backend applies all EF Core migrations and waits for SQL Server to become ready (retry loop), so no manual migration step is needed.
 
 5. **Access Application**
    - Frontend: `http://localhost`
