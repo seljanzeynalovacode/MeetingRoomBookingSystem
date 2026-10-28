@@ -28,6 +28,7 @@ A full-stack meeting room booking platform. Employees search, book, and manage m
 ![i18n](https://img.shields.io/badge/i18n-AZ%2FEN-4F7DF3)
 ![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=white)
 ![Dark/Light Mode](https://img.shields.io/badge/Dark%2FLight_Mode-0B1626)
+![Responsive](https://img.shields.io/badge/Mobile_Responsive-4F7DF3?logo=css3&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?logo=googlegemini&logoColor=white)
 
@@ -55,6 +56,8 @@ Built iteratively through multiple rounds of self-driven security/architecture a
 ## Features
 
 **Users** — email-confirmed registration & login, room search/booking with guest participants, edit/cancel, per-room calendar with blackout periods, "My Bookings", in-app notification bell, AI chat, forgot/reset password, optional "remember me" persistence, dark/light theme toggle (persisted per browser), Azerbaijani/English UI language toggle (applies app-wide, including the admin panel).
+
+> **📱 Fully responsive mobile view.** The entire user panel is optimized for phones, not just shrunk down — a fixed bottom tab bar (Rooms · Calendar · Reservations · Assistant), compact two-column room cards, a collapsible search/filter, a mobile calendar with a tappable weekly day-strip (no desktop view switcher), bookings as bottom-sheet overlays, and the AI assistant as a full-screen chat. The desktop layout is unchanged — the mobile experience is delivered purely through responsive CSS.
 
 **Admins** — fully isolated admin login (2FA), CRUD for buildings/floors/rooms/equipment, room blackouts with conflict checking, per-building working hours, **global + per-building system settings with reset-to-global**, user/role management, org-wide reservation oversight, dashboard analytics.
 
@@ -339,8 +342,6 @@ Secrets stored in `.env` file (**git-ignored**, never committed)
 
 - **Email**: `admin@meethub.local` (or configured in `.env` / User Secrets)
 - **Password**: `Admin@123456` (or configured in `.env` / User Secrets)
-
-Login at: `http://localhost/pages/adminLogin.html`
 
 ---
 
