@@ -22,7 +22,6 @@
     </div>
 
               <div class="nav-right">
-                <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menyu"><i class="bi bi-list"></i></button>
                 <a href="adminDashboard.html" class="btn btn-outline btn-sm" id="adminPanelLink" style="display:none;"><i class="bi bi-shield-lock"></i><span data-i18n="nav.adminPanel">Admin panel</span></a>
       <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Tünd rejimə keç"><i class="bi bi-moon-stars"></i></button>
       <button type="button" class="icon-btn lang-toggle-btn" id="langToggleBtn" aria-label="Dili dəyiş">EN</button>
@@ -128,6 +127,13 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <nav class="bottom-nav" aria-label="Naviqasiya">
+    <a href="dashboard.html" class="bn-item active"><span class="bn-ic"><i class="bi bi-door-open"></i></span><span data-i18n="nav.rooms">Otaqlar</span></a>
+    <a href="roomCalendar.html" class="bn-item"><span class="bn-ic"><i class="bi bi-calendar3"></i></span><span data-i18n="nav.calendar">Təqvim</span></a>
+    <a href="myBookings.html" class="bn-item"><span class="bn-ic"><i class="bi bi-calendar-check"></i></span><span>Rezervlər</span></a>
+    <button type="button" class="bn-item" id="bnAssistant"><span class="bn-ic"><i class="bi bi-robot"></i></span><span>Asistan</span></button>
+  </nav>
 
   <script type="module" src="../javascripts/controllers/dashboard.js"></script>
   <script type="module">

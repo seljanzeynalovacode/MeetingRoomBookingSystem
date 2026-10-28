@@ -1,22 +1,26 @@
+// Mobil alt-menyu davranışı (hamburger əvəzinə bottom tab bar):
+//  - "Asistan" tabı mövcud chat widget-ini açır (#chatWidgetFab-i click edir)
+//  - Otaqlar/Rezervlər filtr kartı mobildə yığcamdır (başlığa vurub açılır)
 export function initMobileNav() {
-  const toggle = document.getElementById("mobileNavToggle");
-  const navLinks = document.querySelector(".nav-links");
-  if (!toggle || !navLinks) return;
+  const bnAssistant = document.getElementById("bnAssistant");
+  if (bnAssistant) {
+    bnAssistant.addEventListener("click", () => {
+      const fab = document.getElementById("chatWidgetFab");
+      if (fab) fab.click();
+    });
+  }
 
-  toggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    navLinks.classList.toggle("open");
-  });
-
-  navLinks.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => navLinks.classList.remove("open"));
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!navLinks.contains(e.target) && e.target !== toggle) {
-      navLinks.classList.remove("open");
-    }
-  });
+  document
+    .querySelectorAll(".dash-layout .filter-card, .mybookings-layout .filter-card")
+    .forEach((card) => {
+      const head = card.querySelector(".filter-card-head");
+      if (!head) return;
+      head.classList.add("is-collapsible");
+      head.addEventListener("click", (e) => {
+        if (e.target.closest("button")) return; // reset/clear düymələrinə toxunma
+        card.classList.toggle("is-open");
+      });
+    });
 }
 
 export function initAdminMobileNav() {

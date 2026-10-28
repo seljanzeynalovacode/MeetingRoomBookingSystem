@@ -18,5 +18,5 @@ EXPOSE 80
 # Set environment
 ENV NODE_ENV=production
 
-# Run static server
-CMD ["http-server", ".", "-p", "80", "--cors"]
+# Run static server (-c-1 = keşi söndür: dəyişikliklər dərhal görünsün, köhnə fayl qalmasın)
+CMD ["http-server", ".", "-p", "80", "--cors", "-c-1"]
