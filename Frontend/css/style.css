@@ -2081,13 +2081,15 @@ body.chat-dock-open .reservations-layout { padding-right: 320px; }
   .hero { padding: 2.75rem 1.25rem 3rem; }
   .hero-inner { gap: 2.25rem; }
   .hero h1 { font-size: 2.05rem; line-height: 1.15; }
+  /* başlıq rəngi mobildə bir qədər açıq — rahat oxunsun */
+  .hero h1 span { background: linear-gradient(135deg, #7AA0F7, #A294F0); -webkit-background-clip: text; background-clip: text; }
   .hero .lede { font-size: 1rem; margin-bottom: 1.6rem; }
   .hero-ctas { flex-direction: column; gap: 0.7rem; margin-bottom: 1.8rem; }
   .hero-ctas .btn { width: 100%; }
   .section { padding: 3.25rem 1.25rem; }
   .section-head { margin-bottom: 2rem; }
   .section-head h2 { font-size: 1.65rem; }
-  .cta-banner { margin: 0 1.25rem 3.5rem; padding: 2.1rem 1.5rem; }
+  .cta-banner { margin: 2.75rem 1.25rem 3.5rem; padding: 2.1rem 1.5rem; }  /* üstdəki elementlə aydın boşluq */
   .cta-banner h2 { font-size: 1.4rem; }
   .cta-banner .btn { width: 100%; justify-content: center; }
   .footer { padding: 2rem 1.25rem; }
