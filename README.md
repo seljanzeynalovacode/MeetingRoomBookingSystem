@@ -2,6 +2,10 @@
 
 A full-stack meeting room booking platform. Employees search, book, and manage meeting rooms across multiple buildings; admins manage the organization's structure, reservations, and system-wide rules — with an AI chatbot, live calendar updates, and email notifications on top.
 
+**🌐 Live app → [meethub-mrbsystem.netlify.app](https://meethub-mrbsystem.netlify.app)**
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Online-brightgreen?logo=netlify&logoColor=white)](https://meethub-mrbsystem.netlify.app)
+
 ![.NET 8](https://img.shields.io/badge/.NET_8-512BD4?logo=dotnet&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-5C2D91?logo=dotnet&logoColor=white)
@@ -24,6 +28,16 @@ A full-stack meeting room booking platform. Employees search, book, and manage m
 ![i18n](https://img.shields.io/badge/i18n-AZ%2FEN-4F7DF3)
 ![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=white)
 ![Dark/Light Mode](https://img.shields.io/badge/Dark%2FLight_Mode-0B1626)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?logo=googlegemini&logoColor=white)
+
+**Deployment:**
+
+![Netlify](https://img.shields.io/badge/Netlify-00C7B7?logo=netlify&logoColor=white)
+![Render](https://img.shields.io/badge/Render-000000?logo=render&logoColor=white)
+![Neon](https://img.shields.io/badge/Neon_Postgres-00E599?logo=postgresql&logoColor=white)
+![Brevo](https://img.shields.io/badge/Brevo-0B996E?logo=brevo&logoColor=white)
+![Auto Deploy](https://img.shields.io/badge/CD-Auto_Deploy_on_Push-2088FF)
 
 ---
 
@@ -144,19 +158,46 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
 
 ---
 
+## Deployment
+
+MeetHub runs as a fully live, **zero-cost** production deployment with continuous delivery — every push to `master` automatically redeploys the affected tier.
+
+**Live app:** https://meethub-mrbsystem.netlify.app
+
+| Tier | Platform | Details |
+|------|----------|---------|
+| **Frontend** | [Netlify](https://www.netlify.com/) | Static `Frontend/` published directly (no build step); auto-deploys on every push. |
+| **Backend API** | [Render](https://render.com/) | ASP.NET Core WebAPI shipped as a Docker image from `Backend/MRBSystem`; auto-deploys on every push. The free instance sleeps after ~15 min idle, so the first request after idle has a ~30–50 s cold start. |
+| **Database** | [Neon](https://neon.tech/) | Serverless **PostgreSQL** — the project was migrated from SQL Server to PostgreSQL for a managed, cloud-native, free database. EF Core migrations apply automatically on backend startup. |
+| **Email** | [Brevo](https://www.brevo.com/) | Transactional email (email confirmation, 2FA, password reset) over Brevo's HTTPS API, since the free backend host blocks outbound SMTP. |
+
+The frontend selects its API base URL by hostname (`localhost` → local backend, otherwise the Render URL), so the same codebase runs locally and in production without edits.
+
+**Try the live demo** — seeded with professional room names, ~2 months of reservations, and blackout periods:
+
+| Role | Email | Password |
+|------|-------|----------|
+| User | `neontest@example.com` | `Salam123!` |
+
+> The admin panel has its own separate, 2FA-protected login.
+>
+> ⏳ The first request after idle can take ~30–50 s while the free Render backend wakes from sleep.
+
+---
+
 ## Installation & Setup
 
 ### Option 1: Local Development (Recommended for Development)
 
 **Prerequisites**: 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- SQL Server (local instance or Docker)
-- SMTP account
+- PostgreSQL (local instance or Docker)
+- Brevo API key (or an SMTP account) for email
 - Gemini API key
 
 **Steps:**
 
-1. **Database Setup** (SQL Server)
+1. **Database Setup** (PostgreSQL)
    ```bash
    cd Backend/MRBSystem
    ```
@@ -164,7 +205,7 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
 2. **Configure Secrets** (User Secrets)
    ```bash
    dotnet user-secrets init --project presentation/MRBSystem.WebAPI
-   dotnet user-secrets set "ConnectionStrings:MRBSystemConnectionString" "Server=localhost,1433;Database=MRBSystemDb;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True" --project presentation/MRBSystem.WebAPI
+   dotnet user-secrets set "ConnectionStrings:MRBSystemConnectionString" "Host=localhost;Port=5432;Database=MRBSystemDb;Username=postgres;Password=YOUR_PASSWORD" --project presentation/MRBSystem.WebAPI
    dotnet user-secrets set "Jwt:Key" "your-super-secret-key-minimum-32-characters-long" --project presentation/MRBSystem.WebAPI
    dotnet user-secrets set "Jwt:Issuer" "MRBSystem" --project presentation/MRBSystem.WebAPI
    dotnet user-secrets set "Jwt:Audience" "MRBSystemUsers" --project presentation/MRBSystem.WebAPI
@@ -207,8 +248,10 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
 
 2. **Update `.env` with your values**
    ```env
-   DB_SA_PASSWORD=your_password
-   DB_CONNECTION_STRING=Server=sqlserver,1433;Database=MRBSystemDb;User Id=sa;Password=your_password;TrustServerCertificate=True;Connection Timeout=30;ConnectRetryCount=5;ConnectRetryInterval=10;
+   DB_USER=postgres
+   DB_PASSWORD=your_password
+   DB_NAME=MRBSystemDb
+   DB_CONNECTION_STRING=Host=postgres;Port=5432;Database=MRBSystemDb;Username=postgres;Password=your_password
    JWT_KEY=your-super-secret-key-minimum-32-characters-long
    JWT_ISSUER=MRBSystem
    JWT_AUDIENCE=MRBSystemUsers
@@ -222,6 +265,7 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
    SMTP_FROMNAME=Meeting Room Booking System
    SMTP_ENABLESSL=true
    GEMINI_API_KEY=your-gemini-api-key
+   BREVO_API_KEY=your-brevo-api-key
    FRONTEND_URL=http://localhost:80
    TIMEZONE=Asia/Baku
    ```
@@ -231,12 +275,12 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
    docker compose up -d
    ```
 
-4. **Database Migration** — automatic. On startup the backend applies all EF Core migrations and waits for SQL Server to become ready (retry loop), so no manual migration step is needed.
+4. **Database Migration** — automatic. On startup the backend applies all EF Core migrations and waits for PostgreSQL to become ready (retry loop), so no manual migration step is needed.
 
 5. **Access Application**
    - Frontend: `http://localhost`
    - Backend API: `http://localhost:8080`
-   - SQL Server: `localhost:1433`
+   - PostgreSQL: `localhost:5432`
 
 6. **Stop Containers**
    ```bash
@@ -251,9 +295,9 @@ dotnet test Backend/MRBSystem/MRBSystem.Testing/MRBSystem.Testing.csproj
 |---------|------|-----------|---------|
 | Frontend | 80 | mrb-frontend | Static HTML/JS/CSS server |
 | Backend API | 8080 | mrb-backend | ASP.NET Core WebAPI |
-| SQL Server | 1433 | mrb-sqlserver | Database |
+| PostgreSQL | 5432 | mrb-postgres | Database |
 
-**Volume:** `sqlserver-data` — persists database across container restarts
+**Volume:** `postgres-data` — persists database across container restarts
 
 **Network:** `mrb-network` — internal communication between services
 
@@ -269,13 +313,14 @@ Secrets stored in `.env` file (**git-ignored**, never committed)
 
 | Key | Purpose |
 |---|---|
-| `DB_SA_PASSWORD` | SQL Server SA password |
-| `DB_CONNECTION_STRING` | Database connection |
+| `DB_USER` / `DB_PASSWORD` / `DB_NAME` | PostgreSQL user, password & database name |
+| `DB_CONNECTION_STRING` | Database connection (Npgsql) |
 | `JWT_KEY` | JWT signing key (min 32 chars) |
 | `JWT_ISSUER` / `JWT_AUDIENCE` | Token issuer/audience |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First-run admin account |
 | `SMTP_*` | Email configuration |
 | `GEMINI_API_KEY` | AI chat API key |
+| `BREVO_API_KEY` | Brevo email API key |
 | `FRONTEND_URL` | Frontend origin for CORS |
 | `TIMEZONE` | `Asia/Baku` |
 
