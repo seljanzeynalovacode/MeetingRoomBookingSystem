@@ -470,6 +470,64 @@ function updateHeaderLabels(startDate, endDate) {
   }
 }
 
+// Mobil: yuxarıda həftəlik gün-seçmə zolağı (preview dizaynı — gün pilləri + event nöqtələri)
+async function renderDateStrip() {
+  const mainCol = contentEl.parentNode;
+  let strip = document.getElementById("mobileDateStrip");
+  if (!strip) {
+    strip = document.createElement("div");
+    strip.id = "mobileDateStrip";
+    strip.className = "cal-date-strip";
+    mainCol.insertBefore(strip, contentEl);
+  }
+  const weekStart = getWeekStart(anchorDate);
+  const anchorStr = toDateOnlyString(anchorDate);
+  const todayStr = toDateOnlyString(new Date());
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + i);
+    days.push(d);
+  }
+  const WD_AZ = ["Baz", "B.e", "Ç.a", "Çər", "C.a", "Cüm", "Şən"]; // getDay(): 0=Baz..6=Şən
+  const WD_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  strip.innerHTML = days
+    .map((d) => {
+      const ds = toDateOnlyString(d);
+      const wd = (getLang() === "en" ? WD_EN : WD_AZ)[d.getDay()];
+      const cls = ["cal-day"];
+      if (ds === anchorStr) cls.push("sel");
+      if (ds === todayStr) cls.push("today");
+      return `<button type="button" class="${cls.join(" ")}" data-date="${ds}"><span class="cd-wd">${escapeHtml(wd)}</span><span class="cd-dn">${d.getDate()}</span><span class="cd-dot"></span></button>`;
+    })
+    .join("");
+  strip.querySelectorAll(".cal-day").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const [y, m, dd] = btn.dataset.date.split("-").map(Number);
+      anchorDate = new Date(y, m - 1, dd);
+      fetchAndRender();
+    });
+  });
+  // event nöqtələri: həftənin məlumatını çək (yalnız mobildə, israf olmasın)
+  if (selectedRoomId && window.matchMedia("(max-width: 620px)").matches) {
+    try {
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      const wdays = await getRoomCalendar(selectedRoomId, toDateOnlyString(weekStart), toDateOnlyString(weekEnd));
+      wdays.forEach((de) => {
+        const ds = de.date.slice(0, 10);
+        const has = (de.reservations && de.reservations.length) || (de.blackouts && de.blackouts.length);
+        if (has) {
+          const pill = strip.querySelector(`.cal-day[data-date="${ds}"]`);
+          if (pill) pill.classList.add("has");
+        }
+      });
+    } catch (e) {
+      /* səssiz keç */
+    }
+  }
+}
+
 let fetchToken = 0;
 
 function setNavDisabled(disabled) {
@@ -484,6 +542,7 @@ async function fetchAndRender() {
   if (!selectedRoomId) return;
   clearAlert(alertBox);
   closeEventPopover();
+  renderDateStrip();
   contentEl.innerHTML = `<div class="empty-state"><i class="bi bi-hourglass-split"></i>Yüklənir...</div>`;
 
   const myToken = ++fetchToken;

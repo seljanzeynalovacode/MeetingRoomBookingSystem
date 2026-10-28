@@ -11,7 +11,7 @@ export function initMobileNav() {
   }
 
   document
-    .querySelectorAll(".dash-layout .filter-card, .mybookings-layout .filter-card")
+    .querySelectorAll(".dash-layout .filter-card, .mybookings-layout .filter-card, .calendar-layout .filter-card")
     .forEach((card) => {
       const head = card.querySelector(".filter-card-head");
       if (!head) return;

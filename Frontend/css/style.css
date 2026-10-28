@@ -2283,3 +2283,48 @@ body.chat-dock-open .reservations-layout { padding-right: 320px; }
     background: var(--surface-raised); border-top: 1px solid var(--border);
   }
 }
+
+/* ========== Mobil: TƏQVİM — həftəlik gün-seçmə zolağı (preview) ========== */
+.cal-date-strip { display: none; }
+@media (max-width: 620px) {
+  .cal-date-strip {
+    display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none;
+    padding: 2px 2px 12px; flex-shrink: 0;
+  }
+  .cal-date-strip::-webkit-scrollbar { display: none; }
+  .cal-day {
+    flex: 1 0 auto; min-width: 44px;
+    border: 1px solid var(--border); border-radius: 15px;
+    background: var(--surface-raised); cursor: pointer; padding: 9px 2px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-family: inherit; transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  .cal-day .cd-wd { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; }
+  .cal-day .cd-dn { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+  .cal-day .cd-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; }
+  .cal-day.has .cd-dot { background: var(--violet-500); }
+  .cal-day.today:not(.sel) .cd-dn { color: var(--violet-600); }
+  .cal-day.sel {
+    background: linear-gradient(135deg, #4F7DF3, #7C6FE9); border-color: transparent;
+    box-shadow: 0 10px 20px -10px rgba(79,125,243,0.8);
+  }
+  .cal-day.sel .cd-wd, .cal-day.sel .cd-dn { color: #fff; }
+  .cal-day.sel.has .cd-dot { background: #fff; }
+
+  /* zolaq tarixi göstərir — mətn tarix etiketi lazım deyil */
+  .calendar-controls .date-label { display: none; }
+}
+
+/* ========== Mobil: TƏQVİM bina/otaq seçimi — digərləri kimi yığcam dropdown ========== */
+@media (max-width: 768px) {
+  .calendar-layout .filter-card .filter-card-head.is-collapsible { cursor: pointer; user-select: none; }
+  .calendar-layout .filter-card:not(.is-open) .filter-group { display: none; }
+  .calendar-layout .filter-card:not(.is-open) .filter-card-head { margin-bottom: 0; }
+  .calendar-layout .filter-card-head.is-collapsible h3 { flex: 1; }
+  .calendar-layout .filter-card-head.is-collapsible h3::after {
+    content: ""; display: inline-block; margin-left: 8px; vertical-align: middle;
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 5px solid currentColor; opacity: 0.45; transition: transform 0.2s;
+  }
+  .calendar-layout .filter-card.is-open .filter-card-head h3::after { transform: rotate(180deg); }
+}
