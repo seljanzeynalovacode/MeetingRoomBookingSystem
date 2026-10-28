@@ -50,6 +50,7 @@ export function initChatWidget() {
         <div class="chat-widget-head-icon"><i class="bi bi-robot"></i></div>
         <div class="chat-widget-head-text">
           <div class="chat-widget-head-title">MeetAI</div>
+          <div class="chat-widget-head-status"><span class="chat-status-dot"></span>onlayn</div>
         </div>
         <button type="button" class="chat-widget-close" id="chatWidgetClose" aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
       </div>

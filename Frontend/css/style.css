@@ -2217,6 +2217,9 @@ body.chat-dock-open .reservations-layout { padding-right: 320px; }
   .calendar-controls .view-toggle { flex: 1 1 100%; }
   .calendar-controls .view-toggle button { flex: 1; justify-content: center; }
 
+  /* Mobildə gün/həftə seçimi YOXDUR — preview kimi tək timeline görünüşü qalır */
+  .view-toggle { display: none; }
+
   /* yan paneldə yalnız bina/otaq seçimi vacibdir — info/legend yığcam */
   .calendar-layout .legend-card { display: none; }
   .room-info-card { padding: 0.85rem 1rem; }
@@ -2227,4 +2230,56 @@ body.chat-dock-open .reservations-layout { padding-right: 320px; }
   .hour-labels .hour-label, .week-hour-labels .hour-label { font-size: 10px; }
   .grid-event-block { font-size: 11px; padding: 5px 8px; border-radius: var(--r-sm); }
   .grid-event-block .ge-time { font-size: 9.5px; }
+}
+
+/* Chat başlıq statusu (hər iki görünüşdə) */
+.chat-widget-head-status { display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.78); margin-top: 1px; }
+.chat-widget-head-status .chat-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; }
+
+/* ========== Mobil: AI ASİSTAN (chat) — preview tam ekran görünüşü ========== */
+@media (max-width: 620px) {
+  .chat-widget-head { background: var(--surface-raised); color: var(--text-primary); border-bottom: 1px solid var(--border); padding: 0.85rem 1rem; }
+  .chat-widget-head::before { display: none; }
+  .chat-widget-head-icon {
+    width: 40px; height: 40px; position: relative;
+    background: linear-gradient(135deg, #4F7DF3, #7C6FE9); color: #fff;
+    box-shadow: 0 6px 14px -6px rgba(124,111,233,0.75);
+  }
+  .chat-widget-head-icon::after {
+    content: ""; position: absolute; right: -1px; bottom: -1px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--green-500); border: 2.5px solid var(--surface-raised);
+  }
+  .chat-widget-head-title { color: var(--text-primary); font-size: 15px; }
+  .chat-widget-head-status { color: var(--green-700); }
+  .chat-widget-head-status .chat-status-dot { background: var(--green-500); }
+  .chat-widget-close { background: var(--bg); border: 1px solid var(--border); color: var(--text-secondary); }
+  .chat-widget-close:hover { background: var(--wash); border-color: var(--border-strong); color: var(--text-primary); }
+}
+
+/* ========== Mobil: BİLDİRİŞ paneli ekrana sığsın (soldan daşmasın) ========== */
+@media (max-width: 620px) {
+  .notification-panel {
+    position: fixed; top: calc(70px + env(safe-area-inset-top, 0px));
+    left: 10px; right: 10px; width: auto; max-width: none;
+  }
+}
+
+/* ========== Mobil: REZERV ET overlay — bottom-sheet, tam sığır (düymələr kəsilmir) ========== */
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (max-width: 620px) {
+  .modal-overlay { z-index: 600; align-items: flex-end; padding: 0; }  /* alt-menyunun üstündə, aşağıya yapışıq */
+  .modal-panel {
+    width: 100%; max-width: 100%;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    max-height: 92vh;
+    padding: 1.4rem 1.2rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+    animation: sheetUp 0.3s var(--ease);
+  }
+  /* footer həmişə görünsün (panel içində aşağıda yapışıq) */
+  .modal-footer {
+    position: sticky; bottom: 0;
+    margin-top: 1.2rem; padding-top: 0.9rem;
+    background: var(--surface-raised); border-top: 1px solid var(--border);
+  }
 }
